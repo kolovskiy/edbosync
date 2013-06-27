@@ -768,7 +768,7 @@ public class Synchronizer {
                         personCodeU = personRet.getPersonCodeU();
                         personIdEdbo = personRet.getIdPerson();
                     }
-                    // to do
+                    // to do   
                     // 1: обновить код и ид персоны в базе
                     ArrayList<PersonDocument> personDocuments = getPersonDocumentEdbo(personCodeU);
                     for (PersonDocument document: personDocuments){
