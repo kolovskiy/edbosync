@@ -1,4 +1,3 @@
-
 package edbosync;
 
 /**
@@ -20,6 +19,14 @@ public class SubmitStatus {
      * ИДентификатор из ЕДБО (в случае успеха)
      */
     private int id;
+    /**
+     * Сообщение об ошибке
+     */
+    private String message = "";
+    /**
+     * Флаг необходимости отмены транзакции по добавлению персоны в базу
+     */
+    private boolean backTransaction = true;
 
     /**
      * Получить значение флага об ошибке
@@ -73,5 +80,41 @@ public class SubmitStatus {
      */
     public void setId(int id) {
         this.id = id;
+    }
+
+    /**
+     * Получить текст сообщения об ошибке
+     *
+     * @return
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * Изменить текст сообщения об ошибке
+     *
+     * @param message текст сообщения об ошибке
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    /**
+     * Получить состояние флага отмены тразакции
+     *
+     * @return состояние флага отмены тразакции
+     */
+    public boolean isBackTransaction() {
+        return backTransaction;
+    }
+
+    /**
+     * Изменить состояние флага отмены тразакции
+     *
+     * @param backTransaction новое состояние флага отмены тразакции
+     */
+    public void setBackTransaction(boolean backTransaction) {
+        this.backTransaction = backTransaction;
     }
 }
