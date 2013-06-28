@@ -704,6 +704,7 @@ public class Synchronizer {
                     int koatuuL1Id = person.getInt("KOATUUCodeL1ID");
                     int koatuuL2Id = person.getInt("KOATUUCodeL2ID");
                     int koatuuL3Id = person.getInt("KOATUUCodeL3ID");
+                    int countryId = person.getInt("CountryID");
                     String koatuu = "";
                     ResultSet koatuuL3 = mySqlStatement.executeQuery(
                             "SELECT KOATUULevel3Code "
@@ -840,7 +841,7 @@ public class Synchronizer {
                             (documentTypeId == 17) ? documentNumber : "", // 45
                             (documentTypeId == 17) ? documentIssued : "", // 46
                             (documentTypeId == 17) ? documentDate : "", // 47
-                            804); // 48
+                            countryId); //804); // 48
                     if (personRetArray == null) {
                         submitStatus.setMessage(personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
                         return json.toJson(submitStatus);
@@ -861,13 +862,13 @@ public class Synchronizer {
                     // Обновление кодов документов
                     ArrayList<PersonDocument> personDocuments = getPersonDocumentEdbo(personCodeU);
                     for (PersonDocument document : personDocuments) {
-                        if (entrantDocumentNumber.equals(document.getNumber()) && entrantDocumentSeries.equalsIgnoreCase(document.getSeries())) {
+                        if (entrantDocumentNumber.equalsIgnoreCase(document.getNumber()) && entrantDocumentSeries.equalsIgnoreCase(document.getSeries())) {
                             mySqlStatement.executeUpdate("UPDATE `abiturient`.`documents`\n"
                                     + "SET\n"
                                     + "`edboID` = " + document.getId_Document() + "\n"
                                     + "WHERE idDocuments = " + entrantDocumentIdMySql + ";");
                         }
-                        if (documentNumber.equals(document.getNumber()) && documentSeries.equalsIgnoreCase(document.getSeries())) {
+                        if (documentNumber.equalsIgnoreCase(document.getNumber()) && documentSeries.equalsIgnoreCase(document.getSeries())) {
                             mySqlStatement.executeUpdate("UPDATE `abiturient`.`documents`\n"
                                     + "SET\n"
                                     + "`edboID` = " + document.getId_Document() + "\n"
