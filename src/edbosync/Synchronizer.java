@@ -182,7 +182,6 @@ public class Synchronizer {
 //        }
 //        return true;
 //    }
-
     /**
      * Установить соединение с базой данных MySQL
      *
@@ -197,7 +196,8 @@ public class Synchronizer {
                 } catch (SQLException ex) {
                     Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                mySqlStatement = mySqlConnection.createStatement();
+                mySqlStatement = mySqlConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                        ResultSet.CONCUR_UPDATABLE);
             } catch (SQLException ex) {
                 Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
@@ -664,9 +664,11 @@ public class Synchronizer {
      * @param personalDocumentIdMySql Идентификатор документа об удостоверении
      * личности в базе MySQL
      * @return Статус попытки в формате json
+     * @see edbosync.SubmitStatus
      */
     public String addPersonEdbo(int personIdMySql,
             int entrantDocumentIdMySql, int personalDocumentIdMySql) {
+
         SubmitStatus submitStatus = new SubmitStatus();
         String personCodeU = "";
         int personIdEdbo = -1;
@@ -749,9 +751,9 @@ public class Synchronizer {
                     int entrantDocumentTypeId = entrantDocument.getInt("TypeID");
                     int isForeigner = entrantDocument.getInt("isForeinghEntrantDocument");
                     int isNotCheckAttestat = entrantDocument.getInt("isNotCheckAttestat");
-                    
+
                     System.out.println(entrantDocumentValue);
-                    
+
                     // удостоверение личности
                     String sqlPersonalDocument = "SELECT * FROM abiturient.documents WHERE `documents`.`idDocuments` = " + personalDocumentIdMySql + ";";
                     ResultSet personalDocument = mySqlStatement.executeQuery(sqlPersonalDocument);
@@ -765,7 +767,7 @@ public class Synchronizer {
                     String documentDate = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(personalDocument.getDate("DateGet"));
                     String documentIssued = personalDocument.getString("Issued");
                     int documentTypeId = personalDocument.getInt("TypeID");
-                    
+
 //                    System.out.println(documentSeries + documentNumber + documentDate + documentIssued + documentTypeId);
 
                     String sqlLanguage = "SELECT * FROM abiturient.languages WHERE idLanguages = " + languageIdPerson + ";";
@@ -849,7 +851,7 @@ public class Synchronizer {
                         personCodeU = personRet.getPersonCodeU();
                         personIdEdbo = personRet.getIdPerson();
                     }
-                    // Обновление кода и идентификатора персоны
+                    // Обновление кода и идентификатора персоны             
                     String sqlUpdatePersonCode = "UPDATE `abiturient`.`person`\n"
                             + "SET\n"
                             + "`codeU` = \"" + personCodeU + "\",\n"
@@ -881,6 +883,100 @@ public class Synchronizer {
         submitStatus.setBackTransaction(false);
         submitStatus.setGuid(personCodeU);
         submitStatus.setId(personIdEdbo);
+        return json.toJson(submitStatus);
+    }
+
+    /**
+     * Добавить документы персоны в базу ЕДБО
+     *
+     * <p>Метод производит перебор документов в базе "Абитуриент". Для каждого
+     * документа, у кторого отсутствует идентификатор записи в базе ЕДБО,
+     * производится попытка добавления.</p>
+     *
+     * @param personIdMySql Идентификатор персоны в базе MySQL
+     * @return Статус попытки в формате json
+     * @see edbosync.SubmitStatus
+     */
+    public String addPersonDocumentsEdbo(int personIdMySql) {
+        SubmitStatus submitStatus = new SubmitStatus();
+        Gson json = new Gson();
+        if (personConnect() && mySqlConnect()) {
+            int edboIdPerson;
+            try {
+                // идентификатор персоны в базе ЕДБО
+                ResultSet person = mySqlStatement.executeQuery("SELECT `person`.`edboID` FROM abiturient.person WHERE idPerson = " + personIdMySql + ";");
+                person.next();
+                edboIdPerson = person.getInt(1);
+                if (person.wasNull()) {
+                    submitStatus.setError(true);
+                    submitStatus.setBackTransaction(false);
+                    submitStatus.setMessage("Неможливо додати документи до персони, яка не пройшла синхронизацію з ЄДБО.");
+                    return json.toJson(submitStatus);
+                }
+
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+                submitStatus.setError(true);
+                submitStatus.setBackTransaction(false);
+                submitStatus.setMessage("Помилка з’єднання: " + ex.getLocalizedMessage());
+                return json.toJson(submitStatus);
+            }
+            String sqlSelectDocuments = "SELECT * FROM abiturient.documents WHERE PersonID = " + personIdMySql + ";";
+            ResultSet document;
+            try {
+                document = mySqlStatement.executeQuery(sqlSelectDocuments);
+                while (document.next()) {
+                    int idDocument = document.getInt("idDocuments");
+                    int typeId = document.getInt("TypeID");
+                    String series = document.getString("Series");
+                    String number = document.getString("Numbers");
+                    String dateGet = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(document.getDate("DateGet"));
+                    int znoPin = (typeId == 4) ? document.getInt("ZNOPin") : 0;
+                    String attestatValue = Float.toString(document.getFloat("AtestatValue"));
+                    String issued = document.getString("Issued");
+                    int awardTypeId = document.getInt("PersonDocumentsAwardsTypesID");
+                    int edboId = document.getInt("edboID");
+                    if (document.wasNull() || edboId == 0) {
+                        edboId = personSoap.personDocumentsAdd(sessionGuid, 
+                                languageId, 
+                                edboIdPerson, 
+                                typeId, 
+                                0, 
+                                (series != null) ? series : "", 
+                                (number != null) ? number : "", 
+                                (dateGet != null) ? dateGet : "", 
+                                (issued != null) ? issued : "", 
+                                "", 
+                                znoPin, 
+                                attestatValue, 
+                                1, 
+                                awardTypeId);
+                        if (edboId == 0) {
+                            submitStatus.setError(true);
+                            submitStatus.setBackTransaction(false);
+                            submitStatus.setMessage(submitStatus.getMessage() + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                        }
+                        document.updateInt("edboID", edboId);
+                        document.updateRow();
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+                submitStatus.setError(true);
+                submitStatus.setBackTransaction(false);
+                submitStatus.setMessage("Помилка з’єднання: " + ex.getLocalizedMessage());
+                return json.toJson(submitStatus);
+            }
+
+        } else {
+            submitStatus.setError(true);
+            submitStatus.setBackTransaction(false);
+            submitStatus.setMessage("Помилка з’єднання.");
+            return json.toJson(submitStatus);
+        }
+        submitStatus.setError(false);
+        submitStatus.setBackTransaction(false);
+        submitStatus.setMessage("Синхронизацію успіхно завершено.");
         return json.toJson(submitStatus);
     }
 
