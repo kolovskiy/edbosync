@@ -70,18 +70,6 @@ public class Synchronizer {
      */
     private EDBOPersonSoap personSoap = null;
     /**
-     * Логин для подключения к ЕДБО
-     */
-    private String soapUser = "pljuta.natalija@edbo.gov.ua";
-    /**
-     * Пароль для подключения к ЕДБО
-     */
-    private String soapPassword = "qazse75259";
-    /**
-     * Ключ клиента-приложения при подключении к ЕДБО
-     */
-    private String applicationKey = "Y0NzMXVGYnplb2lYZzhxVlA3ZUZ4eFJualhlNnowbkh2dmpTQ0FSNkc5U09iOW9yWExQUnVLZ1FWZVNIQmY5b2JMQ1ZaSHRvcmg5eFFka2pKWGlabUZvVnBFN3hTakZCYUROQkhEQ3FzQUFtTFQ5UzRKOE82a2NGeFJGdUs1rMC=";
-    /**
      * Идентификатор текущей соап-сессии
      */
     private String sessionGuid = "";
@@ -96,24 +84,12 @@ public class Synchronizer {
     /*
      * Идентификатор вступительной компании (2 -- 2012, 3 -- 2013)
      */
-    private int seasonId = 2;
+    private int seasonId = 3;
     /**
      * Ключ университета в Soap
      */
     private String universityKey = "ab1bc732-51f3-475c-bcfe-368363369020";
     // MySQL
-    /**
-     * Строка соединения с базой MySQL
-     */
-    private String mySqlConnectionUrl = "jdbc:mysql://10.1.103.26/abiturient?useUnicode=true&characterEncoding=utf-8";
-    /**
-     * Пользователь MySQL
-     */
-    private String mySqlUser = "root";
-    /**
-     * Пароль MySQL
-     */
-    private String mySqlPassword = "root";
     /**
      * Обработчик соединения MySQL
      */
@@ -136,8 +112,9 @@ public class Synchronizer {
      * @return true, если соединение установлено, false - иначе
      */
     protected boolean guidesConnect() {
+        SoapConnectionData data = new SoapConnectionData();
         guidesSoap = guidesEdbo.getEDBOGuidesSoap();
-        sessionGuid = guidesSoap.login(soapUser, soapPassword, 0, applicationKey);
+        sessionGuid = guidesSoap.login(data.getSoapUser(), data.getSoapPassword(), 0, data.getApplicationKey());
         if (sessionGuid.length() != 36) {
             // при соединении возникла ошибка
             System.out.println(sessionGuid);
@@ -154,9 +131,10 @@ public class Synchronizer {
     protected boolean personConnect() {
         // wsdl connection url:
         // http://10.1.103.99:8080/EDBOPerson/EDBOPerson.asmx?WSDL
+        SoapConnectionData data = new SoapConnectionData();
         personSoap = personEdbo.getEDBOPersonSoap();
-//        sessionGuid = personSoap.login(soapUser, soapPassword, 0, applicationKey);
-        sessionGuid = personSoap.login("davidovskij.v@edbo.gov.ua", "testpass1917", 0, ""); //// TEST !!!!!!!!!!!!!!!!
+        sessionGuid = personSoap.login(data.getSoapUser(), data.getSoapPassword(), 0, data.getApplicationKey());
+//        sessionGuid = personSoap.login("davidovskij.v@edbo.gov.ua", "testpass1917", 0, ""); //// TEST !!!!!!!!!!!!!!!!
         if (sessionGuid.length() != 36) {
             // при соединении возникла ошибка
             System.out.println(sessionGuid);
@@ -192,7 +170,8 @@ public class Synchronizer {
             Class.forName("com.mysql.jdbc.Driver");
             try {
                 try {
-                    mySqlConnection = DriverManager.getConnection(mySqlConnectionUrl, mySqlUser, mySqlPassword);
+                    MySqlConnectionData data = new MySqlConnectionData();
+                    mySqlConnection = DriverManager.getConnection(data.getMySqlConnectionUrl(), data.getMySqlUser(), data.getMySqlPassword());
                 } catch (SQLException ex) {
                     Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -603,7 +582,7 @@ public class Synchronizer {
                 List<DPersonOlympiadsAwards> awardsList = awardsArray.getDPersonOlympiadsAwards();
                 for (DPersonOlympiadsAwards award : awardsList) {
                     String sql = "SELECT * "
-                            + "FROM abiturient.PersonOlympiad "
+                            + "FROM abiturient.personolympiad "
                             + "WHERE PersonID = " + personId + " AND OlympiadAwarID = " + award.getIdOlympiadAward() + ";";
                     try {
                         ResultSet personOlympiadsRS = mySqlStatement.executeQuery(sql);
@@ -625,7 +604,7 @@ public class Synchronizer {
                 }
             }
             String sql = "SELECT * "
-                    + "FROM abiturient.PersonOlympiad "
+                    + "FROM abiturient.personolympiad "
                     + "WHERE PersonID = " + personId + ";";
             try {
                 ResultSet olympiad = mySqlStatement.executeQuery(sql);
@@ -1242,15 +1221,22 @@ public class Synchronizer {
                         + "WHERE idPersonSpeciality = " + personSpeciality + ";");
                 int idOlympiadAward = 0; // идентификатор олимпиады персоны
                 int personOlympiadIdEdbo = 0; // идентификатор записи об олимпиаде персоны в ЕДБО
+                String personRequestOlympiadAwardBonus = ""; // бонус за олимпиаду
                 if (personRequestOlympiadRS.next()) {
                     idOlympiadAward = personRequestOlympiadRS.getInt("OlympiadID");
                 }
                 if (idOlympiadAward != 0) {
                     // в заявке есть олимпиада
+                    // дополнительный балл
+                    ResultSet olympBonus = mySqlStatement.executeQuery("SELECT OlympiadAwardBonus FROM abiturient.olympiadsawards WHERE OlympiadAwardID = " + idOlympiadAward + ";");
+                    if (olympBonus.next()) {
+                        personRequestOlympiadAwardBonus = olympBonus.getString(1);
+                    }
+                    // синхронизация списка олимпиад с ЕДБО
                     syncPersonOlympiadsEdbo(codeUPerson, personIdMySql);
                     ResultSet personOlympiadsRS = mySqlStatement.executeQuery(""
                             + "SELECT * "
-                            + "FROM abiturient.PersonOlympiad "
+                            + "FROM abiturient.personolympiad "
                             + "WHERE PersonID = " + personIdMySql + " AND OlympiadAwarID = " + idOlympiadAward + ";");
                     if (!personOlympiadsRS.next()) {
                         // такой олимпиады нет в списке персон и едбо - добавляем
@@ -1269,31 +1255,151 @@ public class Synchronizer {
                         submitStatus.setBackTransaction(false);
                         submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання олімпіади  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
                     }
-                    ResultSet request = mySqlStatement.executeQuery(""
-                            + "SELECT * "
-                            + "FROM abiturient.personspeciality "
-                            + "WHERE idPersonSpeciality = " + personSpeciality + ";");
-                    if (request.next()) {
-                        int originalDocumentsAdd = (request.getInt("isCopyEntrantDoc") == 1) ? 0 : 1;
-                        int isNeedHostel = request.getInt("isNeedHostel");
-                        String codeOfBusiness = "";
-                        int qualificationId = request.getInt("QualificationID");
-                        String courseId = Integer.toString(request.getInt("CourseID"));
-                        switch (qualificationId) {
-                            case 1:
-                                codeOfBusiness += "Б";
-                                break;
-                            case 2:
-                            case 3:
-                                codeOfBusiness += "СМ";
-                                break;
-                            case 4:
-                                codeOfBusiness += "МC";
-                                break;
+
+                }
+                ResultSet request = mySqlStatement.executeQuery(""
+                        + "SELECT * "
+                        + "FROM abiturient.personspeciality "
+                        + "WHERE idPersonSpeciality = " + personSpeciality + ";");
+                if (request.next()) {
+                    int originalDocumentsAdd = (request.getInt("isCopyEntrantDoc") == 1) ? 0 : 1;
+                    int isNeedHostel = request.getInt("isNeedHostel");
+                    String codeOfBusiness = "";
+                    int qualificationId = request.getInt("QualificationID");
+                    String courseId = Integer.toString(request.getInt("CourseID"));
+                    switch (qualificationId) {
+                        case 1:
+                            codeOfBusiness += "Б";
+                            break;
+                        case 2:
+                        case 3:
+                            codeOfBusiness += "СМ";
+                            break;
+                        case 4:
+                            codeOfBusiness += "МC";
+                            break;
+                    }
+                    codeOfBusiness += courseId + String.format("%05d", request.getInt("PersonRequestNumber"));
+                    int idPersonEntranceType = request.getInt("EntranceTypeID");
+                    int idPersonExamenationCause = request.getInt("CausalityID");
+                    int idUniversityQuota1 = (request.getInt("Quota1") == 1) ? 1506 : 0;
+                    int idUniversityQuota2 = (request.getInt("Quota2") == 1) ? 1681 : 0;
+                    int isBudget = request.getInt("isBudget");
+                    int isContract = request.getInt("isContract");
+                    int idPersonEducationForm = request.getInt("EducationFormID");
+                    int idPersonCourse = request.getInt("CoursedpID");
+                    String personRequestCourseBonus = Float.toString(request.getFloat("CoursedpBall"));
+                    int isHigherEducation = request.getInt("isHigherEducation");
+                    int skipDocumentValue = request.getInt("SkipDocumentValue");
+                    int idDocumentSubject1 = request.getInt("DocumentSubject1");
+                    int idDocumentSubject2 = request.getInt("DocumentSubject2");
+                    int idDocumentSubject3 = request.getInt("DocumentSubject3");
+                    int specialityId = request.getInt("SepcialityID");
+                    String universitySpecialitiesCode = "";
+                    int idPersonDocument = request.getInt("EntrantDocumentID");
+                    if (idDocumentSubject1 != 0) {
+                        // есть первый предмет сертификата: выбираем его идентификатор из таблицы предметов
+                        ResultSet subject1 = mySqlStatement.executeQuery(""
+                                + "SELECT edboID "
+                                + "FROM abiturient.documentsubject "
+                                + "WHERE idDocumentSubject = " + idDocumentSubject1 + ";");
+                        if (subject1.next()) {
+                            idDocumentSubject1 = subject1.getInt(1);
                         }
-                        codeOfBusiness += courseId + String.format("%05d", request.getInt("PersonRequestNumber"));
-                        int idPersonEntranceType = request.getInt("EntranceTypeID");
-                        int idPersonExamenationCause = request.getInt("CausalityID");
+                    }
+                    if (idDocumentSubject2 != 0) {
+                        // есть второй предмет сертификата: выбираем его идентификатор из таблицы предметов
+                        ResultSet subject2 = mySqlStatement.executeQuery(""
+                                + "SELECT edboID "
+                                + "FROM abiturient.documentsubject "
+                                + "WHERE idDocumentSubject = " + idDocumentSubject2 + ";");
+                        if (subject2.next()) {
+                            idDocumentSubject1 = subject2.getInt(1);
+                        }
+                    }
+                    if (idDocumentSubject3 != 0) {
+                        // есть третий предмет сертификата: выбираем его идентификатор из таблицы предметов
+                        ResultSet subject3 = mySqlStatement.executeQuery(""
+                                + "SELECT edboID "
+                                + "FROM abiturient.documentsubject "
+                                + "WHERE idDocumentSubject = " + idDocumentSubject3 + ";");
+                        if (subject3.next()) {
+                            idDocumentSubject1 = subject3.getInt(1);
+                        }
+                    }
+                    ResultSet specCodeRS = mySqlStatement.executeQuery(""
+                            + "SELECT SpecialityKode "
+                            + "FROM abiturient.specialities "
+                            + "WHERE idSpeciality = " + specialityId + ";");
+                    if (specCodeRS.next()) {
+                        universitySpecialitiesCode = specCodeRS.getString(1);
+                    }
+                    ResultSet docCodeRs = mySqlStatement.executeQuery(""
+                            + "SELECT edboID "
+                            + "FROM abiturient.documents "
+                            + "WHERE idDocuments = " + idPersonDocument + ";");
+                    if (docCodeRs.next()) {
+                        idPersonDocument = docCodeRs.getInt(1);
+                    }
+                    System.out.println(idPersonDocument);
+                    if (personSoap.personRequestCheckCanAdd(sessionGuid, seasonId, codeUPerson, universitySpecialitiesCode, 0, idPersonEducationForm, idPersonDocument, 0, "") == 0){
+                        submitStatus.setError(true);
+                        submitStatus.setBackTransaction(false);
+                        submitStatus.setMessage(submitStatus.getMessage() + "Неможливо додати заявку  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
+                        return json.toJson(submitStatus);
+                    }
+                    System.out.println(universitySpecialitiesCode);
+                    int edboId = personSoap.personRequestAdd(sessionGuid, // 1
+                            seasonId, // 2
+                            codeUPerson, // 3
+                            universitySpecialitiesCode, // 4
+                            originalDocumentsAdd, //5
+                            isNeedHostel, // 6
+                            codeOfBusiness, // 7
+                            idPersonEntranceType, // 8
+                            idPersonExamenationCause, // 9
+                            idUniversityQuota1, // 10
+                            idUniversityQuota2, // 11
+                            0, // 12
+                            0, // 13
+                            isBudget, // 14
+                            isContract, // 15
+                            idPersonEducationForm, // 16
+                            idDocumentSubject1, // 17
+                            idDocumentSubject2, // 18
+                            idDocumentSubject3, // 19
+                            idPersonCourse, // 20
+                            personRequestCourseBonus, // 21
+                            idOlympiadAward, // 22
+                            personRequestOlympiadAwardBonus, // 23
+                            idPersonDocument, // 24
+                            0, // 25
+                            "", // 26
+                            isHigherEducation, // 27
+                            skipDocumentValue, // 28
+                            0,
+                            0,
+                            0);
+                    if (edboId == 0) {
+                        submitStatus.setError(true);
+                        submitStatus.setBackTransaction(false);
+                        submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання заявки  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
+                        return json.toJson(submitStatus);
+                    } else {
+                        mySqlStatement.executeUpdate("UPDATE `abiturient`.`personspeciality`\n"
+                                + "SET\n"
+                                + "`edboID` = " + edboId + "\n"
+                                + "WHERE idPersonSpeciality = " + personSpeciality + ";");
+                        ResultSet benefitsRS = mySqlStatement.executeQuery(""
+                                + "SELECT edboID "
+                                + "FROM abiturient.personbenefits "
+                                + "WHERE PersonID = " + personIdMySql + ";");
+                        while (benefitsRS.next()) {
+                            personSoap.personRequestBenefitsAdd(sessionGuid, actualDate, languageId, edboId, benefitsRS.getInt(1));
+                        }
+                        submitStatus.setError(false);
+                        submitStatus.setBackTransaction(false);
+                        submitStatus.setMessage(submitStatus.getMessage() + "Заявку успішно додано до ЄДБО<br />");
                     }
                 }
             } catch (SQLException ex) {
@@ -1311,18 +1417,6 @@ public class Synchronizer {
             return json.toJson(submitStatus);
         }
         return json.toJson(submitStatus);
-    }
-
-    public String getSoapUser() {
-        return soapUser;
-    }
-
-    public String getSoapPassword() {
-        return soapPassword;
-    }
-
-    public String getApplicationKey() {
-        return applicationKey;
     }
 
     public String getSessionGuid() {
@@ -1345,39 +1439,11 @@ public class Synchronizer {
         return universityKey;
     }
 
-    public String getMySqlConnectionUrl() {
-        return mySqlConnectionUrl;
-    }
-
-    public String getMySqlUser() {
-        return mySqlUser;
-    }
-
-    public String getMySqlPassword() {
-        return mySqlPassword;
-    }
-
-    public void setSoapUser(String soapUser) {
-        this.soapUser = soapUser;
-    }
-
-    public void setSoapPassword(String soapPassword) {
-        this.soapPassword = soapPassword;
-    }
-
     public void setLanguageId(int languageId) {
         this.languageId = languageId;
     }
 
     public void setSeasonId(int seasonId) {
         this.seasonId = seasonId;
-    }
-
-    public void setMySqlUser(String mySqlUser) {
-        this.mySqlUser = mySqlUser;
-    }
-
-    public void setMySqlPassword(String mySqlPassword) {
-        this.mySqlPassword = mySqlPassword;
     }
 }

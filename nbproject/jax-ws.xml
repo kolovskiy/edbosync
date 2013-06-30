@@ -31,8 +31,8 @@
       </wsimport-options>
     </client>
     <client name="EDBOPerson">
-      <wsdl-url>http://test.edbo.gov.ua:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsdl-url>
-      <local-wsdl-file>test.edbo.gov.ua_8080/EDBOPerson/EDBOPerson.asmx.wsdl</local-wsdl-file>
+      <wsdl-url>http://10.1.103.99:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsdl-url>
+      <local-wsdl-file>10.1.103.99_8080/EDBOPerson/EDBOPerson.asmx.wsdl</local-wsdl-file>
       <package-name>ua.edboservice</package-name>
       <catalog-file>catalog.xml</catalog-file>
       <wsimport-options>
@@ -46,7 +46,7 @@
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>wsdlLocation</wsimport-option-name>
-          <wsimport-option-value>http://test.edbo.gov.ua:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsimport-option-value>
+          <wsimport-option-value>http://10.1.103.99:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsimport-option-value>
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>xnocompile</wsimport-option-name>

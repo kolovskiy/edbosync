@@ -187,6 +187,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="MiddleName" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_PersonSex" type="s:int" />
         </s:sequence>
       </s:complexType>
       <s:element name="SaveHistory">
@@ -3930,6 +3931,15 @@
           <s:element minOccurs="0" maxOccurs="1" name="Email" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Phone" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="WebSite" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BossNameW" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AdressW" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EmailW" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneW" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WebSiteW" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsEz" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateRegistration" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="AdressDocumentGetW" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PersonRequestStatusTypeNameEz" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:element name="PersonRequestAddFromString">
