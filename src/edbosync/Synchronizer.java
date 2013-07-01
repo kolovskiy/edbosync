@@ -388,6 +388,7 @@ public class Synchronizer {
                 json = new Gson();
                 return json.toJson(person);
             }
+//            mySqlConnectionClose();
         }
         return "0";
     }
@@ -468,6 +469,7 @@ public class Synchronizer {
 
                     person.add(p);
                 }
+//                mySqlConnectionClose();
                 Gson json;
                 json = new Gson();
                 return json.toJson(person);
@@ -945,7 +947,7 @@ public class Synchronizer {
             } catch (SQLException ex) {
                 Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
             }
-            mySqlConnectionClose();
+//            mySqlConnectionClose();
         }
         submitStatus.setError(false);
         submitStatus.setBackTransaction(false);
@@ -1123,7 +1125,7 @@ public class Synchronizer {
                 submitStatus.setMessage("Помилка з’єднання: " + ex.getLocalizedMessage());
                 return json.toJson(submitStatus);
             }
-            mySqlConnectionClose();
+//            mySqlConnectionClose();
         } else {
             submitStatus.setError(true);
             submitStatus.setBackTransaction(false);
@@ -1210,7 +1212,7 @@ public class Synchronizer {
                 submitStatus.setMessage("Помилка з’єднання: " + ex.getLocalizedMessage());
                 return json.toJson(submitStatus);
             }
-            mySqlConnectionClose();
+//            mySqlConnectionClose();
         } else {
             submitStatus.setError(true);
             submitStatus.setBackTransaction(false);
@@ -1293,19 +1295,20 @@ public class Synchronizer {
                     String codeOfBusiness = "";
                     int qualificationId = request.getInt("QualificationID");
                     String courseId = Integer.toString(request.getInt("CourseID"));
-                    switch (qualificationId) {
-                        case 1:
-                            codeOfBusiness += "Б";
-                            break;
-                        case 2:
-                        case 3:
-                            codeOfBusiness += "СМ";
-                            break;
-                        case 4:
-                            codeOfBusiness += "МC";
-                            break;
-                    }
-                    codeOfBusiness += courseId + String.format("%05d", request.getInt("PersonRequestNumber"));
+//                    switch (qualificationId) {
+//                        case 1:
+//                            codeOfBusiness += "Б";
+//                            break;
+//                        case 2:
+//                        case 3:
+//                            codeOfBusiness += "СМ";
+//                            break;
+//                        case 4:
+//                            codeOfBusiness += "МC";
+//                            break;
+//                    }
+//                    codeOfBusiness += courseId + String.format("%05d", request.getInt("PersonRequestNumber"));
+                    codeOfBusiness = String.format("%05d", request.getInt("RequestNumber"));
                     int idPersonEntranceType = request.getInt("EntranceTypeID");
                     int idPersonExamenationCause = request.getInt("CausalityID");
                     int idUniversityQuota1 = (request.getInt("Quota1") == 1) ? 1506 : 0;
@@ -1503,7 +1506,7 @@ public class Synchronizer {
                 submitStatus.setMessage("Помилка з’єднання: " + ex.getLocalizedMessage());
                 return json.toJson(submitStatus);
             }
-            mySqlConnectionClose();
+//            mySqlConnectionClose();
         } else {
             submitStatus.setError(true);
             submitStatus.setBackTransaction(false);
@@ -1511,6 +1514,39 @@ public class Synchronizer {
             return json.toJson(submitStatus);
         }
         return json.toJson(submitStatus);
+    }
+    
+    public void editRequestsAll() {
+        if (mySqlConnect() && personConnect()) {
+            String sql = "SELECT * FROM abiturient.personspeciality WHERE edboID is not null;";
+            try {
+                ResultSet request = mySqlStatement.executeQuery(sql);
+                while (request.next()) {
+                    int idPersonRequest = request.getInt("edboID");
+                    int originalDocumentsAdd = (request.getInt("isCopyEntrantDoc") == 1) ? 0 : 1;
+                    int isNeedHostel = request.getInt("isNeedHostel");
+                    String codeOfBusiness = String.format("%05d", request.getInt("RequestNumber"));
+                    int isBudget = request.getInt("isBudget");
+                    int isContract = request.getInt("isContract");
+                    int isHigherEducation = request.getInt("isHigherEducation");
+                    int skipDocumentValue = request.getInt("SkipDocumentValue");
+                    if (personSoap.personRequestEdit(sessionGuid, 
+                            idPersonRequest, 
+                            originalDocumentsAdd, 
+                            isNeedHostel, 
+                            codeOfBusiness, 
+                            isBudget, 
+                            isContract, 
+                            isHigherEducation, 
+                            skipDocumentValue) == 0){
+                        System.out.println(personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+//            mySqlConnectionClose();
+        }
     }
 
     public void syncRequestsAll() {
