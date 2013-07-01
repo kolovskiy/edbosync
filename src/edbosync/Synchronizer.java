@@ -24,20 +24,26 @@ import ua.edboservice.EDBOPersonSoap;
 import ua.edboservice.ArrayOfDPersonAddresses;
 import ua.edboservice.ArrayOfDPersonBenefits;
 import ua.edboservice.ArrayOfDPersonContacts;
+import ua.edboservice.ArrayOfDPersonCourses;
 import ua.edboservice.ArrayOfDPersonDocuments;
 import ua.edboservice.ArrayOfDPersonDocumentsSubjects;
 import ua.edboservice.ArrayOfDPersonOlympiadsAwards;
 import ua.edboservice.ArrayOfDRequestExaminationCauses;
+import ua.edboservice.ArrayOfDSpecRedactions;
+import ua.edboservice.ArrayOfDUniversityCourses;
 import ua.edboservice.ArrayOfDUniversityFacultetSpecialities;
 import ua.edboservice.ArrayOfDUniversityFacultets;
 import ua.edboservice.DPersonAddRet;
 import ua.edboservice.DPersonAddresses;
 import ua.edboservice.DPersonBenefits;
 import ua.edboservice.DPersonContacts;
+import ua.edboservice.DPersonCourses;
 import ua.edboservice.DPersonDocuments;
 import ua.edboservice.DPersonDocumentsSubjects;
 import ua.edboservice.DPersonOlympiadsAwards;
 import ua.edboservice.DRequestExaminationCauses;
+import ua.edboservice.DSpecRedactions;
+import ua.edboservice.DUniversityCourses;
 import ua.edboservice.DUniversityFacultetSpecialities;
 import ua.edboservice.DUniversityFacultets;
 /*
@@ -258,11 +264,13 @@ public class Synchronizer {
                             + "'" + speciality.getSpecSpecialityName() + "',"
                             + "'" + speciality.getSpecDirectionName() + "',"
                             + "'" + speciality.getSpecSpecializationName() + "',"
-                            + "'" + speciality.getSpecCode() + "',"
+                            + "'" + speciality.getUniversitySpecialitiesKode() + "',"
                             + facultet.getIdUniversityFacultet() + ","
                             + mon_kod + ","
                             + speciality.getUniversitySpecialitiesContractCount() + ","
-                            + speciality.getIdPersonEducationForm());
+                            + speciality.getIdPersonEducationForm() + ", begin " + speciality.getDateBeginPersonRequestSeason().toString()
+                            + " end " + speciality.getDateEndPersonRequestSeason().toString());
+                    System.out.println("");
                     try {
                         ResultSet facultetInMysql = mySqlStatement.executeQuery("SELECT * FROM abiturient.facultets WHERE facultets.idFacultet = "
                                 + facultet.getIdUniversityFacultet() + ";");
@@ -273,13 +281,27 @@ public class Synchronizer {
                         Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     try {
-                        mySqlStatement.executeUpdate(sql);
+//                        mySqlStatement.executeUpdate(sql);
+                        mySqlStatement.executeUpdate("UPDATE `abiturient`.`specialities`\n"
+                                + "SET\n"
+                                + "SpecialityKode = \"" + speciality.getUniversitySpecialitiesKode() + "\"\n"
+                                + "WHERE idSpeciality = " + speciality.getIdUniversitySpecialities() + ";");
                     } catch (SQLException ex) {
-//                        System.out.println(sql);
-//                        System.out.flush();
-//                        Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+                        System.out.println(sql);
+                        System.out.flush();
+                        Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+            }
+        }
+    }
+
+    public void specReadctions() {
+        if (guidesConnect()) {
+            ArrayOfDSpecRedactions specRedArray = guidesSoap.specRedactionsGet(sessionGuid);
+            List<DSpecRedactions> specRedList = specRedArray.getDSpecRedactions();
+            for (DSpecRedactions dSpecRed : specRedList) {
+                System.out.println(dSpecRed.getSpecRedactionName() + "  " + dSpecRed.getSpecRedactionCode() + "  " + dSpecRed.getIdSpecRedactions());
             }
         }
     }
@@ -312,6 +334,8 @@ public class Synchronizer {
                     p.setResident(dPerson.getResident());
                     p.setPersonCodeU(dPerson.getPersonCodeU());
                     p.setId_Person(dPerson.getIdPerson());
+
+                    System.out.println(dPerson.getBirthday().toString());
 
                     // адрес персоны
                     ArrayOfDPersonAddresses adressesArray = personSoap.personAddressesGet(sessionGuid, actualDate, languageId, dPerson.getPersonCodeU(), 0);
@@ -921,6 +945,7 @@ public class Synchronizer {
             } catch (SQLException ex) {
                 Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
             }
+            mySqlConnectionClose();
         }
         submitStatus.setError(false);
         submitStatus.setBackTransaction(false);
@@ -1005,7 +1030,8 @@ public class Synchronizer {
                     String number = document.getString("Numbers");
                     String dateGet = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(document.getDate("DateGet"));
                     int znoPin = (typeId == 4) ? document.getInt("ZNOPin") : 0;
-                    String attestatValue = Float.toString(document.getFloat("AtestatValue"));
+                    float attestatval = (typeId == 11 || typeId == 12) ? document.getFloat("AtestatValue") * 10.0f : document.getFloat("AtestatValue");
+                    String attestatValue = Float.toString(attestatval);
                     String issued = document.getString("Issued");
                     int awardTypeId = document.getInt("PersonDocumentsAwardsTypesID");
                     int edboId = document.getInt("edboID");
@@ -1097,7 +1123,7 @@ public class Synchronizer {
                 submitStatus.setMessage("Помилка з’єднання: " + ex.getLocalizedMessage());
                 return json.toJson(submitStatus);
             }
-
+            mySqlConnectionClose();
         } else {
             submitStatus.setError(true);
             submitStatus.setBackTransaction(false);
@@ -1184,7 +1210,7 @@ public class Synchronizer {
                 submitStatus.setMessage("Помилка з’єднання: " + ex.getLocalizedMessage());
                 return json.toJson(submitStatus);
             }
-
+            mySqlConnectionClose();
         } else {
             submitStatus.setError(true);
             submitStatus.setBackTransaction(false);
@@ -1314,7 +1340,7 @@ public class Synchronizer {
                                 + "FROM abiturient.documentsubject "
                                 + "WHERE idDocumentSubject = " + idDocumentSubject2 + ";");
                         if (subject2.next()) {
-                            idDocumentSubject1 = subject2.getInt(1);
+                            idDocumentSubject2 = subject2.getInt(1);
                         }
                     }
                     if (idDocumentSubject3 != 0) {
@@ -1324,7 +1350,7 @@ public class Synchronizer {
                                 + "FROM abiturient.documentsubject "
                                 + "WHERE idDocumentSubject = " + idDocumentSubject3 + ";");
                         if (subject3.next()) {
-                            idDocumentSubject1 = subject3.getInt(1);
+                            idDocumentSubject3 = subject3.getInt(1);
                         }
                     }
                     ResultSet specCodeRS = mySqlStatement.executeQuery(""
@@ -1341,12 +1367,80 @@ public class Synchronizer {
                     if (docCodeRs.next()) {
                         idPersonDocument = docCodeRs.getInt(1);
                     }
+                    // синхронизация подготовительных курсов
+                    if (idPersonCourse != 0) {
+                        int personCourseIdold = idPersonCourse;
+                        // 1 проверям наличие записий о курсах персоны в нашей базе
+                        ArrayOfDPersonCourses coursesArray = personSoap.personCoursesGet(sessionGuid, actualDate, languageId, edboIdPerson, seasonId, universityKey);
+                        List<DPersonCourses> coursesList = coursesArray.getDPersonCourses();
+                        for (DPersonCourses courses : coursesList) {
+                            ResultSet coursesIdRS = mySqlStatement.executeQuery("SELECT idCourseDP \n"
+                                    + "FROM abiturient.coursedp\n"
+                                    + "WHERE guid LIKE \"" + courses.getUniversityCourseCode() + "\";");
+                            coursesIdRS.next();
+                            int coursesIdLocal = coursesIdRS.getInt(1);
+                            coursesIdRS.close();
+                            ResultSet coursesRS = mySqlStatement.executeQuery(""
+                                    + "SELECT * \n"
+                                    + "FROM abiturient.personcoursesdp \n"
+                                    + "WHERE \n"
+                                    + "PersonID = " + personIdMySql + " \n"
+                                    + "AND\n"
+                                    + "guid LIKE \"" + courses.getUniversityCourseCode() + "\";");
+                            if (!coursesRS.next()) {
+                                // если нет то заносим
+                                coursesRS.moveToInsertRow();
+                                coursesRS.updateInt("PersonID", personIdMySql);
+                                coursesRS.updateInt("CourseDPID", coursesIdLocal);
+                                coursesRS.updateInt("edboID", courses.getIdPersonCourse());
+                                coursesRS.updateString("guid", courses.getUniversityCourseCode());
+                                coursesRS.insertRow();
+                                coursesRS.moveToCurrentRow();
+                            }
+                        }
+                        // 2 проверяем наличие строки соответствующими курсами у персоны
+                        ResultSet coursesGuidRS = mySqlStatement.executeQuery("SELECT guid\n"
+                                + "FROM `abiturient`.`coursedp` \n"
+                                + "WHERE \n"
+                                + "idCourseDP = " + personCourseIdold + ";");
+                        coursesGuidRS.next();
+                        String coursesGuid = coursesGuidRS.getString(1);
+                        ResultSet coursesRS = mySqlStatement.executeQuery(""
+                                + "SELECT * \n"
+                                + "FROM abiturient.personcoursesdp \n"
+                                + "WHERE \n"
+                                + "PersonID = " + personIdMySql + " \n"
+                                + "AND\n"
+                                + "CourseDPID = " + personCourseIdold + ";");
+                        if (coursesRS.next() && coursesRS.getInt("edboID") != 0) {
+                            idPersonCourse = coursesRS.getInt("edboID");
+                        } else {
+                            // если не найдено, то нет и в едбо, значит обновляем
+                            idPersonCourse = personSoap.personCoursesAdd(sessionGuid, languageId, edboIdPerson, coursesGuid, 0, seasonId, "");
+                            coursesRS.moveToInsertRow();
+                            coursesRS.updateInt("PersonID", personIdMySql);
+                            coursesRS.updateInt("CourseDPID", personCourseIdold);
+                            coursesRS.updateInt("edboID", idPersonCourse);
+                            coursesRS.insertRow();
+                            coursesRS.moveToCurrentRow();
+                        }
+                        if (idPersonCourse == 0) {
+                            submitStatus.setError(true);
+                            submitStatus.setBackTransaction(false);
+                            submitStatus.setMessage(submitStatus.getMessage() + "Неможливо додати курси  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
+                            System.out.println(seasonId + " " + codeUPerson + " " + universitySpecialitiesCode + " " + idPersonEducationForm + " " + idPersonDocument);
+                            return json.toJson(submitStatus);
+                        }
+                    }
                     System.out.println(idPersonDocument);
-                    if (personSoap.personRequestCheckCanAdd(sessionGuid, seasonId, codeUPerson, universitySpecialitiesCode, 0, idPersonEducationForm, idPersonDocument, 0, "") == 0){
+                    if (personSoap.personRequestCheckCanAdd(sessionGuid, 3, codeUPerson, universitySpecialitiesCode, 0, idPersonEducationForm, idPersonDocument, 0, "") == 0) {
                         submitStatus.setError(true);
                         submitStatus.setBackTransaction(false);
                         submitStatus.setMessage(submitStatus.getMessage() + "Неможливо додати заявку  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
+                        System.out.println(seasonId + " " + codeUPerson + " " + universitySpecialitiesCode + " " + idPersonEducationForm + " " + idPersonDocument);
                         return json.toJson(submitStatus);
+                    } else {
+                        System.out.println("Beeengooooooooooooooooooo");
                     }
                     System.out.println(universitySpecialitiesCode);
                     int edboId = personSoap.personRequestAdd(sessionGuid, // 1
@@ -1356,8 +1450,8 @@ public class Synchronizer {
                             originalDocumentsAdd, //5
                             isNeedHostel, // 6
                             codeOfBusiness, // 7
-                            idPersonEntranceType, // 8
-                            idPersonExamenationCause, // 9
+                            (idPersonEntranceType != 0) ? idPersonEntranceType : 2, // 8
+                            (idPersonExamenationCause != 0 && idPersonEntranceType != 1) ? idPersonExamenationCause : 100, // 9
                             idUniversityQuota1, // 10
                             idUniversityQuota2, // 11
                             0, // 12
@@ -1409,7 +1503,7 @@ public class Synchronizer {
                 submitStatus.setMessage("Помилка з’єднання: " + ex.getLocalizedMessage());
                 return json.toJson(submitStatus);
             }
-
+            mySqlConnectionClose();
         } else {
             submitStatus.setError(true);
             submitStatus.setBackTransaction(false);
@@ -1417,6 +1511,44 @@ public class Synchronizer {
             return json.toJson(submitStatus);
         }
         return json.toJson(submitStatus);
+    }
+
+    public void syncRequestsAll() {
+        if (mySqlConnect()) {
+            String sql = "SELECT * FROM abiturient.personspeciality WHERE edboID is null;";
+            try {
+                ResultSet request = mySqlStatement.executeQuery(sql);
+                while (request.next()) {
+                    int idPersonSpeciality = request.getInt("idPersonSpeciality");
+                    int idPerson = request.getInt("PersonID");
+                    System.out.println("Персона:   " + idPerson + "Заявка: " + idPersonSpeciality);
+                    System.out.println(addPersonRequestEdbo(idPerson, idPersonSpeciality));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void coursesUpdateEdbo() {
+        if (mySqlConnect() && guidesConnect()) {
+            ArrayOfDUniversityCourses coursesArray = guidesSoap.universityCoursesGet(sessionGuid, languageId, actualDate, universityKey, seasonId);
+            List<DUniversityCourses> coursesList = coursesArray.getDUniversityCourses();
+            for (DUniversityCourses course : coursesList) {
+                System.out.println(course.getIdUniversityCourse() + " " + course.getUniversityCourseName() + "   " + course.getUniversityCourseCode());
+                try {
+                    mySqlStatement.executeUpdate("UPDATE `abiturient`.`coursedp`\n"
+                            + "SET\n"
+                            + "guid = '" + course.getUniversityCourseCode() + "'\n"
+                            + "WHERE idCourseDP = " + course.getIdUniversityCourse() + ";");
+
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(Synchronizer.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 
     public String getSessionGuid() {
