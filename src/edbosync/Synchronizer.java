@@ -1138,6 +1138,77 @@ public class Synchronizer {
     }
 
     /**
+     * Отредактировать параметры документа в базе ЕДБО
+     * <p>Метод для документа, который уже синхронизирован с ЕДБО, производит
+     * редактирование полей "серия", "номер", "дата выдачи" и "кем выдан" в базе
+     * ЕДБО</p>
+     *
+     * @param documentIdMysql Идентификатор документа в базе MySQL
+     * @return Статус попытки в формате json
+     * @see edbosync.SubmitStatus
+     */
+    public String editDocumentEdbo(int documentIdMysql) {
+        SubmitStatus submitStatus = new SubmitStatus();
+        Gson json = new Gson();
+        submitStatus.setError(false);
+        submitStatus.setBackTransaction(false);
+
+        if (mySqlConnect() && personConnect()) {
+            String sql = "SELECT * FROM abiturient.documents WHERE idDocuments = " + documentIdMysql + ";";
+            try {
+                ResultSet document = mySqlStatement.executeQuery(sql);
+                if (document.next()) {
+                    int idPersonDocument = document.getInt("edboID");
+                    if (idPersonDocument == 0) {
+                        submitStatus.setError(true);
+                        submitStatus.setMessage("Не можливо редагувати документ, який не синхронизований з ЭДБО");
+                        return json.toJson(submitStatus);
+                    }
+                    int typeId = document.getInt("TypeID");
+                    String series = document.getString("Series");
+                    String number = document.getString("Numbers");
+                    String dateGet = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(document.getDate("DateGet"));
+                    String issued = document.getString("Issued");
+                    int awardTypeId = document.getInt("PersonDocumentsAwardsTypesID");
+                    float attestatval = (typeId == 11 || typeId == 12) ? document.getFloat("AtestatValue") * 10.0f : document.getFloat("AtestatValue");
+                    String attestatValue = Float.toString(attestatval);
+                    if (personSoap.personDocumentsEdit(
+                            sessionGuid,
+                            languageId,
+                            idPersonDocument,
+                            0,
+                            (series != null) ? series : "",
+                            (number != null) ? number : "",
+                            (dateGet != null) ? dateGet : "",
+                            (issued != null) ? issued : "",
+                            "",
+                            1,
+                            awardTypeId) == 0) {
+                        submitStatus.setError(true);
+                        submitStatus.setMessage("Помилка редагування документа: " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                        return json.toJson(submitStatus);
+                    }
+                    // если документ - аттестат, то обновлям сведения о среднем бале в едбо
+                    if (typeId == 2 || (typeId >= 7 && typeId <= 15)) {
+                        if (personSoap.entrantDocumentValueChange(sessionGuid, attestatValue, 1, universityKey, idPersonDocument) == 0) {
+                            submitStatus.setError(true);
+                            submitStatus.setMessage("Помилка редагування документа: " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                            return json.toJson(submitStatus);
+                        }
+                    }
+                    submitStatus.setMessage("Документ успішно відредактовано в базі ЄДБО");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+                submitStatus.setError(true);
+                submitStatus.setMessage("Помилка з’єднання з базою даних \"Абітурієнт\"");
+            }
+        }
+
+        return json.toJson(submitStatus);
+    }
+
+    /**
      * Добавление льгот персоны в базу ЕДБО
      *
      * @param personIdMySql Идентификатор персоны в базе Mysql
@@ -1326,6 +1397,11 @@ public class Synchronizer {
                     int specialityId = request.getInt("SepcialityID");
                     String universitySpecialitiesCode = "";
                     int idPersonDocument = request.getInt("EntrantDocumentID");
+
+                    System.out.println("original  " + originalDocumentsAdd);
+                    System.out.println("additional Ball     " + personRequestCourseBonus);
+
+
                     if (idDocumentSubject1 != 0) {
                         // есть первый предмет сертификата: выбираем его идентификатор из таблицы предметов
                         ResultSet subject1 = mySqlStatement.executeQuery(""
@@ -1515,7 +1591,7 @@ public class Synchronizer {
         }
         return json.toJson(submitStatus);
     }
-    
+
     public void editRequestsAll() {
         if (mySqlConnect() && personConnect()) {
             String sql = "SELECT * FROM abiturient.personspeciality WHERE edboID is not null;";
@@ -1530,15 +1606,15 @@ public class Synchronizer {
                     int isContract = request.getInt("isContract");
                     int isHigherEducation = request.getInt("isHigherEducation");
                     int skipDocumentValue = request.getInt("SkipDocumentValue");
-                    if (personSoap.personRequestEdit(sessionGuid, 
-                            idPersonRequest, 
-                            originalDocumentsAdd, 
-                            isNeedHostel, 
-                            codeOfBusiness, 
-                            isBudget, 
-                            isContract, 
-                            isHigherEducation, 
-                            skipDocumentValue) == 0){
+                    if (personSoap.personRequestEdit(sessionGuid,
+                            idPersonRequest,
+                            originalDocumentsAdd,
+                            isNeedHostel,
+                            codeOfBusiness,
+                            isBudget,
+                            isContract,
+                            isHigherEducation,
+                            skipDocumentValue) == 0) {
                         System.out.println(personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
                     }
                 }
