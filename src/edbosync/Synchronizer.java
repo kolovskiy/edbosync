@@ -1143,18 +1143,18 @@ public class Synchronizer {
      * редактирование полей "серия", "номер", "дата выдачи" и "кем выдан" в базе
      * ЕДБО</p>
      *
-     * @param documentIdMysql Идентификатор документа в базе MySQL
+     * @param documentIdMySql Идентификатор документа в базе MySQL
      * @return Статус попытки в формате json
      * @see edbosync.SubmitStatus
      */
-    public String editDocumentEdbo(int documentIdMysql) {
+    public String editDocumentEdbo(int documentIdMySql) {
         SubmitStatus submitStatus = new SubmitStatus();
         Gson json = new Gson();
         submitStatus.setError(false);
         submitStatus.setBackTransaction(false);
 
         if (mySqlConnect() && personConnect()) {
-            String sql = "SELECT * FROM abiturient.documents WHERE idDocuments = " + documentIdMysql + ";";
+            String sql = "SELECT * FROM abiturient.documents WHERE idDocuments = " + documentIdMySql + ";";
             try {
                 ResultSet document = mySqlStatement.executeQuery(sql);
                 if (document.next()) {
