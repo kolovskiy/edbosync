@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import java.sql.Date;
 import java.util.Calendar;
+import ua.edboservice.ArrayOfDOlympiadsAwards;
 import ua.edboservice.ArrayOfDPersonAddRet;
 import ua.edboservice.ArrayOfDPersonRequestSeasons;
 import ua.edboservice.ArrayOfDPersonsFind;
@@ -35,6 +36,7 @@ import ua.edboservice.ArrayOfDSpecRedactions;
 import ua.edboservice.ArrayOfDUniversityCourses;
 import ua.edboservice.ArrayOfDUniversityFacultetSpecialities;
 import ua.edboservice.ArrayOfDUniversityFacultets;
+import ua.edboservice.DOlympiadsAwards;
 import ua.edboservice.DPersonAddRet;
 import ua.edboservice.DPersonAddresses;
 import ua.edboservice.DPersonBenefits;
@@ -620,6 +622,7 @@ public class Synchronizer {
                             // олимпиада уже была добавлена
                             personOlympiadsRS.updateInt("edboID", award.getIdPersonOlympiadAward());
                             personOlympiadsRS.updateRow();
+                            System.out.println("Обновлена олимпиада: " + award.getIdPersonOlympiadAward());
                         } else {
                             personOlympiadsRS.moveToInsertRow();
                             personOlympiadsRS.updateInt("PersonID", personId);
@@ -627,6 +630,7 @@ public class Synchronizer {
                             personOlympiadsRS.updateInt("edboID", award.getIdPersonOlympiadAward());
                             personOlympiadsRS.insertRow();
                             personOlympiadsRS.moveToCurrentRow();
+                            System.out.println("Вставлена олимпиада: " + award.getIdPersonOlympiadAward());
                         }
                     } catch (SQLException ex) {
                         Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
@@ -1344,6 +1348,14 @@ public class Synchronizer {
                     if (!personOlympiadsRS.next()) {
                         // такой олимпиады нет в списке персон и едбо - добавляем
                         personOlympiadIdEdbo = personSoap.personOlympiadsAwardsAdd(sessionGuid, languageId, edboIdPerson, idOlympiadAward);
+                        if (personOlympiadIdEdbo == 0) {
+                            submitStatus.setError(true);
+                            submitStatus.setBackTransaction(false);
+                            submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання олімпіади  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
+                            return json.toJson(submitStatus);
+                        } else {
+                            System.out.println("Додано олімпіаду: " + personOlympiadIdEdbo);
+                        }
                         personOlympiadsRS.moveToInsertRow();
                         personOlympiadsRS.updateInt("PersonID", personIdMySql);
                         personOlympiadsRS.updateInt("OlympiadAwarID", idOlympiadAward);
@@ -1357,6 +1369,7 @@ public class Synchronizer {
                         submitStatus.setError(true);
                         submitStatus.setBackTransaction(false);
                         submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання олімпіади  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
+                        return json.toJson(submitStatus);
                     }
 
                 }
@@ -1547,7 +1560,7 @@ public class Synchronizer {
                             idDocumentSubject3, // 19
                             idPersonCourse, // 20
                             personRequestCourseBonus, // 21
-                            idOlympiadAward, // 22
+                            personOlympiadIdEdbo, //idOlympiadAward, // 22
                             personRequestOlympiadAwardBonus, // 23
                             idPersonDocument, // 24
                             0, // 25
@@ -1713,13 +1726,13 @@ public class Synchronizer {
                         int idUniversityEntrantWave = requestStatus.getIdUniversityEntrantWave();
                         if (idPersonRequestStatusType == fromStatus) {
                             if (personSoap.personRequestsStatusChange(
-                                    sessionGuid, 
-                                    idPersonRequest, 
-                                    toStatus, 
-                                    "", 
-                                    idUniversityEntrantWave, 
+                                    sessionGuid,
+                                    idPersonRequest,
+                                    toStatus,
+                                    "",
+                                    idUniversityEntrantWave,
                                     -1, //isBudget, 
-                                    -1) ==0) {//isContract) == 0) {
+                                    -1) == 0) {//isContract) == 0) {
                                 submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />\n");
 //                                System.out.println(idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
                             } else {
@@ -1738,6 +1751,39 @@ public class Synchronizer {
         }
 //        System.out.println(submitStatus.getMessage());
         return json.toJson(submitStatus);
+    }
+
+    public void olympiadsAwardsGet() {
+        if (guidesConnect() && mySqlConnect()) {
+            ArrayOfDOlympiadsAwards olympiadsAwardArray = guidesSoap.olympiadsAwardsGet(sessionGuid, languageId, actualDate, seasonId);
+            List<DOlympiadsAwards> olympiadsAwardsList = olympiadsAwardArray.getDOlympiadsAwards();
+            for (DOlympiadsAwards award : olympiadsAwardsList) {
+                System.out.println(award.getIdOlympiadAward() + "\t"
+                        + award.getOlympiadAwardName() + '\t'
+                        + award.getOlympiadAwardBonus() + '\t'
+                        + award.getIdOlimpiad() + '\t'
+                        + award.getOlimpiadName());
+                String sql = "INSERT INTO `abiturient`.`olympiadsawards`\n"
+                        + "(`idOlimpiad`,\n"
+                        + "`OlimpiadName`,\n"
+                        + "`OlympiadAwardID`,\n"
+                        + "`OlympiadAwardName`,\n"
+                        + "`OlympiadAwardBonus`)\n"
+                        + "VALUES\n"
+                        + "(\n"
+                        + award.getIdOlimpiad() + ",\n"
+                        + "'" + award.getOlimpiadName() + "',\n"
+                        + award.getIdOlympiadAward() + ",\n"
+                        + "'" + award.getOlympiadAwardName() + "',\n"
+                        + award.getOlympiadAwardBonus() + "\n"
+                        + ");";
+                try {
+                    mySqlStatement.executeUpdate(sql);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 
     public String getSessionGuid() {
