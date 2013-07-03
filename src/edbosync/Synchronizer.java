@@ -28,6 +28,8 @@ import ua.edboservice.ArrayOfDPersonCourses;
 import ua.edboservice.ArrayOfDPersonDocuments;
 import ua.edboservice.ArrayOfDPersonDocumentsSubjects;
 import ua.edboservice.ArrayOfDPersonOlympiadsAwards;
+import ua.edboservice.ArrayOfDPersonRequestStatusTypes;
+import ua.edboservice.ArrayOfDPersonRequestsStatuses;
 import ua.edboservice.ArrayOfDRequestExaminationCauses;
 import ua.edboservice.ArrayOfDSpecRedactions;
 import ua.edboservice.ArrayOfDUniversityCourses;
@@ -41,6 +43,8 @@ import ua.edboservice.DPersonCourses;
 import ua.edboservice.DPersonDocuments;
 import ua.edboservice.DPersonDocumentsSubjects;
 import ua.edboservice.DPersonOlympiadsAwards;
+import ua.edboservice.DPersonRequestStatusTypes;
+import ua.edboservice.DPersonRequestsStatuses;
 import ua.edboservice.DRequestExaminationCauses;
 import ua.edboservice.DSpecRedactions;
 import ua.edboservice.DUniversityCourses;
@@ -1661,6 +1665,79 @@ public class Synchronizer {
                 }
             }
         }
+    }
+
+    /**
+     * Получить список допустимых статусов заявок персоны из ЕДБО
+     */
+    public void getRequestsStatuses() {
+        if (personConnect()) {
+            ArrayOfDPersonRequestStatusTypes statusArray = personSoap.personRequestStatusTypesGet(sessionGuid, actualDate, languageId);
+            List<DPersonRequestStatusTypes> statusList = statusArray.getDPersonRequestStatusTypes();
+            for (DPersonRequestStatusTypes status : statusList) {
+                System.out.println(status.getIdPersonRequestStatusType() + "\t" + status.getPersonRequestStatusTypeName()
+                        + "\t" + status.getPersonRequestStatusTypeDescription() + "\t" + status.getPersonRequestStatusCode());
+            }
+        }
+    }
+
+    /**
+     * Изменить статус заявок в базе ЕДБО
+     * <p>Метод выбирает все синхронизированные заявки в базе MySQL. Затем для
+     * каждой заявки проверяется ее статус в базе ЕДБО. Если статус
+     * соответствовал параметру fromStatus то он меняется на toStatus.</p>
+     *
+     * @param fromStatus Исходное значение статуса заяки
+     * @param toStatus Новое значение статуса заяки
+     * @return Описание попытки
+     */
+    public String changeRequestStatus(int fromStatus, int toStatus) {
+        SubmitStatus submitStatus = new SubmitStatus();
+        Gson json = new Gson();
+        submitStatus.setError(false);
+        submitStatus.setBackTransaction(false);
+
+        if (mySqlConnect() && personConnect()) {
+            String sql = "SELECT isContract, isBudget, edboID FROM abiturient.personspeciality where edboID is not null;";
+            try {
+                ResultSet request = mySqlStatement.executeQuery(sql);
+                while (request.next()) {
+                    int idPersonRequest = request.getInt("edboID");
+                    int isBudget = request.getInt("isBudget");
+                    int isContract = request.getInt("isBudget");
+                    ArrayOfDPersonRequestsStatuses requestStatusArray = personSoap.personRequestsStatusesGet(sessionGuid, languageId, idPersonRequest);
+                    List<DPersonRequestsStatuses> requestStatusList = requestStatusArray.getDPersonRequestsStatuses();
+                    for (DPersonRequestsStatuses requestStatus : requestStatusList) {
+                        int idPersonRequestStatusType = requestStatus.getIdPersonRequestStatusType();
+                        int idPersonRequestStatus = requestStatus.getIdPersonRequestStatus();
+                        int idUniversityEntrantWave = requestStatus.getIdUniversityEntrantWave();
+                        if (idPersonRequestStatusType == fromStatus) {
+                            if (personSoap.personRequestsStatusChange(
+                                    sessionGuid, 
+                                    idPersonRequest, 
+                                    toStatus, 
+                                    "", 
+                                    idUniversityEntrantWave, 
+                                    -1, //isBudget, 
+                                    -1) ==0) {//isContract) == 0) {
+                                submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />\n");
+//                                System.out.println(idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                            } else {
+                                submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tCтатус заяки змінено<br />\n");
+//                                System.out.println(idPersonRequest + ":\tCтатус заяки змінено");
+                            }
+                        }
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            submitStatus.setError(true);
+            submitStatus.setMessage("Помилка з’єднання.");
+        }
+//        System.out.println(submitStatus.getMessage());
+        return json.toJson(submitStatus);
     }
 
     public String getSessionGuid() {
