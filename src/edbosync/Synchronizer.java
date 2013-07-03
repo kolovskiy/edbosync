@@ -286,17 +286,17 @@ public class Synchronizer {
                     } catch (SQLException ex) {
                         Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    try {
-//                        mySqlStatement.executeUpdate(sql);
-                        mySqlStatement.executeUpdate("UPDATE `abiturient`.`specialities`\n"
-                                + "SET\n"
-                                + "SpecialityKode = \"" + speciality.getUniversitySpecialitiesKode() + "\"\n"
-                                + "WHERE idSpeciality = " + speciality.getIdUniversitySpecialities() + ";");
-                    } catch (SQLException ex) {
-                        System.out.println(sql);
-                        System.out.flush();
-                        Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+//                    try {
+////                        mySqlStatement.executeUpdate(sql);
+//                        mySqlStatement.executeUpdate("UPDATE `abiturient`.`specialities`\n"
+//                                + "SET\n"
+//                                + "SpecialityKode = \"" + speciality.getUniversitySpecialitiesKode() + "\"\n"
+//                                + "WHERE idSpeciality = " + speciality.getIdUniversitySpecialities() + ";");
+//                    } catch (SQLException ex) {
+//                        System.out.println(sql);
+//                        System.out.flush();
+//                        Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
                 }
             }
         }
@@ -1529,6 +1529,7 @@ public class Synchronizer {
                         }
                     }
                     System.out.println(idPersonDocument);
+//                    System.out.println(idPersonExamenationCause + "\t" + idPersonEntranceType+ "\tCause: " + ((idPersonExamenationCause != 0 && idPersonEntranceType != 1) ? idPersonExamenationCause : ((idPersonEntranceType == 1) ? 0 : 100)));
                     if (personSoap.personRequestCheckCanAdd(sessionGuid, 3, codeUPerson, universitySpecialitiesCode, 0, idPersonEducationForm, idPersonDocument, 0, "") == 0) {
                         submitStatus.setError(true);
                         submitStatus.setBackTransaction(false);
@@ -1538,7 +1539,7 @@ public class Synchronizer {
                     } else {
                         System.out.println("Beeengooooooooooooooooooo");
                     }
-                    System.out.println(universitySpecialitiesCode);
+                    
                     int edboId = personSoap.personRequestAdd(sessionGuid, // 1
                             seasonId, // 2
                             codeUPerson, // 3
@@ -1547,7 +1548,7 @@ public class Synchronizer {
                             isNeedHostel, // 6
                             codeOfBusiness, // 7
                             (idPersonEntranceType != 0) ? idPersonEntranceType : 2, // 8
-                            (idPersonExamenationCause != 0 && idPersonEntranceType != 1) ? idPersonExamenationCause : 100, // 9
+                            ((idPersonExamenationCause != 0 && idPersonEntranceType != 1) ? idPersonExamenationCause : ((idPersonEntranceType == 1) ? 0 : 100)), // 9
                             idUniversityQuota1, // 10
                             idUniversityQuota2, // 11
                             0, // 12
