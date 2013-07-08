@@ -30,6 +30,7 @@ import ua.edboservice.ArrayOfDPersonDocuments;
 import ua.edboservice.ArrayOfDPersonDocumentsSubjects;
 import ua.edboservice.ArrayOfDPersonOlympiadsAwards;
 import ua.edboservice.ArrayOfDPersonRequestStatusTypes;
+import ua.edboservice.ArrayOfDPersonRequests;
 import ua.edboservice.ArrayOfDPersonRequestsStatuses;
 import ua.edboservice.ArrayOfDRequestExaminationCauses;
 import ua.edboservice.ArrayOfDSpecRedactions;
@@ -46,6 +47,7 @@ import ua.edboservice.DPersonDocuments;
 import ua.edboservice.DPersonDocumentsSubjects;
 import ua.edboservice.DPersonOlympiadsAwards;
 import ua.edboservice.DPersonRequestStatusTypes;
+import ua.edboservice.DPersonRequests;
 import ua.edboservice.DPersonRequestsStatuses;
 import ua.edboservice.DRequestExaminationCauses;
 import ua.edboservice.DSpecRedactions;
@@ -998,6 +1000,11 @@ public class Synchronizer {
                     submitStatus.setMessage("Неможливо додати документи до персони, яка не пройшла синхронизацію з ЄДБО.");
                     return json.toJson(submitStatus);
                 }
+                // очистим идентифкатор документа оо образовании для ресинхронизации
+                mySqlStatement.executeUpdate("UPDATE `abiturient`.`documents`\n"
+                        + "SET\n"
+                        + "`documents`.`edboID` = null\n"
+                        + "WHERE `documents`.`TypeID` in (2, 7,8,9,10,11,12,13,14,15) AND `documents`.`PersonID` = " + personIdMySql + ";");
                 ArrayList<PersonDocument> personDocuments = getPersonDocumentEdbo(codeUPerson);
                 for (PersonDocument personDocument : personDocuments) {
 //                    System.out.println(personDocument.getSeries() + personDocument.getNumber());
@@ -1040,8 +1047,8 @@ public class Synchronizer {
                     String number = document.getString("Numbers");
                     String dateGet = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(document.getDate("DateGet"));
                     int znoPin = (typeId == 4) ? document.getInt("ZNOPin") : 0;
-                    float attestatval = (typeId == 11 || typeId == 12) ? document.getFloat("AtestatValue") * 10.0f : document.getFloat("AtestatValue");
-                    String attestatValue = Float.toString(attestatval);
+                    //float attestatval = (typeId == 11 || typeId == 12) ? document.getFloat("AtestatValue") * 10.0f : document.getFloat("AtestatValue");
+                    String attestatValue = Float.toString(document.getFloat("AtestatValue"));
                     String issued = document.getString("Issued");
                     int awardTypeId = document.getInt("PersonDocumentsAwardsTypesID");
                     int edboId = document.getInt("edboID");
@@ -1523,6 +1530,7 @@ public class Synchronizer {
                         if (idPersonCourse == 0) {
                             submitStatus.setError(true);
                             submitStatus.setBackTransaction(false);
+                            System.out.println(coursesGuid);
                             submitStatus.setMessage(submitStatus.getMessage() + "Неможливо додати курси  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
                             System.out.println(seasonId + " " + codeUPerson + " " + universitySpecialitiesCode + " " + idPersonEducationForm + " " + idPersonDocument);
                             return json.toJson(submitStatus);
@@ -1539,7 +1547,7 @@ public class Synchronizer {
                     } else {
                         System.out.println("Beeengooooooooooooooooooo");
                     }
-                    
+
                     int edboId = personSoap.personRequestAdd(sessionGuid, // 1
                             seasonId, // 2
                             codeUPerson, // 3
@@ -1681,6 +1689,51 @@ public class Synchronizer {
         }
     }
 
+    public void medalsUpdateEdbo() {
+        if (personConnect() && mySqlConnect()) {
+            String sql = "select `personspeciality`.`PersonID` AS `idPersonMysql`, \n"
+                    + "`person`.`edboID` AS `idPersonEdbo`,\n"
+                    + "`personspeciality`.`edboID` as `idPersonRequest`, \n"
+                    + "`personbenefits`.`edboID` AS `idPersonBenefit`\n"
+                    + "from\n"
+                    + "`abiturient`.`personspeciality` join `abiturient`.`personbenefits`\n"
+                    + "on `personspeciality`.`PersonID` = `personbenefits`.`PersonID` \n"
+                    + "join `abiturient`.`person`\n"
+                    + "on `personspeciality`.`PersonID` = `person`.`idPerson`\n"
+                    + "where\n"
+                    + "`personbenefits`.`BenefitID` = 39;";
+            try {
+                ResultSet requestWithMedals = mySqlStatement.executeQuery(sql);
+//                ArrayList<Integer> personWithMedal = new ArrayList<Integer>();
+//                while (requestWithMedals.next()) {
+//                    int idPersonMySql = requestWithMedals.getInt("idPersonMysql");
+//                    personWithMedal.add(idPersonMySql);
+//                }
+//                for (int iPerson: personWithMedal){
+//                    addPersonBenefits(iPerson);
+//                }
+//                requestWithMedals = mySqlStatement.executeQuery(sql);
+                while (requestWithMedals.next()) {
+                    int idPersonMySql = requestWithMedals.getInt("idPersonMysql");
+                    int idPersonEdbo = requestWithMedals.getInt("idPersonEdbo");
+                    int idPersonRequest = requestWithMedals.getInt("idPersonRequest");
+                    int idPersonBenefit = requestWithMedals.getInt("idPersonBenefit");
+                    if (idPersonBenefit != 0) {
+                        
+                        int result = personSoap.personRequestBenefitsAdd(sessionGuid, actualDate, languageId, idPersonRequest, idPersonBenefit);
+                        if (result == 0) {
+                            System.out.println(idPersonMySql + ": ЄДБО " + idPersonEdbo + ": заявка № " + idPersonRequest + ": Помилка додавання пільги доя заяки  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                        } else {                           
+                            System.out.println(idPersonMySql + ": ЄДБО " + idPersonEdbo + ": заявка № " + idPersonRequest + ": Льгота про медаль додана до заявки");
+                        }
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
     /**
      * Получить список допустимых статусов заявок персоны из ЕДБО
      */
@@ -1712,10 +1765,11 @@ public class Synchronizer {
         submitStatus.setBackTransaction(false);
 
         if (mySqlConnect() && personConnect()) {
-            String sql = "SELECT isContract, isBudget, edboID FROM abiturient.personspeciality where edboID is not null;";
+            String sql = "SELECT isContract, isBudget, edboID, StatusID FROM abiturient.personspeciality where edboID is not null;";
             try {
                 ResultSet request = mySqlStatement.executeQuery(sql);
                 while (request.next()) {
+                    
                     int idPersonRequest = request.getInt("edboID");
                     int isBudget = request.getInt("isBudget");
                     int isContract = request.getInt("isBudget");
@@ -1734,14 +1788,16 @@ public class Synchronizer {
                                     idUniversityEntrantWave,
                                     -1, //isBudget, 
                                     -1) == 0) {//isContract) == 0) {
-                                submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />\n");
-//                                System.out.println(idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+//                                submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />\n");
+                                System.out.println(idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
                             } else {
-                                submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tCтатус заяки змінено<br />\n");
-//                                System.out.println(idPersonRequest + ":\tCтатус заяки змінено");
+//                                submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tCтатус заяки змінено<br />\n");
+                                System.out.println(idPersonRequest + ":\tCтатус заяки змінено");
+                                //request.updateInt("StatusID", toStatus);
                             }
                         }
                     }
+                    
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
@@ -1752,6 +1808,29 @@ public class Synchronizer {
         }
 //        System.out.println(submitStatus.getMessage());
         return json.toJson(submitStatus);
+    }
+
+    public void syncRequestsStatuses() {
+        if (mySqlConnect() && personConnect()) {
+            String sql = "SELECT * FROM abiturient.person where codeU is not null;";
+            try {
+                ResultSet person = mySqlStatement.executeQuery(sql);
+                while (person.next()) {
+                    String personCodeU = person.getString("codeU");
+                    ArrayOfDPersonRequests requestsArray = personSoap.personRequestsGet(sessionGuid, actualDate, languageId, personCodeU, seasonId, seasonId, "", 0, 0, "");
+                    List<DPersonRequests> requestsList = requestsArray.getDPersonRequests();
+                    for (DPersonRequests request : requestsList) {
+                        int idPersonRequest = request.getIdPersonRequest();
+                        if (idPersonRequest != 0) {
+//                            String
+                        }
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
     }
 
     public void olympiadsAwardsGet() {
