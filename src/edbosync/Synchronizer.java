@@ -1421,6 +1421,28 @@ public class Synchronizer {
                     int specialityId = request.getInt("SepcialityID");
                     String universitySpecialitiesCode = "";
                     int idPersonDocument = request.getInt("EntrantDocumentID");
+                    // если запись уже была добавлена, то обновляем ее поля в ЕДБО
+                    if (request.getInt("edboID") != 0) {
+                        if (personSoap.personRequestEdit(sessionGuid,
+                                request.getInt("edboID"),
+                                originalDocumentsAdd,
+                                isNeedHostel,
+                                codeOfBusiness,
+                                isBudget,
+                                isContract,
+                                isHigherEducation,
+                                skipDocumentValue) == 0) {
+                            submitStatus.setError(true);
+                            submitStatus.setBackTransaction(false);
+                            submitStatus.setMessage(submitStatus.getMessage() + "Помилка редагування заявки  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
+                            return json.toJson(submitStatus);
+                        } else {
+                            submitStatus.setError(false);
+                            submitStatus.setBackTransaction(false);
+                            submitStatus.setMessage(submitStatus.getMessage() + "Заявку успішно відредаговано.<br />");
+                            return json.toJson(submitStatus);
+                        } // if - else
+                    } // if
 
                     System.out.println("original  " + originalDocumentsAdd);
                     System.out.println("additional Ball     " + personRequestCourseBonus);
@@ -1719,11 +1741,11 @@ public class Synchronizer {
                     int idPersonRequest = requestWithMedals.getInt("idPersonRequest");
                     int idPersonBenefit = requestWithMedals.getInt("idPersonBenefit");
                     if (idPersonBenefit != 0) {
-                        
+
                         int result = personSoap.personRequestBenefitsAdd(sessionGuid, actualDate, languageId, idPersonRequest, idPersonBenefit);
                         if (result == 0) {
                             System.out.println(idPersonMySql + ": ЄДБО " + idPersonEdbo + ": заявка № " + idPersonRequest + ": Помилка додавання пільги доя заяки  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
-                        } else {                           
+                        } else {
                             System.out.println(idPersonMySql + ": ЄДБО " + idPersonEdbo + ": заявка № " + idPersonRequest + ": Льгота про медаль додана до заявки");
                         }
                     }
@@ -1765,73 +1787,103 @@ public class Synchronizer {
         submitStatus.setBackTransaction(false);
 
         if (mySqlConnect() && personConnect()) {
-            String sql = "SELECT isContract, isBudget, edboID, StatusID FROM abiturient.personspeciality where edboID is not null;";
+            String sql = "SELECT * FROM abiturient.personspeciality where edboID is not null;";
             try {
                 ResultSet request = mySqlStatement.executeQuery(sql);
                 while (request.next()) {
-                    
+
                     int idPersonRequest = request.getInt("edboID");
-                    int isBudget = request.getInt("isBudget");
-                    int isContract = request.getInt("isBudget");
+//                    int isBudget = request.getInt("isBudget");
+//                    int isContract = request.getInt("isBudget");
                     ArrayOfDPersonRequestsStatuses requestStatusArray = personSoap.personRequestsStatusesGet(sessionGuid, languageId, idPersonRequest);
                     List<DPersonRequestsStatuses> requestStatusList = requestStatusArray.getDPersonRequestsStatuses();
-                    for (DPersonRequestsStatuses requestStatus : requestStatusList) {
-                        int idPersonRequestStatusType = requestStatus.getIdPersonRequestStatusType();
-                        int idPersonRequestStatus = requestStatus.getIdPersonRequestStatus();
-                        int idUniversityEntrantWave = requestStatus.getIdUniversityEntrantWave();
-                        if (idPersonRequestStatusType == fromStatus) {
-                            if (personSoap.personRequestsStatusChange(
-                                    sessionGuid,
-                                    idPersonRequest,
-                                    toStatus,
-                                    "",
-                                    idUniversityEntrantWave,
-                                    -1, //isBudget, 
-                                    -1) == 0) {//isContract) == 0) {
+                    DPersonRequestsStatuses lastStatus = requestStatusList.get(0);
+                    int idPersonRequestStatusType = lastStatus.getIdPersonRequestStatusType();
+                    int idUniversityEntrantWave = lastStatus.getIdUniversityEntrantWave();
+                    if (idPersonRequestStatusType == fromStatus) {
+                        if (personSoap.personRequestsStatusChange(
+                                sessionGuid,
+                                idPersonRequest,
+                                toStatus,
+                                "",
+                                idUniversityEntrantWave,
+                                -1, //isBudget, 
+                                -1) == 0) {//isContract) == 0) {
 //                                submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />\n");
-                                System.out.println(idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
-                            } else {
+                            System.out.println(idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                        } else {
 //                                submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tCтатус заяки змінено<br />\n");
-                                System.out.println(idPersonRequest + ":\tCтатус заяки змінено");
-                                //request.updateInt("StatusID", toStatus);
-                            }
-                        }
-                    }
-                    
-                }
+                            System.out.println(idPersonRequest + ":\tCтатус заяки змінено");
+                            request.updateInt("StatusID", toStatus);
+                            request.updateRow();
+                        } // if - else
+                    } // if
+//                    for (DPersonRequestsStatuses requestStatus : requestStatusList) {
+//                        int idPersonRequestStatusType = requestStatus.getIdPersonRequestStatusType();
+////                        int idPersonRequestStatus = requestStatus.getIdPersonRequestStatus();
+//                        int idUniversityEntrantWave = requestStatus.getIdUniversityEntrantWave();
+//                        if (idPersonRequestStatusType == fromStatus) {
+//                            if (personSoap.personRequestsStatusChange(
+//                                    sessionGuid,
+//                                    idPersonRequest,
+//                                    toStatus,
+//                                    "",
+//                                    idUniversityEntrantWave,
+//                                    -1, //isBudget, 
+//                                    -1) == 0) {//isContract) == 0) {
+////                                submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />\n");
+//                                System.out.println(idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+//                            } else {
+////                                submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tCтатус заяки змінено<br />\n");
+//                                System.out.println(idPersonRequest + ":\tCтатус заяки змінено");
+//                                request.updateInt("StatusID", toStatus);
+//                                request.updateRow();
+//                            } // else
+//                        } // if
+//                    } // for
+
+                } // while
             } catch (SQLException ex) {
                 Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            } // try - catch
         } else {
             submitStatus.setError(true);
             submitStatus.setMessage("Помилка з’єднання.");
-        }
+        } // if - else
 //        System.out.println(submitStatus.getMessage());
         return json.toJson(submitStatus);
     }
 
+    /**
+     * Синхронизация статусов всех зоявок с их статусами в ЕДБО
+     */
     public void syncRequestsStatuses() {
         if (mySqlConnect() && personConnect()) {
-            String sql = "SELECT * FROM abiturient.person where codeU is not null;";
+            String sql = "SELECT * FROM abiturient.personspeciality where edboID is not null;";
             try {
-                ResultSet person = mySqlStatement.executeQuery(sql);
-                while (person.next()) {
-                    String personCodeU = person.getString("codeU");
-                    ArrayOfDPersonRequests requestsArray = personSoap.personRequestsGet(sessionGuid, actualDate, languageId, personCodeU, seasonId, seasonId, "", 0, 0, "");
-                    List<DPersonRequests> requestsList = requestsArray.getDPersonRequests();
-                    for (DPersonRequests request : requestsList) {
-                        int idPersonRequest = request.getIdPersonRequest();
-                        if (idPersonRequest != 0) {
-//                            String
-                        }
-                    }
-                }
+                ResultSet request = mySqlStatement.executeQuery(sql);
+                while (request.next()) {
+                    int currentPersonStatusId = request.getInt("StatusID");
+                    int idPersonRequest = request.getInt("edboID");
+                    ArrayOfDPersonRequestsStatuses requestStatusArray = personSoap.personRequestsStatusesGet(sessionGuid, languageId, idPersonRequest);
+                    List<DPersonRequestsStatuses> requestStatusList = requestStatusArray.getDPersonRequestsStatuses();
+                    DPersonRequestsStatuses lastStatus = requestStatusList.get(0);
+                    int idPersonRequestStatusType = lastStatus.getIdPersonRequestStatusType();
+                    if (idPersonRequestStatusType == currentPersonStatusId) {
+                        System.out.println("Заявка " + idPersonRequest + ": статус актуальний.");
+                    } else {
+                        request.updateInt("StatusID", idPersonRequestStatusType);
+                        request.updateRow();
+                        System.out.println("Заявка " + idPersonRequest + ": в базі MySQL статус змінено з " + currentPersonStatusId + " на " + idPersonRequestStatusType);
+                    } // if - else
+                } // while
             } catch (SQLException ex) {
                 Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-    }
+            } // try - catch
+        } else {
+            System.out.println("Помилка з’єднання.");
+        } // if - else
+    } // syncRequestsStatuses()
 
     public void olympiadsAwardsGet() {
         if (guidesConnect() && mySqlConnect()) {
