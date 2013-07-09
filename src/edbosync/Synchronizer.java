@@ -1443,7 +1443,7 @@ public class Synchronizer {
                             return json.toJson(submitStatus);
                         } // if - else
                     } // if
-
+                    // иначе добавляем заявку в ЕДБО
                     System.out.println("original  " + originalDocumentsAdd);
                     System.out.println("additional Ball     " + personRequestCourseBonus);
 
@@ -1711,6 +1711,9 @@ public class Synchronizer {
         }
     }
 
+    /**
+     * Добавление льготы медалистам в базе данных ЕДБО
+     */
     public void medalsUpdateEdbo() {
         if (personConnect() && mySqlConnect()) {
             String sql = "select `personspeciality`.`PersonID` AS `idPersonMysql`, \n"
@@ -1754,6 +1757,46 @@ public class Synchronizer {
                 Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    /**
+     * Добавление льгот в заявки в ЕДБО
+     */
+    public void requestBenefitsAddEdbo() {
+        if (personConnect() && mySqlConnect()) {
+            try {
+                // синхронизация списка льгот
+                ResultSet benefits = mySqlStatement.executeQuery("SELECT * FROM abiturient.personbenefits where edboID is null;");
+                while (benefits.next()) {
+                    String status = addPersonBenefits(benefits.getInt("PersonID"));
+                    System.out.println("Пільга " + benefits.getInt("idPersonBenefits") + ": " + status);
+                } // while
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+            } // try - catch
+            try {
+                ResultSet requestBenefits = mySqlStatement.executeQuery("select `personspeciality`.`idPersonSpeciality` AS `idPersonSpeciality`, `personspeciality`.`edboID` AS `idPersonRequest`, `personbenefits`.`edboID` AS `idPersonBenefit`, `personbenefits`.`BenefitID` AS `idBenefit`, `personspeciality`.`CoursedpID` AS `idCourseDP`\n"
+                        + "from `abiturient`.`personspeciality` join `abiturient`.`personbenefits`\n"
+                        + "    on `personspeciality`.`PersonID` = `personbenefits`.`PersonID`;");
+                while (requestBenefits.next()) {
+                    int idBenefit = requestBenefits.getInt("idBenefit");
+                    int idCourseDP = requestBenefits.getInt("idCourseDP");
+                    int idPersonSpeciality = requestBenefits.getInt("idPersonSpeciality");
+                    int idPersonRequest = requestBenefits.getInt("idPersonRequest");
+                    int idPersonBenefit = requestBenefits.getInt("idPersonBenefit");
+                    if (idBenefit != 41 || (idBenefit == 41 && idCourseDP != 0)) {
+                        int result = personSoap.personRequestBenefitsAdd(sessionGuid, actualDate, languageId, idPersonRequest, idPersonBenefit);
+                        if (result == 0) {
+                            System.out.println(idPersonSpeciality + ": ЄДБО  заявка № " + idPersonRequest + ": Помилка додавання пільги до заявки  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                        } else {
+                            System.out.println(idPersonSpeciality + ": ЄДБО  заявка № " + idPersonRequest + ": Пільга додана до заявки");
+                        }
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } // if (personConnect() && mySqlConnect())
     }
 
     /**
