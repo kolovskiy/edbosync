@@ -36,6 +36,7 @@ import ua.edboservice.ArrayOfDRequestExaminationCauses;
 import ua.edboservice.ArrayOfDSpecRedactions;
 import ua.edboservice.ArrayOfDUniversityCourses;
 import ua.edboservice.ArrayOfDUniversityFacultetSpecialities;
+import ua.edboservice.ArrayOfDUniversityFacultetSpecialitiesSubjects;
 import ua.edboservice.ArrayOfDUniversityFacultets;
 import ua.edboservice.DOlympiadsAwards;
 import ua.edboservice.DPersonAddRet;
@@ -53,6 +54,7 @@ import ua.edboservice.DRequestExaminationCauses;
 import ua.edboservice.DSpecRedactions;
 import ua.edboservice.DUniversityCourses;
 import ua.edboservice.DUniversityFacultetSpecialities;
+import ua.edboservice.DUniversityFacultetSpecialitiesSubjects;
 import ua.edboservice.DUniversityFacultets;
 /*
  * To change this template, choose Tools | Templates
@@ -1828,7 +1830,8 @@ public class Synchronizer {
         submitStatus.setBackTransaction(false);
 
         if (mySqlConnect() && personConnect()) {
-            String sql = "SELECT * FROM abiturient.personspeciality where edboID is not null;";
+//            String sql = "SELECT * FROM abiturient.personspeciality where edboID is not null;";
+            String sql = "SELECT * FROM abiturient.personspeciality where edboID is not null and StatusID = 1;";
             try {
                 ResultSet request = mySqlStatement.executeQuery(sql);
                 while (request.next()) {
@@ -1957,6 +1960,115 @@ public class Synchronizer {
                 } catch (SQLException ex) {
                     Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+        }
+    }
+
+    /**
+     * Получить значения GUID специальности (поиск по базе MySQL)
+     *
+     * @param idSpeciality Код специальности в базе MySQL
+     * @return GUID специальности, если он был найден в базе, иначе пустая
+     * строка
+     */
+    protected String getSpecialityGuid(int idSpeciality) {
+        String guid = "";
+        if (mySqlConnect()) {
+            String sql = "SELECT `specialities`.`SpecialityKode` FROM abiturient.specialities WHERE `specialities`.`idSpeciality` = " + idSpeciality + ";";
+            try {
+                ResultSet specRS = mySqlStatement.executeQuery(sql);
+                if (specRS.next()) {
+                    guid = specRS.getString(1);
+                } // if
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+            } // try - catch
+        } // if
+        return guid;
+    }
+
+    /**
+     * Получить значение идентификатора предмата специальности (предложения) в
+     * базе ЕДБО
+     *
+     * @param idSubject Идентификатор предмета
+     * @param universitySpecialitiesKode GUIG код специальности (предложения)
+     * @return В случае успеха идентификатор предмата специальности, иначе -1
+     */
+    protected int getIdSpecialitySubjectEdbo(int idSubject, String universitySpecialitiesKode) {
+        if (guidesConnect()) {
+            ArrayOfDUniversityFacultetSpecialitiesSubjects subjectsArray = guidesSoap.universityFacultetSpecialitiesSubjectsGet(sessionGuid, languageId, actualDate, universitySpecialitiesKode);
+            List<DUniversityFacultetSpecialitiesSubjects> subjectsList = subjectsArray.getDUniversityFacultetSpecialitiesSubjects();
+            for (DUniversityFacultetSpecialitiesSubjects subject : subjectsList) {
+                if (subject.getIdSubject() == idSubject) {
+                    return subject.getIdUniversitySpecialitiesSubject();
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Добавить экзамены заявок в заявки базы ЕДБО
+     */
+    public void addRequestExaminationsEdbo() {
+        if (mySqlConnect() && personConnect()) {
+            // Выбор из БД заявок с экзаменами
+            String sql = "SELECT * \n"
+                    + "FROM abiturient.personspeciality \n"
+                    + "WHERE\n"
+                    + "`personspeciality`.`Exam1ID` is not null OR `personspeciality`.`Exam2ID` is not null OR `personspeciality`.`Exam3ID` is not null;";
+            try {
+                ResultSet request = mySqlStatement.executeQuery(sql);
+                while (request.next()) {
+                    int idSpeciality = request.getInt("SepcialityID");
+                    String universitySpecialitiesKode = getSpecialityGuid(idSpeciality);
+                    // идентификаторы предметов
+                    int idSubject1 = request.getInt("Exam1ID");
+                    int idSubject2 = request.getInt("Exam2ID");
+                    int idSubject3 = request.getInt("Exam3ID");
+                    // баллы по предметам
+                    int examinationValue1 = request.getInt("Exam1Ball");
+                    int examinationValue2 = request.getInt("Exam2Ball");
+                    int examinationValue3 = request.getInt("Exam3Ball");
+                    int idPersonRequest = request.getInt("edboID");
+                    if (idSubject1 != 0 && examinationValue1 == 0) {
+                        int idUniversitySpecialitiesSubject = getIdSpecialitySubjectEdbo(idSubject1, universitySpecialitiesKode);
+                        int idPersonRequestExamination = personSoap.personRequestExaminationsAdd(sessionGuid, languageId, idPersonRequest, idUniversitySpecialitiesSubject, Integer.toString(examinationValue1));
+                        if (idPersonRequestExamination == 0){
+                            System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " +idPersonRequest + "; Код спеціальності " + idSpeciality + " : Помилка додавання екзамену 1 до заявки: " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                        } else{
+                            System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " +idPersonRequest + "; Код спеціальності " + idSpeciality + " : Екзамен 1 додано до заявки: " + idPersonRequestExamination);
+                            request.updateInt("IdPersonRequestExamination1", idPersonRequestExamination);
+                            request.updateRow();
+                        }
+                    }
+                    if (idSubject2 != 0 && examinationValue2 == 0) {
+                        int idUniversitySpecialitiesSubject = getIdSpecialitySubjectEdbo(idSubject2, universitySpecialitiesKode);
+                        int idPersonRequestExamination = personSoap.personRequestExaminationsAdd(sessionGuid, languageId, idPersonRequest, idUniversitySpecialitiesSubject, Integer.toString(examinationValue2));
+                        if (idPersonRequestExamination == 0){
+                            System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " +idPersonRequest + "; Код спеціальності " + idSpeciality + " : Помилка додавання екзамену 2 до заявки: " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                        } else{
+                            System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " +idPersonRequest + "; Код спеціальності " + idSpeciality + " : Екзамен 2 додано до заявки: " + idPersonRequestExamination);
+                            request.updateInt("IdPersonRequestExamination2", idPersonRequestExamination);
+                            request.updateRow();
+                        }
+                    }
+                    if (idSubject3 != 0 && examinationValue3 == 0) {
+                        int idUniversitySpecialitiesSubject = getIdSpecialitySubjectEdbo(idSubject3, universitySpecialitiesKode);
+                        int idPersonRequestExamination = personSoap.personRequestExaminationsAdd(sessionGuid, languageId, idPersonRequest, idUniversitySpecialitiesSubject, Integer.toString(examinationValue3));
+                        if (idPersonRequestExamination == 0){
+                            System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " +idPersonRequest + "; Код спеціальності " + idSpeciality + " : Помилка додавання екзамену 3 до заявки: " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                        } else{
+                            System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " +idPersonRequest + "; Код спеціальності " + idSpeciality + " : Екзамен 3 додано до заявки: " + idPersonRequestExamination);
+                            request.updateInt("IdPersonRequestExamination3", idPersonRequestExamination);
+                            request.updateRow();
+                        }
+                    }
+//                    System.out.println(universitySpecialitiesKode + ' ' + idSubject1);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
