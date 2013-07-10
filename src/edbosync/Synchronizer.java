@@ -1390,19 +1390,6 @@ public class Synchronizer {
                     String codeOfBusiness = "";
                     int qualificationId = request.getInt("QualificationID");
                     String courseId = Integer.toString(request.getInt("CourseID"));
-//                    switch (qualificationId) {
-//                        case 1:
-//                            codeOfBusiness += "Б";
-//                            break;
-//                        case 2:
-//                        case 3:
-//                            codeOfBusiness += "СМ";
-//                            break;
-//                        case 4:
-//                            codeOfBusiness += "МC";
-//                            break;
-//                    }
-//                    codeOfBusiness += courseId + String.format("%05d", request.getInt("PersonRequestNumber"));
                     codeOfBusiness = String.format("%05d", request.getInt("RequestNumber"));
                     int idPersonEntranceType = request.getInt("EntranceTypeID");
                     int idPersonExamenationCause = request.getInt("CausalityID");
@@ -1612,11 +1599,22 @@ public class Synchronizer {
                                 + "`edboID` = " + edboId + "\n"
                                 + "WHERE idPersonSpeciality = " + personSpeciality + ";");
                         ResultSet benefitsRS = mySqlStatement.executeQuery(""
-                                + "SELECT edboID "
+                                + "SELECT * "
                                 + "FROM abiturient.personbenefits "
                                 + "WHERE PersonID = " + personIdMySql + ";");
                         while (benefitsRS.next()) {
-                            personSoap.personRequestBenefitsAdd(sessionGuid, actualDate, languageId, edboId, benefitsRS.getInt(1));
+                            int idBenefit = benefitsRS.getInt("BenefitID");
+                            if (idBenefit != 41 || (idBenefit == 41 && idPersonCourse != 0)) {
+                                int result = personSoap.personRequestBenefitsAdd(sessionGuid, actualDate, languageId, edboId, benefitsRS.getInt("edboID"));
+                                if (result == 0) {
+                                    submitStatus.setError(true);
+                                    submitStatus.setBackTransaction(false);
+                                    submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання пільги до заявки  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
+                                } else {
+                                    submitStatus.setMessage(submitStatus.getMessage() + "До заявки успішно додано пільгу<br />");
+                                }
+                            }
+
                         }
                         submitStatus.setError(false);
                         submitStatus.setBackTransaction(false);
@@ -1856,11 +1854,13 @@ public class Synchronizer {
                             System.out.println(idPersonRequest + ":\tПомилка зміни статусу заявки:\t" + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
                         } else {
 //                                submitStatus.setMessage(submitStatus.getMessage() + idPersonRequest + ":\tCтатус заяки змінено<br />\n");
-                            System.out.println(idPersonRequest + ":\tCтатус заяки змінено");
+                            System.out.println(idPersonRequest + ":\tCтатус заяки змінено.");
                             request.updateInt("StatusID", toStatus);
                             request.updateRow();
                         } // if - else
-                    } // if
+                    } else {
+                        System.out.println(idPersonRequest + ":\tCтатус заяки актуальний.");
+                    }// if - else
 //                    for (DPersonRequestsStatuses requestStatus : requestStatusList) {
 //                        int idPersonRequestStatusType = requestStatus.getIdPersonRequestStatusType();
 ////                        int idPersonRequestStatus = requestStatus.getIdPersonRequestStatus();
