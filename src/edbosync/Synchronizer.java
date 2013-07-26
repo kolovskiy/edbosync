@@ -299,9 +299,9 @@ public class Synchronizer {
 //                                + "SpecialityKode = \"" + speciality.getUniversitySpecialitiesKode() + "\"\n"
 //                                + "WHERE idSpeciality = " + speciality.getIdUniversitySpecialities() + ";");
                     } catch (SQLException ex) {
-                        System.out.println(sql);
-                        System.out.flush();
-                        Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+//                        System.out.println(sql);
+//                        System.out.flush();
+//                        Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
