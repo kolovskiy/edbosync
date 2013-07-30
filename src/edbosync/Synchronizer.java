@@ -2197,7 +2197,7 @@ public class Synchronizer {
             }
         }
     }
-    
+
     /**
      * Получить баллы экзаменов из заявок базы ЕДБО
      */
@@ -2217,37 +2217,62 @@ public class Synchronizer {
                     int idSubject3 = request.getInt("Exam3ID");
                     int idPersonRequest = request.getInt("edboID");
                     ArrayOfDPersonRequestExaminations examinationsArray = personSoap.personRequestExaminationsGet(sessionGuid, actualDate, languageId, idPersonRequest);
-                    if (examinationsArray != null){
+                    if (examinationsArray != null) {
                         List<DPersonRequestExaminations> examinationsList = examinationsArray.getDPersonRequestExaminations();
-                        for (DPersonRequestExaminations examination : examinationsList){
-                           int idSubject = examination.getIdSubject();
-                           if (idSubject == idSubject1 || (idSubject1 == 3 && 12 <= idSubject && idSubject <= 15 )){
-                               request.updateInt("Exam1ID", idSubject);
-                               request.updateInt("Exam1Ball", examination.getPersonRequestExaminationValue().toBigInteger().intValue());
-                               request.updateInt("IdPersonRequestExamination1", examination.getIdPersonRequestExamination());
-                               request.updateRow();
-                               
-                               System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 1: " + examination.getPersonRequestExaminationValue().toBigInteger().intValue());
-                           } // if
-                           if (idSubject == idSubject2 || (idSubject2 == 3 && 12 <= idSubject && idSubject <= 15 )){
-                               request.updateInt("Exam2ID", idSubject);
-                               request.updateInt("Exam2Ball", examination.getPersonRequestExaminationValue().toBigInteger().intValue());
-                               request.updateInt("IdPersonRequestExamination2", examination.getIdPersonRequestExamination());
-                               request.updateRow();
-                               
-                               System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 2: " + examination.getPersonRequestExaminationValue().toBigInteger().intValue());
-                           } // if
-                           if (idSubject == idSubject3 || (idSubject3 == 3 && 12 <= idSubject && idSubject <= 15 )){
-                               request.updateInt("Exam3ID", idSubject);
-                               request.updateInt("Exam3Ball", examination.getPersonRequestExaminationValue().toBigInteger().intValue());
-                               request.updateInt("IdPersonRequestExamination3", examination.getIdPersonRequestExamination());
-                               request.updateRow();
-                               
-                               System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 3: " + examination.getPersonRequestExaminationValue().toBigInteger().intValue());
-                           } // if
+                        for (DPersonRequestExaminations examination : examinationsList) {
+                            int idSubject = examination.getIdSubject();
+                            if (idSubject == idSubject1 || (idSubject1 == 3 && 12 <= idSubject && idSubject <= 15)) {
+                                request.updateInt("Exam1ID", idSubject);
+                                request.updateInt("Exam1Ball", examination.getPersonRequestExaminationValue().toBigInteger().intValue());
+                                request.updateInt("IdPersonRequestExamination1", examination.getIdPersonRequestExamination());
+                                request.updateRow();
+
+                                System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 1: " + examination.getPersonRequestExaminationValue().toBigInteger().intValue());
+                            } // if
+                            if (idSubject == idSubject2 || (idSubject2 == 3 && 12 <= idSubject && idSubject <= 15)) {
+                                request.updateInt("Exam2ID", idSubject);
+                                request.updateInt("Exam2Ball", examination.getPersonRequestExaminationValue().toBigInteger().intValue());
+                                request.updateInt("IdPersonRequestExamination2", examination.getIdPersonRequestExamination());
+                                request.updateRow();
+
+                                System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 2: " + examination.getPersonRequestExaminationValue().toBigInteger().intValue());
+                            } // if
+                            if (idSubject == idSubject3 || (idSubject3 == 3 && 12 <= idSubject && idSubject <= 15)) {
+                                request.updateInt("Exam3ID", idSubject);
+                                request.updateInt("Exam3Ball", examination.getPersonRequestExaminationValue().toBigInteger().intValue());
+                                request.updateInt("IdPersonRequestExamination3", examination.getIdPersonRequestExamination());
+                                request.updateRow();
+
+                                System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 3: " + examination.getPersonRequestExaminationValue().toBigInteger().intValue());
+                            } // if
                         } // for
                     } // if
                 } // while
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    /**
+     * Метод переноса дополнительного из заявок базы MySQL в ЕДБО
+     */
+    public void addRequestAdditionalBallEdbo() {
+        if (mySqlConnect() && personConnect()) {
+            String sql = "SELECT * FROM abiturient.personspeciality where `personspeciality`.`AdditionalBall` is not null;";
+            try {
+                ResultSet request = mySqlStatement.executeQuery(sql);
+                while (request.next()) {
+                    int idPersonRequest = request.getInt("edboID");
+                    String additionalBall = Float.toString(request.getFloat("AdditionalBall"));
+                    String description = request.getString("AdditionalBallComment");
+                    int result = personSoap.konkursValueCorrectValueChange(sessionGuid, idPersonRequest, additionalBall, description);
+                    if (result == 0) {
+                        System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + ". Помилка додавання додаткового балу: " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                    } else {
+                        System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + ". Додатковий бал успышно змінено");
+                    }
+                }
             } catch (SQLException ex) {
                 Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
             }
