@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import java.util.List;
 import java.util.ArrayList;
 import com.google.gson.Gson;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Calendar;
 import ua.edboservice.ArrayOfDOlympiadsAwards;
@@ -1227,6 +1228,59 @@ public class Synchronizer {
         return json.toJson(submitStatus);
     }
 
+    protected void compareBenefits(int idPerson) {
+        if (personConnect() && mySqlConnect()) {
+            ArrayList<PersonBenefit> benefits = getPersonBenefitsEdbo(idPerson);
+            if (!benefits.isEmpty()) {
+                for (PersonBenefit benefit : benefits) {
+                    ResultSet benefitMysql;
+                    try {
+                        benefitMysql = mySqlStatement.executeQuery(""
+                          + "SELECT * "
+                          + "FROM abiturient.personbenefits "
+                          + "WHERE edboID = " + benefit.getId_PersonBenefit() + ";");
+                        if (benefitMysql.next()) {
+                            System.err.println("Льгота есть в базе. Персона № " + 
+                                    benefitMysql.getInt("PersonID") + 
+                                    ". Идент. персоны (едбо)." +
+                                    idPerson +
+                                    ". Идент. льготы (mysql): " + 
+                                    benefitMysql.getInt("BenefitID") + 
+                                    ". Идент. льготы (едбо): " + 
+                                    benefit.getId_Benefit() + 
+                                    ". Идентификаторы льготы " + 
+                                    ((benefitMysql.getInt("BenefitID") == benefit.getId_Benefit()) ? "совпали." : "НЕ совпали"));
+                         
+                        } else {
+                            System.err.println("!!! Льгота отсутствует в базе данных. " +
+                                    "Идент. персоны (едбо)." +
+                                    idPerson +
+                                    ". Идент. льготы (едбо): " + 
+                                    benefit.getId_Benefit());
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+    }
+
+    public void compareBenefits() {
+        if (mySqlConnect()) {
+            ResultSet person;
+            try {
+                person = mySqlStatement.executeQuery("SELECT * FROM person;");
+                while (person.next()) {
+                    int idPerson = person.getInt("edboID");
+                    compareBenefits(idPerson);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
     /**
      * Добавление льгот персоны в базу ЕДБО
      *
@@ -2207,7 +2261,7 @@ public class Synchronizer {
             String sql = "SELECT * \n"
                     + "FROM abiturient.personspeciality \n"
                     + "WHERE\n"
-                    + "`personspeciality`.`Exam1ID` is not null OR `personspeciality`.`Exam2ID` is not null OR `personspeciality`.`Exam3ID` is not null;";
+                    + "(`personspeciality`.`Exam1ID` is not null OR `personspeciality`.`Exam2ID` is not null OR `personspeciality`.`Exam3ID` is not null);";
             try {
                 ResultSet request = mySqlStatement.executeQuery(sql);
                 while (request.next()) {
@@ -2221,15 +2275,16 @@ public class Synchronizer {
                         List<DPersonRequestExaminations> examinationsList = examinationsArray.getDPersonRequestExaminations();
                         for (DPersonRequestExaminations examination : examinationsList) {
                             int idSubject = examination.getIdSubject();
-                            if (idSubject == idSubject1 || (idSubject1 == 3 && 12 <= idSubject && idSubject <= 15)) {
+                            if (idSubject == idSubject1 || (idSubject1 == 3 && 30 <= idSubject && idSubject <= 33)) {
                                 request.updateInt("Exam1ID", idSubject);
                                 request.updateInt("Exam1Ball", examination.getPersonRequestExaminationValue().toBigInteger().intValue());
+//                                request.updateBigDecimal("Exam1Ball", examination.getPersonRequestExaminationValue());
                                 request.updateInt("IdPersonRequestExamination1", examination.getIdPersonRequestExamination());
                                 request.updateRow();
 
                                 System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 1: " + examination.getPersonRequestExaminationValue().toBigInteger().intValue());
                             } // if
-                            if (idSubject == idSubject2 || (idSubject2 == 3 && 12 <= idSubject && idSubject <= 15)) {
+                            if (idSubject == idSubject2 || (idSubject2 == 3 && 30 <= idSubject && idSubject <= 33)) {
                                 request.updateInt("Exam2ID", idSubject);
                                 request.updateInt("Exam2Ball", examination.getPersonRequestExaminationValue().toBigInteger().intValue());
                                 request.updateInt("IdPersonRequestExamination2", examination.getIdPersonRequestExamination());
@@ -2237,7 +2292,7 @@ public class Synchronizer {
 
                                 System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 2: " + examination.getPersonRequestExaminationValue().toBigInteger().intValue());
                             } // if
-                            if (idSubject == idSubject3 || (idSubject3 == 3 && 12 <= idSubject && idSubject <= 15)) {
+                            if (idSubject == idSubject3 || (idSubject3 == 3 && 30 <= idSubject && idSubject <= 33)) {
                                 request.updateInt("Exam3ID", idSubject);
                                 request.updateInt("Exam3Ball", examination.getPersonRequestExaminationValue().toBigInteger().intValue());
                                 request.updateInt("IdPersonRequestExamination3", examination.getIdPersonRequestExamination());
