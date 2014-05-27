@@ -1,29 +1,19 @@
 package edbosync;
 
+import com.google.gson.Gson;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.List;
-import java.util.ArrayList;
-import com.google.gson.Gson;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.Calendar;
 import ua.edboservice.ArrayOfDOlympiadsAwards;
 import ua.edboservice.ArrayOfDPersonAddRet;
-import ua.edboservice.ArrayOfDPersonRequestSeasons;
-import ua.edboservice.ArrayOfDPersonsFind;
-import ua.edboservice.DPersonRequestSeasons;
-import ua.edboservice.DPersonsFind;
-import ua.edboservice.EDBOGuides;
-import ua.edboservice.EDBOGuidesSoap;
-import ua.edboservice.EDBOPerson;
-import ua.edboservice.EDBOPersonSoap;
 import ua.edboservice.ArrayOfDPersonAddresses;
+import ua.edboservice.ArrayOfDPersonAddresses2;
 import ua.edboservice.ArrayOfDPersonBenefits;
 import ua.edboservice.ArrayOfDPersonContacts;
 import ua.edboservice.ArrayOfDPersonCourses;
@@ -31,9 +21,11 @@ import ua.edboservice.ArrayOfDPersonDocuments;
 import ua.edboservice.ArrayOfDPersonDocumentsSubjects;
 import ua.edboservice.ArrayOfDPersonOlympiadsAwards;
 import ua.edboservice.ArrayOfDPersonRequestExaminations;
+import ua.edboservice.ArrayOfDPersonRequestSeasons;
 import ua.edboservice.ArrayOfDPersonRequestStatusTypes;
 import ua.edboservice.ArrayOfDPersonRequests;
 import ua.edboservice.ArrayOfDPersonRequestsStatuses;
+import ua.edboservice.ArrayOfDPersonsFind;
 import ua.edboservice.ArrayOfDRequestExaminationCauses;
 import ua.edboservice.ArrayOfDSpecRedactions;
 import ua.edboservice.ArrayOfDUniversityCourses;
@@ -43,6 +35,7 @@ import ua.edboservice.ArrayOfDUniversityFacultets;
 import ua.edboservice.DOlympiadsAwards;
 import ua.edboservice.DPersonAddRet;
 import ua.edboservice.DPersonAddresses;
+import ua.edboservice.DPersonAddresses2;
 import ua.edboservice.DPersonBenefits;
 import ua.edboservice.DPersonContacts;
 import ua.edboservice.DPersonCourses;
@@ -50,15 +43,20 @@ import ua.edboservice.DPersonDocuments;
 import ua.edboservice.DPersonDocumentsSubjects;
 import ua.edboservice.DPersonOlympiadsAwards;
 import ua.edboservice.DPersonRequestExaminations;
+import ua.edboservice.DPersonRequestSeasons;
 import ua.edboservice.DPersonRequestStatusTypes;
-import ua.edboservice.DPersonRequests;
 import ua.edboservice.DPersonRequestsStatuses;
+import ua.edboservice.DPersonsFind;
 import ua.edboservice.DRequestExaminationCauses;
 import ua.edboservice.DSpecRedactions;
 import ua.edboservice.DUniversityCourses;
 import ua.edboservice.DUniversityFacultetSpecialities;
 import ua.edboservice.DUniversityFacultetSpecialitiesSubjects;
 import ua.edboservice.DUniversityFacultets;
+import ua.edboservice.EDBOGuides;
+import ua.edboservice.EDBOGuidesSoap;
+import ua.edboservice.EDBOPerson;
+import ua.edboservice.EDBOPersonSoap;
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -351,11 +349,11 @@ public class Synchronizer {
                     System.out.println(dPerson.getBirthday().toString());
 
                     // адрес персоны
-                    ArrayOfDPersonAddresses adressesArray = personSoap.personAddressesGet(sessionGuid, actualDate, languageId, dPerson.getPersonCodeU(), 0);
-                    List<DPersonAddresses> adressesList = adressesArray.getDPersonAddresses();
+                    ArrayOfDPersonAddresses2 adressesArray = personSoap.personAddressesGet2(sessionGuid, actualDate, languageId, dPerson.getPersonCodeU(), 0);
+                    List<DPersonAddresses2> adressesList = adressesArray.getDPersonAddresses2();
                     if (adressesList.size() > 0) {
 
-                        DPersonAddresses adress = adressesList.get(0); // работаем с первым адресом (нам болше и не нужно)
+                        DPersonAddresses2 adress = adressesList.get(0); // работаем с первым адресом (нам болше и не нужно)
                         p.setId_StreetType(adress.getIdStreetType());
                         p.setAddress(adress.getAdress());
                         p.setHomeNumber(adress.getHomeNumber());
@@ -436,11 +434,15 @@ public class Synchronizer {
                     p.setId_Person(dPerson.getIdPerson());
 
                     // адрес персоны
-                    ArrayOfDPersonAddresses adressesArray = personSoap.personAddressesGet(sessionGuid, actualDate, languageId, dPerson.getPersonCodeU(), 0);
-                    List<DPersonAddresses> adressesList = adressesArray.getDPersonAddresses();
+                    ArrayOfDPersonAddresses2 adressesArray = personSoap.personAddressesGet2(sessionGuid, actualDate, languageId, dPerson.getPersonCodeU(), 0);
+                    if (adressesArray == null){
+                        processEdboPersonErrors();
+                        return "0";
+                    }
+                    List<DPersonAddresses2> adressesList = adressesArray.getDPersonAddresses2();
                     if (adressesList.size() > 0) {
 
-                        DPersonAddresses adress = adressesList.get(0); // работаем с первым адресом (нам болше и не нужно)
+                        DPersonAddresses2 adress = adressesList.get(0); // работаем с первым адресом (нам болше и не нужно)
                         p.setId_StreetType(adress.getIdStreetType());
                         p.setAddress(adress.getAdress());
                         p.setHomeNumber(adress.getHomeNumber());
@@ -2310,7 +2312,7 @@ public class Synchronizer {
     }
 
     /**
-     * Метод переноса дополнительного из заявок базы MySQL в ЕДБО
+     * Метод переноса дополнительного балла из заявок базы MySQL в ЕДБО
      */
     public void addRequestAdditionalBallEdbo() {
         if (mySqlConnect() && personConnect()) {
@@ -2333,6 +2335,28 @@ public class Synchronizer {
             }
         }
     }
+    
+    /**
+     * Обработчик ошибок, которые возвращает сервер ЕДБО, для соапа персоны
+     */
+    private void processEdboPersonErrors(){
+        ua.edboservice.ArrayOfDLastError errorArray = personSoap.getLastError(sessionGuid);
+        List<ua.edboservice.DLastError> errorList = errorArray.getDLastError();
+        for (ua.edboservice.DLastError dError : errorList) {
+            System.err.println(dError.getLastErrorDescription());
+        }
+    }
+    /**
+     * Обработчик ошибок, которые возвращает сервер ЕДБО, для соапа справочников
+     */
+    private void processEdboGuidesErrors(){
+        ua.edboservice.ArrayOfDLastError errorArray = guidesSoap.getLastError(sessionGuid);
+        List<ua.edboservice.DLastError> errorList = errorArray.getDLastError();
+        for (ua.edboservice.DLastError dError : errorList) {
+            System.err.println(dError.getLastErrorDescription());
+        }
+    }
+    
 
     public String getSessionGuid() {
         return sessionGuid;
