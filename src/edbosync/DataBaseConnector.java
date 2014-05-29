@@ -87,6 +87,19 @@ public class DataBaseConnector {
         return true;
     }
     /**
+     * Выполнить SQL-запрос
+     * @param query Текст запроса
+     * @return Результат выполнения запроса
+     */
+    public ResultSet executeQuery(String query){
+        try {
+            return statement.executeQuery(query);
+        } catch (SQLException ex) {
+            Logger.getLogger(DataBaseConnector.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    /**
      * Получить экземпляр объекта соединения с БД
      * @return Экземпляр объекта соединения с БД
      */

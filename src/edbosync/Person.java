@@ -72,6 +72,34 @@ public class Person {
      * Почтовый индекс
      */
     private String postIndex;
+    /**
+     * Транслитерация фамилии
+     */
+    private String lastNameEn;
+    /**
+     * Транслитерация имени
+     */
+    private String firstNameEn;
+    /**
+     * Транслитерация отчества
+     */
+    private String middleNameEn;
+    /**
+     * Идентификатор страны
+     */
+    private int id_Country = -1;
+    /**
+     * Квартира
+     */
+    private String apartment;
+    /**
+     * Корпус
+     */
+    private String housing;
+    /**
+     * Идентификатор записи о КОАТАУ населенного пункта
+     */
+    private int id_KoatuuCode;
     // Контакты
 //    private ArrayList<PersonContact> contacts = new ArrayList<>(); //!< Список констактов персоны
 
@@ -344,6 +372,7 @@ public class Person {
     public void setPostIndex(String postIndex) {
         this.postIndex = postIndex;
     }
+
     /**
      * Получить список контактов персоны
      *
@@ -361,4 +390,91 @@ public class Person {
 //    public void setContacts(ArrayList<PersonContact> contacts) {
 //        this.contacts = contacts;
 //    }
+    /**
+     * Получить значение транслитерации фамилии
+     *
+     * @return Транслитерация фамилии
+     */
+    public String getLastNameEn() {
+        return lastNameEn;
+    }
+
+    /**
+     * Установить значение транслитерации фамилии
+     *
+     * @param lastNameEn Значение транслитерации имени
+     */
+    public void setLastNameEn(String lastNameEn) {
+        this.lastNameEn = lastNameEn;
+    }
+
+    /**
+     * Получить значение транслитерации имени
+     *
+     * @return Транслитерация имени
+     */
+    public String getFirstNameEn() {
+        return firstNameEn;
+    }
+
+    /**
+     * Установить значение транслитерации имени
+     *
+     * @param firstNameEn Значение транслитерации имени
+     */
+    public void setFirstNameEn(String firstNameEn) {
+        this.firstNameEn = firstNameEn;
+    }
+
+    /**
+     * Получить значение транслитерации отчества
+     *
+     * @return Транслитерация отчества
+     */
+    public String getMiddleNameEn() {
+        return middleNameEn;
+    }
+
+    /**
+     * Установить значение транслитерации отчества
+     *
+     * @param middleNameEn Значение транслитерации отчества
+     */
+    public void setMiddleNameEn(String middleNameEn) {
+        this.middleNameEn = middleNameEn;
+    }
+
+    public int getId_Country() {
+        return id_Country;
+    }
+
+    public void setId_Country(int id_Country) {
+        this.id_Country = id_Country;
+    }
+
+    public String getApartment() {
+        return apartment;
+    }
+
+    public void setApartment(String apartment) {
+        this.apartment = apartment;
+    }
+
+    public String getHousing() {
+        return housing;
+    }
+
+    public void setHousing(String housing) {
+        this.housing = housing;
+    }
+
+    public int getId_KoatuuCode() {
+        return id_KoatuuCode;
+    }
+
+    public void setId_KoatuuCode(int id_KoatuuCode) {
+        this.id_KoatuuCode = id_KoatuuCode;
+    }
+    
+    
 }

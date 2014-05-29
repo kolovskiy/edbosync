@@ -1,7 +1,10 @@
 package edbosync;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ua.edboservice.ArrayOfDLastError;
+import ua.edboservice.DLastError;
 import ua.edboservice.EDBOGuides;
 import ua.edboservice.EDBOGuidesSoap;
 
@@ -85,6 +88,18 @@ public class EdboGuidesConnector {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Обработчик ошибок, которые возвращает сервер ЕДБО
+     */
+    protected void processErrors(){
+        ArrayOfDLastError errorArray;
+        errorArray = soap.getLastError(sessionGuid);
+        List<DLastError> errorList = errorArray.getDLastError();
+        for (DLastError dError : errorList) {
+            System.err.println(dError.getLastErrorDescription());
+        }
     }
 
     public EDBOGuidesSoap getSoap() {
