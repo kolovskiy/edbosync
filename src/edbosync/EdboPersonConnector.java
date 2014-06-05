@@ -10,9 +10,11 @@ import ua.edboservice.EDBOPersonSoap;
 
 /**
  * Класс для соединения с сервером ЕДБО (персоны)
+ *
  * @author Сергей Чопоров
  */
 public class EdboPersonConnector {
+
     protected EDBOPerson edboPerson = new EDBOPerson();
     /**
      * Экземпляр Soap-потока персоны
@@ -38,18 +40,20 @@ public class EdboPersonConnector {
      * Ключ университета в ЕДБО
      */
     String universityKey = "ab1bc732-51f3-475c-bcfe-368363369020";
+
     /**
      * Конструктор по умолчанию создает соединение со службой EDBO Person
      */
-    public EdboPersonConnector(){
+    public EdboPersonConnector() {
         login();
     }
 
     /**
-     * Сборщик мусора закрывает соединение с ЕДБО при уничтожении экземпляра класса
+     * Сборщик мусора закрывает соединение с ЕДБО при уничтожении экземпляра
+     * класса
      */
     @Override
-    protected void finalize(){
+    protected void finalize() {
         try {
             logout();
         } finally {
@@ -60,8 +64,10 @@ public class EdboPersonConnector {
             }
         }
     }
+
     /**
      * Установка соединения со службой EDBO Person
+     *
      * @return true, если соединение установлено, false - иначе
      */
     protected final boolean login() {
@@ -78,30 +84,45 @@ public class EdboPersonConnector {
         }
         return true;
     }
-    
+
     /**
-     * Закрытие соединения  со службой EDBO Person
+     * Закрытие соединения со службой EDBO Person
+     *
      * @return true, если соединение установлено, false - иначе
      */
     protected final boolean logout() {
         String result = soap.logout(sessionGuid);
-        if (result.length() > 0){
+        if (result.length() > 0) {
             System.err.println(result);
             return false;
         }
         return true;
     }
-    
+
     /**
      * Обработчик ошибок, которые возвращает сервер ЕДБО
+     *
+     * @return Строка с сообщением об ошибках
      */
-    protected void processErrors(){
+    public String processErrors() {
         ArrayOfDLastError errorArray;
         errorArray = soap.getLastError(sessionGuid);
+        String finalMessage = "";
         List<DLastError> errorList = errorArray.getDLastError();
         for (DLastError dError : errorList) {
             System.err.println(dError.getLastErrorDescription());
+            finalMessage = finalMessage + dError.getLastErrorDescription() + " ";
         }
+        return finalMessage;
+    }
+
+    /**
+     * Обработчик ошибок, которые возвращает сервер ЕДБО
+     *
+     * @return Строка с сообщением об ошибках в формате json
+     */
+    public String processErrorsJson() {
+        return "{\"error\":\"" + processErrors() + "\"}";
     }
 
     public EDBOPersonSoap getSoap() {
@@ -135,5 +156,5 @@ public class EdboPersonConnector {
     public void setSeasonId(int seasonId) {
         this.seasonId = seasonId;
     }
-    
+
 }

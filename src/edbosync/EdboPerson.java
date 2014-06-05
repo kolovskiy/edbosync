@@ -46,22 +46,32 @@ public class EdboPerson {
         ArrayOfDPersonsFind2 personArray = soap.personsFind2(edbo.getSessionGuid(), edbo.getActualDate(), edbo.getLanguageId(), "*", series, number, "", 1, "", "");
         return processArrayOfDPersonsFind(personArray);
     }
+
     /**
      * Поиск в базе ЕДБО по маске ФИО
+     *
      * @param fio Маска ФИО
      * @return Сведения о персоне в формате json
      */
-    public String find(String fio){
+    public String find(String fio) {
         EDBOPersonSoap soap = edbo.getSoap();
         ArrayOfDPersonsFind2 personArray = soap.personsFind2(edbo.getSessionGuid(), edbo.getActualDate(), edbo.getLanguageId(), fio.replaceAll(" ", "*").replaceAll("c|C|i|I", "?"), "", "", "", 1, "", "");
         return processArrayOfDPersonsFind(personArray);
     }
+
     /**
      * Обработать массив информации о результатх поиска персоны
+     *
      * @param personArray Массив информации о результатах поиска персоны
-     * @return Результат разбора массива информации о результатах поиска персоны в формате json
+     * @return Результат разбора массива информации о результатах поиска персоны
+     * в формате json
      */
     protected String processArrayOfDPersonsFind(ArrayOfDPersonsFind2 personArray) {
+        if (personArray == null) {
+            // возникла ошибка при получении данных из ЕДБО
+            return edbo.processErrorsJson();
+        }
+        
         List<DPersonsFind2> personList = personArray.getDPersonsFind2();
         EDBOPersonSoap soap = edbo.getSoap();
         if (personList.size() > 0) {
@@ -82,10 +92,12 @@ public class EdboPerson {
                 p.setLastNameEn(dPerson.getLastNameEn());
                 p.setMiddleNameEn(dPerson.getMiddleNameEn());
 
-//                System.out.println(dPerson.getBirthday().toString());
-
                 // адрес персоны
                 ArrayOfDPersonAddresses2 adressesArray = soap.personAddressesGet2(edbo.sessionGuid, edbo.actualDate, edbo.languageId, dPerson.getPersonCodeU(), 0);
+                if (adressesArray == null) {
+                    // возникла ошибка при получении данных из ЕДБО
+                    return edbo.processErrorsJson();
+                }
                 List<DPersonAddresses2> adressesList = adressesArray.getDPersonAddresses2();
                 if (adressesList.size() > 0) {
 
@@ -107,7 +119,7 @@ public class EdboPerson {
                             // Запрос вернул информацию о коде KOATUU на третьем уровне
                             p.setId_KoatuuCode(koatuu_full.getInt(1));
                         } else {
-                                // Если запись на третьем уровне отсутствует (например, у жителей крупных городов),
+                            // Если запись на третьем уровне отсутствует (например, у жителей крупных городов),
                             // то поиск осуществляем по второму уровню
                             ResultSet koatuu2 = db.executeQuery("SELECT idKOATUULevel2 "
                                     + "FROM abiturient.koatuulevel2 WHERE KOATUULevel2FullName like \""
@@ -133,5 +145,5 @@ public class EdboPerson {
         }
         return "0";
     }
-    
+
 }

@@ -10,9 +10,11 @@ import ua.edboservice.EDBOGuidesSoap;
 
 /**
  * Класс для соединения с сервером ЕДБО (справочники)
+ *
  * @author Сергей Чопоров
  */
 public class EdboGuidesConnector {
+
     protected EDBOGuides edboGuides = new EDBOGuides();
     /**
      * Экземпляр Soap-потока справочников
@@ -38,17 +40,20 @@ public class EdboGuidesConnector {
      * Ключ университета в ЕДБО
      */
     String universityKey = "ab1bc732-51f3-475c-bcfe-368363369020";
+
     /**
      * Конструктор по умолчанию создает соединение со службой EDBO Person
      */
-    public EdboGuidesConnector(){
+    public EdboGuidesConnector() {
         login();
     }
+
     /**
-     * Сборщик мусора закрывает соединение с ЕДБО при уничтожении экземпляра класса
+     * Сборщик мусора закрывает соединение с ЕДБО при уничтожении экземпляра
+     * класса
      */
     @Override
-    protected void finalize(){
+    protected void finalize() {
         try {
             logout();
         } finally {
@@ -59,11 +64,13 @@ public class EdboGuidesConnector {
             }
         }
     }
+
     /**
      * Установка соединения со службой EDBO Guides
+     *
      * @return true, если соединение установлено, false - иначе
      */
-    protected final boolean login(){
+    protected final boolean login() {
         // wsdl connection url:
         // http://10.1.103.99:8080/EDBOGuides/EDBOGuides.asmx?WSDL
         SoapConnectionData data = new SoapConnectionData();
@@ -76,30 +83,45 @@ public class EdboGuidesConnector {
         }
         return true;
     }
-    
+
     /**
-     * Закрытие соединения  со службой EDBO Guides
+     * Закрытие соединения со службой EDBO Guides
+     *
      * @return true, если соединение установлено, false - иначе
      */
     protected final boolean logout() {
         String result = soap.logout(sessionGuid);
-        if (result.length() > 0){
+        if (result.length() > 0) {
             System.err.println(result);
             return false;
         }
         return true;
     }
-    
+
     /**
      * Обработчик ошибок, которые возвращает сервер ЕДБО
+     *
+     * @return Строку с сообшением об ошибках
      */
-    protected void processErrors(){
+    public String processErrors() {
         ArrayOfDLastError errorArray;
         errorArray = soap.getLastError(sessionGuid);
+        String finalMessage = "";
         List<DLastError> errorList = errorArray.getDLastError();
         for (DLastError dError : errorList) {
             System.err.println(dError.getLastErrorDescription());
+            finalMessage = finalMessage + dError.getLastErrorDescription() + " ";
         }
+        return finalMessage;
+    }
+    
+    /**
+     * Обработчик ошибок, которые возвращает сервер ЕДБО
+     *
+     * @return Строка с сообщением об ошибках в формате json
+     */
+    public String processErrorsJson() {
+        return "{\"error\":\"" + processErrors() + "\"}";
     }
 
     public EDBOGuidesSoap getSoap() {
@@ -133,6 +155,5 @@ public class EdboGuidesConnector {
     public void setSeasonId(int seasonId) {
         this.seasonId = seasonId;
     }
-    
-    
+
 }

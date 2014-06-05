@@ -17,6 +17,10 @@ public class EdboPhoto {
     public String load(String personCodeU){
         EDBOPersonSoap soap = edbo.getSoap();
         ArrayOfDPersonSOAPPhoto photoArray = soap.personSOAPPhotoGet(edbo.getSessionGuid(), edbo.getUniversityKey(), personCodeU);
+        if (photoArray == null) {
+            // возникла ошибка при получении данных из ЕДБО
+            return edbo.processErrorsJson();
+        }
         List<DPersonSOAPPhoto> photoList = photoArray.getDPersonSOAPPhoto();
         String base64 = new String();
         for(DPersonSOAPPhoto dPhoto: photoList){

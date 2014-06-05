@@ -31,6 +31,12 @@ public class EdboContacts {
         Gson json = new Gson();
         ArrayList<PersonContact> contacts = new ArrayList<PersonContact>();
         ArrayOfDPersonContacts contactsArray = soap.personContactsGet(edbo.getSessionGuid(), edbo.getActualDate(), edbo.getLanguageId(), personCodeU, 0);
+        
+        if (contactsArray == null){
+            // возникла ошибка при получении данных из ЕДБО
+            return edbo.processErrorsJson();
+        }
+        
         List<DPersonContacts> contactsList = contactsArray.getDPersonContacts();
         for (DPersonContacts dContact : contactsList) {
             PersonContact contact = new PersonContact();
