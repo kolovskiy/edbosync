@@ -19,7 +19,7 @@
     <target name="wsimport-client-EDBOGuides" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/EDBOGuides"/>
         <property name="wsdl-EDBOGuides" location="xml-resources/web-service-references/EDBOGuides/wsdl/10.1.103.99_8080/EDBOGuides/EDBOGuides.asmx.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/EDBOGuides" destdir="${build.generated.dir}/jax-wsCache/EDBOGuides" wsdl="${wsdl-EDBOGuides}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" wsdlLocation="http://10.1.103.99:8080/EDBOGuides/EDBOGuides.asmx?WSDL" xnocompile="true" xendorsed="true">
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/EDBOGuides" destdir="${build.generated.dir}/jax-wsCache/EDBOGuides" wsdl="${wsdl-EDBOGuides}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://10.1.103.99:8080/EDBOGuides/EDBOGuides.asmx?WSDL" xnocompile="true" xendorsed="true">
             <depends file="${wsdl-EDBOGuides}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/EDBOGuides"/>
         </wsimport>

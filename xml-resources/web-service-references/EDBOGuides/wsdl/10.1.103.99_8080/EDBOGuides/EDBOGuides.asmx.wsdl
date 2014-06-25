@@ -1264,10 +1264,58 @@
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="Id_University" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="UniversityFullName" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="Id_ExternalUniversity_u" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="Id_ExternalUniversity_p" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_ExternalUniversity_1" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_ExternalUniversity_2" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_ExternalUniversity_3" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="T_UniversityExtId_1" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="T_UniversityExtId_2" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="T_UniversityExtId_3" type="s:int" />
         </s:sequence>
       </s:complexType>
+      <s:element name="UniversityExtIdsTypesGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityExtIdsTypesGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityExtIdsTypesGetResult" type="tns:ArrayOfDUniversityExtIdsTypes" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDUniversityExtIdsTypes">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dUniversityExtIdsTypes" nillable="true" type="tns:dUniversityExtIdsTypes" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dUniversityExtIdsTypes">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityExtIdsType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityExtIdsTypeName" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="UniversityExtIdsEdit">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="T_UniversityExtId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_University" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityExtIdsType" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_ExternalUniversity" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityExtIdsEditResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityExtIdsEditResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="StateOrdersCategoriesGet">
         <s:complexType>
           <s:sequence>
@@ -2047,8 +2095,10 @@
       <s:complexType name="dWebCheckStats">
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="Id_WebCheckStat" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="DateBegin" type="s:dateTime" />
-          <s:element minOccurs="1" maxOccurs="1" name="DateEnd" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="DateBegin" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TimeBegin" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DateEnd" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TimeEnd" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ResponseText" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Id_WebCheckStatType" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Id_Person" type="s:int" />
@@ -2071,6 +2121,454 @@
           <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
         </s:sequence>
       </s:complexType>
+      <s:element name="UniversityImportDocDataGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_PersonDocumentType" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityImportDocType" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocDataGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityImportDocDataGetResult" type="tns:ArrayOfDUniversityImportDocData" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDUniversityImportDocData">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dUniversityImportDocData" nillable="true" type="tns:dUniversityImportDocData" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dUniversityImportDocData">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityImportDoc" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityImportDocType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityImportDocTypeName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_PersonDocumentType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="PersonDocumentTypeName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_User" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateLastChange" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityImportDocData" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_ImportDocData" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_PersonDocument" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="DocumentNumberInOsvita" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DocumentDataInOsvita" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityKodeInOsvita" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityNameInOsvita" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpecialityKode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpecialityName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Kvalification" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Profession" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MiddleName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_PersonSex" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Birthday" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="INN" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PasportType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PasportSeries" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PasportNumbers" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PasportDateGet" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="EducationDocumentSeries" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EducationDocumentNumber" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="EducationDocumentDateGive" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="EducationDocumentDateExpired" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Operation" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsCorrected" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Person" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_PersonDocument_EDBOPasport" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastName_EDBO" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstName_EDBO" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MiddleName_EDBO" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Birthday_EDBO" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="PasportType_EDBO" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PasportDocumentSeries_EDBO" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PasportDocumentNumbers_EDBO" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PasportDocumentDateGet_EDBO" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_PersonEducation" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="PersonEducationNotBindType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="PersonEducationNotBindTypeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PersonCodeU" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PersonEducationFormName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="QualificationName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Course" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpecComplexName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="EduExist" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityFacultetFullName" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="UniversityImportDocTypeGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocTypeGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityImportDocTypeGetResult" type="tns:ArrayOfDUniversityImportDocType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDUniversityImportDocType">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dUniversityImportDocType" nillable="true" type="tns:dUniversityImportDocType" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dUniversityImportDocType">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityImportDocType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityImportDocTypeName" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="UniversityImportDocGenerate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityImportDocType" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_PersonDocumentType" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocGenerateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityImportDocGenerateResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocGenerate2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityImportDocType" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_PersonDocumentType" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocGenerate2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityImportDocGenerate2Result" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocDataAddToDelivery">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_DeliveryOfDocuments" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_PersonDocumentType" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Id_UniversityImportDocDatas" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocDataAddToDeliveryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityImportDocDataAddToDeliveryResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocDataAutoAddToDelivery">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_DeliveryOfDocuments" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_PersonDocumentType" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocDataAutoAddToDeliveryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityImportDocDataAutoAddToDeliveryResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocDataMoveToIgnor">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_PersonDocumentType" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Id_UniversityImportDocDatas" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocDataMoveToIgnorResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityImportDocDataMoveToIgnorResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocDataRemoveFromIgnor">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_PersonDocumentType" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Id_UniversityImportDocDatas" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocDataRemoveFromIgnorResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityImportDocDataRemoveFromIgnorResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocDataSetEducation">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityImportDocData" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_PersonEducation" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityImportDocDataSetEducationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityImportDocDataSetEducationResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentsGetResult" type="tns:ArrayOfDUniversityCoursesStudents" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDUniversityCoursesStudents">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dUniversityCoursesStudents" nillable="true" type="tns:dUniversityCoursesStudents" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dUniversityCoursesStudents">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityCoursesStudent" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityCourseCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_PersonRequestSeasons" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UserAdd" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UserEdit" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateCreate" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateEdit" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="StudentsCount" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="RequestSeasonsName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityCourseName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubjectName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_RegulationDocument" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsVerified" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_RegulationDocumentVerificationHistoryType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="RegulationDocumentVerificationHistoryTypeName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsExistFile" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Subject1" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubjectName1" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Subject2" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubjectName2" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Subject3" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubjectName3" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="UniversityCoursesStudentsDataGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityCoursesStudent" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsDataGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentsDataGetResult" type="tns:ArrayOfDUniversityCoursesStudentsData" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDUniversityCoursesStudentsData">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dUniversityCoursesStudentsData" nillable="true" type="tns:dUniversityCoursesStudentsData" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dUniversityCoursesStudentsData">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityCoursesStudentsData" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityCoursesStudent" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="PersonCodeU" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_PersonName" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="UniversityCoursesValue" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="FIO" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Birthday" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Person" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Subject1" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubjectName1" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Subject2" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubjectName2" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Subject3" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubjectName3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FDPSertificateSeries" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FDPSertificateNumber" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="UniversityCoursesStudentsAdd">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCourseCode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_PersonRequestSeasons" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentsData" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_Subject1" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_Subject2" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_Subject3" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsAddResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentsAddResult" type="tns:ArrayOfDUniversityCoursesStudentsRetun" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDUniversityCoursesStudentsRetun">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dUniversityCoursesStudentsRetun" nillable="true" type="tns:dUniversityCoursesStudentsRetun" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dUniversityCoursesStudentsRetun">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Ret" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityCoursesStudent" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Error" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="UniversityCoursesStudentsEdit">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityCoursesStudent" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsEditResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityCoursesStudentsEditResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsDataChange">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityCoursesStudent" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentsData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsDataChangeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentsDataChangeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsDataAdd">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityCoursesStudent" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentsData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsDataAddResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentsDataAddResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsDataDel">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityCoursesStudent" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentsData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsDataDelResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityCoursesStudentsDataDelResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsDel">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityCoursesStudent" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsDelResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityCoursesStudentsDelResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsDataSubjectsChange">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_UniversityCoursesStudentsData" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_Subject1" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_Subject2" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_Subject3" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityCoursesStudentsDataSubjectsChangeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityCoursesStudentsDataSubjectsChangeResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="DeliveryOfDocumentsDataFind">
         <s:complexType>
           <s:sequence>
@@ -2118,6 +2616,8 @@
           <s:element minOccurs="1" maxOccurs="1" name="ExistDocument" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="Id_PersonDocumentsAwardType" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="Value" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="DeliveryOfDocumentsDateBegin" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DeliveryOfDocumentsDateEnd" type="s:dateTime" />
         </s:sequence>
       </s:complexType>
       <s:element name="DeliveryOfDocumentsDataPersonsFind">
@@ -13459,6 +13959,7 @@
           <s:element minOccurs="1" maxOccurs="1" name="EnableEducationalCycles" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="IsMONGiveBudget" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PublishOnWebSite" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsProgramDoubleDiploms" type="s:int" />
         </s:sequence>
       </s:complexType>
       <s:element name="UniversitiesCodesGet">
@@ -13668,6 +14169,7 @@
           <s:element minOccurs="1" maxOccurs="1" name="EnableEducationalCycles" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="IsMONGiveBudget" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PublishOnWebSite" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsProgramDoubleDiploms" type="s:int" />
         </s:sequence>
       </s:complexType>
       <s:element name="UniversitiesFind">
@@ -13745,6 +14247,7 @@
             <s:element minOccurs="0" maxOccurs="1" name="UniversityShortNameEn" type="s:string" />
             <s:element minOccurs="1" maxOccurs="1" name="IsMONGiveBudget" type="s:int" />
             <s:element minOccurs="1" maxOccurs="1" name="PublishOnWebSite" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="IsProgramDoubleDiploms" type="s:int" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -13833,6 +14336,7 @@
             <s:element minOccurs="0" maxOccurs="1" name="UniversityShortNameEn" type="s:string" />
             <s:element minOccurs="1" maxOccurs="1" name="IsMONGiveBudget" type="s:int" />
             <s:element minOccurs="1" maxOccurs="1" name="PublishOnWebSite" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="IsProgramDoubleDiploms" type="s:int" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -14443,6 +14947,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="ContactPhone" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ContactMobile" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="EntranceCodes" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="RequestPriority" type="s:int" />
         </s:sequence>
       </s:complexType>
       <s:element name="UniversityFacultetsGetRequests2Bin">
@@ -16456,6 +16961,18 @@
   <wsdl:message name="UniversityExtIdsGetSoapOut">
     <wsdl:part name="parameters" element="tns:UniversityExtIdsGetResponse" />
   </wsdl:message>
+  <wsdl:message name="UniversityExtIdsTypesGetSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityExtIdsTypesGet" />
+  </wsdl:message>
+  <wsdl:message name="UniversityExtIdsTypesGetSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityExtIdsTypesGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityExtIdsEditSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityExtIdsEdit" />
+  </wsdl:message>
+  <wsdl:message name="UniversityExtIdsEditSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityExtIdsEditResponse" />
+  </wsdl:message>
   <wsdl:message name="StateOrdersCategoriesGetSoapIn">
     <wsdl:part name="parameters" element="tns:StateOrdersCategoriesGet" />
   </wsdl:message>
@@ -16605,6 +17122,114 @@
   </wsdl:message>
   <wsdl:message name="WebCheckStatsGetSoapOut">
     <wsdl:part name="parameters" element="tns:WebCheckStatsGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataGetSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataGet" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataGetSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocTypeGetSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocTypeGet" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocTypeGetSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocTypeGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocGenerateSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocGenerate" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocGenerateSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocGenerateResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocGenerate2SoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocGenerate2" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocGenerate2SoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocGenerate2Response" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataAddToDeliverySoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataAddToDelivery" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataAddToDeliverySoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataAddToDeliveryResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataAutoAddToDeliverySoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataAutoAddToDelivery" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataAutoAddToDeliverySoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataAutoAddToDeliveryResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataMoveToIgnorSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataMoveToIgnor" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataMoveToIgnorSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataMoveToIgnorResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataRemoveFromIgnorSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataRemoveFromIgnor" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataRemoveFromIgnorSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataRemoveFromIgnorResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataSetEducationSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataSetEducation" />
+  </wsdl:message>
+  <wsdl:message name="UniversityImportDocDataSetEducationSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityImportDocDataSetEducationResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsGetSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsGet" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsGetSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDataGetSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDataGet" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDataGetSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDataGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsAddSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsAdd" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsAddSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsAddResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsEditSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsEdit" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsEditSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsEditResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDataChangeSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDataChange" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDataChangeSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDataChangeResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDataAddSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDataAdd" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDataAddSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDataAddResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDataDelSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDataDel" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDataDelSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDataDelResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDelSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDel" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDelSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDelResponse" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDataSubjectsChangeSoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDataSubjectsChange" />
+  </wsdl:message>
+  <wsdl:message name="UniversityCoursesStudentsDataSubjectsChangeSoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDataSubjectsChangeResponse" />
   </wsdl:message>
   <wsdl:message name="DeliveryOfDocumentsDataFindSoapIn">
     <wsdl:part name="parameters" element="tns:DeliveryOfDocumentsDataFind" />
@@ -19707,6 +20332,14 @@
       <wsdl:input message="tns:UniversityExtIdsGetSoapIn" />
       <wsdl:output message="tns:UniversityExtIdsGetSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="UniversityExtIdsTypesGet">
+      <wsdl:input message="tns:UniversityExtIdsTypesGetSoapIn" />
+      <wsdl:output message="tns:UniversityExtIdsTypesGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityExtIdsEdit">
+      <wsdl:input message="tns:UniversityExtIdsEditSoapIn" />
+      <wsdl:output message="tns:UniversityExtIdsEditSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="StateOrdersCategoriesGet">
       <wsdl:input message="tns:StateOrdersCategoriesGetSoapIn" />
       <wsdl:output message="tns:StateOrdersCategoriesGetSoapOut" />
@@ -19806,6 +20439,78 @@
     <wsdl:operation name="WebCheckStatsGet">
       <wsdl:input message="tns:WebCheckStatsGetSoapIn" />
       <wsdl:output message="tns:WebCheckStatsGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataGet">
+      <wsdl:input message="tns:UniversityImportDocDataGetSoapIn" />
+      <wsdl:output message="tns:UniversityImportDocDataGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocTypeGet">
+      <wsdl:input message="tns:UniversityImportDocTypeGetSoapIn" />
+      <wsdl:output message="tns:UniversityImportDocTypeGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocGenerate">
+      <wsdl:input message="tns:UniversityImportDocGenerateSoapIn" />
+      <wsdl:output message="tns:UniversityImportDocGenerateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocGenerate2">
+      <wsdl:input message="tns:UniversityImportDocGenerate2SoapIn" />
+      <wsdl:output message="tns:UniversityImportDocGenerate2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataAddToDelivery">
+      <wsdl:input message="tns:UniversityImportDocDataAddToDeliverySoapIn" />
+      <wsdl:output message="tns:UniversityImportDocDataAddToDeliverySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataAutoAddToDelivery">
+      <wsdl:input message="tns:UniversityImportDocDataAutoAddToDeliverySoapIn" />
+      <wsdl:output message="tns:UniversityImportDocDataAutoAddToDeliverySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataMoveToIgnor">
+      <wsdl:input message="tns:UniversityImportDocDataMoveToIgnorSoapIn" />
+      <wsdl:output message="tns:UniversityImportDocDataMoveToIgnorSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataRemoveFromIgnor">
+      <wsdl:input message="tns:UniversityImportDocDataRemoveFromIgnorSoapIn" />
+      <wsdl:output message="tns:UniversityImportDocDataRemoveFromIgnorSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataSetEducation">
+      <wsdl:input message="tns:UniversityImportDocDataSetEducationSoapIn" />
+      <wsdl:output message="tns:UniversityImportDocDataSetEducationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsGet">
+      <wsdl:input message="tns:UniversityCoursesStudentsGetSoapIn" />
+      <wsdl:output message="tns:UniversityCoursesStudentsGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataGet">
+      <wsdl:input message="tns:UniversityCoursesStudentsDataGetSoapIn" />
+      <wsdl:output message="tns:UniversityCoursesStudentsDataGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsAdd">
+      <wsdl:input message="tns:UniversityCoursesStudentsAddSoapIn" />
+      <wsdl:output message="tns:UniversityCoursesStudentsAddSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsEdit">
+      <wsdl:input message="tns:UniversityCoursesStudentsEditSoapIn" />
+      <wsdl:output message="tns:UniversityCoursesStudentsEditSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataChange">
+      <wsdl:input message="tns:UniversityCoursesStudentsDataChangeSoapIn" />
+      <wsdl:output message="tns:UniversityCoursesStudentsDataChangeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataAdd">
+      <wsdl:input message="tns:UniversityCoursesStudentsDataAddSoapIn" />
+      <wsdl:output message="tns:UniversityCoursesStudentsDataAddSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataDel">
+      <wsdl:input message="tns:UniversityCoursesStudentsDataDelSoapIn" />
+      <wsdl:output message="tns:UniversityCoursesStudentsDataDelSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDel">
+      <wsdl:input message="tns:UniversityCoursesStudentsDelSoapIn" />
+      <wsdl:output message="tns:UniversityCoursesStudentsDelSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataSubjectsChange">
+      <wsdl:input message="tns:UniversityCoursesStudentsDataSubjectsChangeSoapIn" />
+      <wsdl:output message="tns:UniversityCoursesStudentsDataSubjectsChangeSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="DeliveryOfDocumentsDataFind">
       <wsdl:input message="tns:DeliveryOfDocumentsDataFindSoapIn" />
@@ -22192,6 +22897,24 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UniversityExtIdsTypesGet">
+      <soap:operation soapAction="http://edboservice.ua/UniversityExtIdsTypesGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityExtIdsEdit">
+      <soap:operation soapAction="http://edboservice.ua/UniversityExtIdsEdit" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="StateOrdersCategoriesGet">
       <soap:operation soapAction="http://edboservice.ua/StateOrdersCategoriesGet" style="document" />
       <wsdl:input>
@@ -22410,6 +23133,168 @@
     </wsdl:operation>
     <wsdl:operation name="WebCheckStatsGet">
       <soap:operation soapAction="http://edboservice.ua/WebCheckStatsGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataGet">
+      <soap:operation soapAction="http://edboservice.ua/UniversityImportDocDataGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocTypeGet">
+      <soap:operation soapAction="http://edboservice.ua/UniversityImportDocTypeGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocGenerate">
+      <soap:operation soapAction="http://edboservice.ua/UniversityImportDocGenerate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocGenerate2">
+      <soap:operation soapAction="http://edboservice.ua/UniversityImportDocGenerate2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataAddToDelivery">
+      <soap:operation soapAction="http://edboservice.ua/UniversityImportDocDataAddToDelivery" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataAutoAddToDelivery">
+      <soap:operation soapAction="http://edboservice.ua/UniversityImportDocDataAutoAddToDelivery" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataMoveToIgnor">
+      <soap:operation soapAction="http://edboservice.ua/UniversityImportDocDataMoveToIgnor" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataRemoveFromIgnor">
+      <soap:operation soapAction="http://edboservice.ua/UniversityImportDocDataRemoveFromIgnor" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataSetEducation">
+      <soap:operation soapAction="http://edboservice.ua/UniversityImportDocDataSetEducation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsGet">
+      <soap:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataGet">
+      <soap:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDataGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsAdd">
+      <soap:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsAdd" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsEdit">
+      <soap:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsEdit" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataChange">
+      <soap:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDataChange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataAdd">
+      <soap:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDataAdd" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataDel">
+      <soap:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDataDel" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDel">
+      <soap:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDel" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataSubjectsChange">
+      <soap:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDataSubjectsChange" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -27217,6 +28102,24 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UniversityExtIdsTypesGet">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityExtIdsTypesGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityExtIdsEdit">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityExtIdsEdit" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="StateOrdersCategoriesGet">
       <soap12:operation soapAction="http://edboservice.ua/StateOrdersCategoriesGet" style="document" />
       <wsdl:input>
@@ -27435,6 +28338,168 @@
     </wsdl:operation>
     <wsdl:operation name="WebCheckStatsGet">
       <soap12:operation soapAction="http://edboservice.ua/WebCheckStatsGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataGet">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityImportDocDataGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocTypeGet">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityImportDocTypeGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocGenerate">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityImportDocGenerate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocGenerate2">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityImportDocGenerate2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataAddToDelivery">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityImportDocDataAddToDelivery" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataAutoAddToDelivery">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityImportDocDataAutoAddToDelivery" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataMoveToIgnor">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityImportDocDataMoveToIgnor" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataRemoveFromIgnor">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityImportDocDataRemoveFromIgnor" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityImportDocDataSetEducation">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityImportDocDataSetEducation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsGet">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataGet">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDataGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsAdd">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsAdd" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsEdit">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsEdit" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataChange">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDataChange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataAdd">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDataAdd" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataDel">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDataDel" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDel">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDel" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UniversityCoursesStudentsDataSubjectsChange">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityCoursesStudentsDataSubjectsChange" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
