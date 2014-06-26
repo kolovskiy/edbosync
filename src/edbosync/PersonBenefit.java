@@ -15,6 +15,18 @@ public class PersonBenefit {
      * Идентификатор записи о льготе персоны в базе ЕДБО
      */
     private int id_PersonBenefit;
+    /**
+     * Серия документа для льготы
+     */
+    private String benefitsDocumentSeries;
+    /**
+     * Номер документа для льготы
+     */
+    private String benefitsDocumentNumber;
+    /**
+     * Кем выдан документ для льготы
+     */
+    private String benefitsDocumentIssued;
 
     /**
      * Получить значение идентификатора льготы персоны
@@ -52,4 +64,29 @@ public class PersonBenefit {
     public void setId_PersonBenefit(int id_PersonBenefit) {
         this.id_PersonBenefit = id_PersonBenefit;
     }
+
+    public String getBenefitsDocumentSeries() {
+        return benefitsDocumentSeries;
+    }
+
+    public void setBenefitsDocumentSeries(String benefitsDocumentSeries) {
+        this.benefitsDocumentSeries = benefitsDocumentSeries;
+    }
+
+    public String getBenefitsDocumentNumber() {
+        return benefitsDocumentNumber;
+    }
+
+    public void setBenefitsDocumentNumber(String benefitsDocumentNumber) {
+        this.benefitsDocumentNumber = benefitsDocumentNumber;
+    }
+
+    public String getBenefitsDocumentIssued() {
+        return benefitsDocumentIssued;
+    }
+
+    public void setBenefitsDocumentIssued(String benefitsDocumentIssued) {
+        this.benefitsDocumentIssued = benefitsDocumentIssued;
+    }
+
 }
