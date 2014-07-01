@@ -35,7 +35,7 @@ public class EdboPersonConnector {
     /**
      * Идентификатор вступительной компании (2 - 2012, 3 - 2013, ...)
      */
-    protected int seasonId = 3;
+    protected int seasonId = 4;
     /**
      * Ключ университета в ЕДБО
      */
