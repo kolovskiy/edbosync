@@ -64,7 +64,7 @@ public class EdboOlympiads {
             List<DPersonOlympiadsAwards> awardsList = awardsArray.getDPersonOlympiadsAwards();
             for (DPersonOlympiadsAwards award : awardsList) {
                 String sql = "SELECT * "
-                        + "FROM abiturient.personolympiad "
+                        + "FROM personolympiad "
                         + "WHERE PersonID = " + personId + " AND OlympiadAwarID = " + award.getIdOlympiadAward() + ";";
                 try {
                     ResultSet personOlympiadsRS = dbc.executeQuery(sql);
@@ -89,7 +89,7 @@ public class EdboOlympiads {
         }
         
         // БД ----> ЕДБО
-        String sql = "SELECT * FROM abiturient.personolympiad WHERE PersonID = " + personId + ";";
+        String sql = "SELECT * FROM personolympiad WHERE PersonID = " + personId + ";";
         try {
             ResultSet olympiad = dbc.executeQuery(sql);
             while (olympiad.next()) {

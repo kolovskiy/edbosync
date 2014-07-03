@@ -112,7 +112,7 @@ public class EdboPerson {
                     // определение кодов KOATUU
                     try {
                         ResultSet koatuu_full = db.executeQuery("SELECT idKOATUULevel3 "
-                                + "FROM abiturient.koatuulevel3 WHERE KOATUULevel3FullName like \""
+                                + "FROM koatuulevel3 WHERE KOATUULevel3FullName like \""
                                 + adress.getKOATUUFullName().replaceAll("'", "\\\\'")
                                 + "\";");
                         if (koatuu_full.next()) {
@@ -122,7 +122,7 @@ public class EdboPerson {
                             // Если запись на третьем уровне отсутствует (например, у жителей крупных городов),
                             // то поиск осуществляем по второму уровню
                             ResultSet koatuu2 = db.executeQuery("SELECT idKOATUULevel2 "
-                                    + "FROM abiturient.koatuulevel2 WHERE KOATUULevel2FullName like \""
+                                    + "FROM koatuulevel2 WHERE KOATUULevel2FullName like \""
                                     + adress.getKOATUUFullName().replaceAll("'", "\\\\'")
                                     + "\";");
                             if (koatuu2.next()) {
