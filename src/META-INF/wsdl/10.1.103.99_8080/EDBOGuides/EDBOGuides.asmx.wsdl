@@ -2,6 +2,36 @@
 <wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://edboservice.ua/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://edboservice.ua/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://edboservice.ua/">
+      <s:element name="ReportEmploymentsDataDel">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_ReportEmploymentsData" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ReportEmploymentsDataDelResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ReportEmploymentsDataDelResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ReportEmploymentsAutoFill">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_ReportEmployment" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ReportEmploymentsAutoFillResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ReportEmploymentsAutoFillResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="ReportEmploymentsMonCheckChange">
         <s:complexType>
           <s:sequence>
@@ -2569,6 +2599,327 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="WebPersonsGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsStatusType" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="OnlyMy" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WebPersonsGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebPersonsGetResult" type="tns:ArrayOfDWebPersons" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDWebPersons">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dWebPersons" nillable="true" type="tns:dWebPersons" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dWebPersons">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersons" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateCreate" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateLastChange" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="PersonCodeU" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MiddleName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EngLastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EngFirstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EngMiddleName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="BirthDay" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="SexTypeID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SexTypeName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Citizen" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="CitizenCountryName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UIN" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DocTypeID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="DocTypeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DocSeria" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DocNumber" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DocDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="DocGiven" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Phone1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Phone2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Phone3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EMail" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ICQ" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Skype" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Country" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="CountryName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PostIndex" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TerID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="KOATUUName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="KOATUUFullName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="StreetType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="StreetTypeFullName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StreetTypeShortName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StreetName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="HouseNum" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="HouseSection" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FlatNum" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Country2" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Country2Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PostIndex2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TerID2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="KOATUUName2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="KOATUUFullName2" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="StreetType2" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="StreetType2FullName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StreetType2ShortName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StreetName2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="HouseNum2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="HouseSection2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FlatNum2" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="SkipMiddleName" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="MedicalCertificateNumeber" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="MedicalCertificateDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="AllAddress" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AllAddress2" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsStatus" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="WebPersonsStatusIsActive" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="WebPersonsStatusDateLastChange" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_User" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserFIO" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WebPersonsStatusDescription" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsStatusType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="WebPersonsStatusTypeName" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="WebPersonsEducationGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersons" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WebPersonsEducationGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebPersonsEducationGetResult" type="tns:ArrayOfDWebPersonsEducation" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDWebPersonsEducation">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dWebPersonsEducation" nillable="true" type="tns:dWebPersonsEducation" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dWebPersonsEducation">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsEducation" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersons" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="EduDocTypeID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="EduDocTypeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EduDocSeries" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EduDocNumber" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="EduDocDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="EduEOID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EduEOName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EduInfo" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="WebPersonsForeignGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersons" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WebPersonsForeignGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebPersonsForeignGetResult" type="tns:ArrayOfDWebPersonsForeign" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDWebPersonsForeign">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dWebPersonsForeign" nillable="true" type="tns:dWebPersonsForeign" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dWebPersonsForeign">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsForeign" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersons" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_LanguageEx" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="LanguageExName" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="WebPersonsTrusteeGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersons" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsTrusteeType" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WebPersonsTrusteeGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebPersonsTrusteeGetResult" type="tns:ArrayOfDWebPersonsTrustee" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDWebPersonsTrustee">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dWebPersonsTrustee" nillable="true" type="tns:dWebPersonsTrustee" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dWebPersonsTrustee">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsTrustee" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersons" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsTrusteeType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="WebPersonsTrusteeTypeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MiddleName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Phone1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Phone2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Phone3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EMail" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ICQ" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Skype" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Country" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="CountryName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PostIndex" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TerID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="KOATUUName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="KOATUUFullName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="StreetType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="StreetTypeFullName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StreetTypeShortName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StreetName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="HouseNum" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="HouseSection" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FlatNum" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AllAddress" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="WebPersonsStatusHistoryGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersons" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WebPersonsStatusHistoryGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebPersonsStatusHistoryGetResult" type="tns:ArrayOfDWebPersonsStatusHistory" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDWebPersonsStatusHistory">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dWebPersonsStatusHistory" nillable="true" type="tns:dWebPersonsStatusHistory" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dWebPersonsStatusHistory">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsStatus" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersons" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsStatusType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="WebPersonsStatusTypeName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="WebPersonsStatusIsActive" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="WebPersonsStatusDateLastChange" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_User" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="WebPersonsStatusDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="User_FIO" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="WebPersonsStatusTypeGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WebPersonsStatusTypeGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebPersonsStatusTypeGetResult" type="tns:ArrayOfDWebPersonsStatusType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDWebPersonsStatusType">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dWebPersonsStatusType" nillable="true" type="tns:dWebPersonsStatusType" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dWebPersonsStatusType">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsStatusType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="WebPersonsStatusTypeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WebPersonsStatusTypeDesciption" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="WebPersonsPhotoGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersons" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WebPersonsPhotoGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebPersonsPhotoGetResult" type="tns:ArrayOfDWebPersonsPhoto" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDWebPersonsPhoto">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dWebPersonsPhoto" nillable="true" type="tns:dWebPersonsPhoto" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dWebPersonsPhoto">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersonsPhoto" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_WebPersons" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="WebPersonsPhoto" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="DeliveryOfDocumentsErrorsCheck">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_DeliveryOfDocuments" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeliveryOfDocumentsErrorsCheckResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DeliveryOfDocumentsErrorsCheckResult" type="tns:dDeliveryOfDocumentsErrors" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="dDeliveryOfDocumentsErrors">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_DeliveryOfDocuments" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DataCount" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DataErrorCount" type="s:int" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="DeliveryOfDocumentsDataFind">
         <s:complexType>
           <s:sequence>
@@ -3329,6 +3680,73 @@
           <s:element minOccurs="0" maxOccurs="1" name="LanguageExName" type="s:string" />
         </s:sequence>
       </s:complexType>
+      <s:element name="ExaminationSheetsGet2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_PersonRequestSeasons" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Filters" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ExaminationSheetsGet2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ExaminationSheetsGet2Result" type="tns:ArrayOfDExaminationSheets2" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDExaminationSheets2">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dExaminationSheets2" nillable="true" type="tns:dExaminationSheets2" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dExaminationSheets2">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_ExaminationSheet" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_PersonRequestSeasons" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_ExaminationSheetExamenType" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_ExaminationSheeValuesType" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_ExaminationSheetStatus" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_UniversitySpecialitiesSubject" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversitySpecialitiesKode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ExaminationSheetDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExaminationSheetNumber" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ExaminationSheetDateLastChange" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExaminationSheetGroupName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExaminationSheetStreemName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExaminationSheetExaminer" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ExaminationSheetDateBegin" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="ExaminationSheetDateEnd" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExaminationSheetExamenTypeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExaminationSheetValuesTypeName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExaminationSheetStatusName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Subject" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SubjectName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversitySpecialitiesSubjectsName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversitySpecialitiesSubjectsDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PersonEducationFormName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Course" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="DurationEducation" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CourseName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="EducationDateBegin" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="EducationDateEnd" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsSecondEducation" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_Qualification" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="QualificationName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpecClasifierCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpecDirectionName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpecSpecialityClasifierCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpecSpecialityName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpecScecializationName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UniversityFacultetFullName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Id_LanguageEx" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="LanguageExName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NameRequestSeason" type="s:string" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="ExaminationSheetsRequestsGet">
         <s:complexType>
           <s:sequence>
@@ -3446,6 +3864,7 @@
             <s:element minOccurs="1" maxOccurs="1" name="Id_LanguageEx" type="s:int" />
             <s:element minOccurs="1" maxOccurs="1" name="CountPerGroup" type="s:int" />
             <s:element minOccurs="1" maxOccurs="1" name="SplitByLanguages" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="SortType" type="s:int" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -6051,36 +6470,33 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="ReportEmploymentsDataDel">
+      <s:element name="OrderOfDocumentRenewTypesGet">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="Id_ReportEmploymentsData" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="ActualDate" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_Language" type="s:int" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="ReportEmploymentsDataDelResponse">
+      <s:element name="OrderOfDocumentRenewTypesGetResponse">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="ReportEmploymentsDataDelResult" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="OrderOfDocumentRenewTypesGetResult" type="tns:ArrayOfDOrderOfDocumentRenewTypes" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="ReportEmploymentsAutoFill">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="Id_ReportEmployment" type="s:int" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="ReportEmploymentsAutoFillResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="ReportEmploymentsAutoFillResult" type="s:int" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
+      <s:complexType name="ArrayOfDOrderOfDocumentRenewTypes">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dOrderOfDocumentRenewTypes" nillable="true" type="tns:dOrderOfDocumentRenewTypes" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dOrderOfDocumentRenewTypes">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_OrderOfDocumentRenewType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="OrderOfDocumentRenewTypeName" type="s:string" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="OrderOfDocumentsForAddRequestsGet">
         <s:complexType>
           <s:sequence>
@@ -9414,26 +9830,31 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="DeliveryOfDocumentsErrorsCheck">
+      <s:element name="RegulationDocumentVerificationHistoryTypesGet">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="Id_DeliveryOfDocuments" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_Language" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="ActualDate" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="DeliveryOfDocumentsErrorsCheckResponse">
+      <s:element name="RegulationDocumentVerificationHistoryTypesGetResponse">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="DeliveryOfDocumentsErrorsCheckResult" type="tns:dDeliveryOfDocumentsErrors" />
+            <s:element minOccurs="0" maxOccurs="1" name="RegulationDocumentVerificationHistoryTypesGetResult" type="tns:ArrayOfDRegulationDocumentVerificationHistoryTypes" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:complexType name="dDeliveryOfDocumentsErrors">
+      <s:complexType name="ArrayOfDRegulationDocumentVerificationHistoryTypes">
         <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="Id_DeliveryOfDocuments" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="DataCount" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="DataErrorCount" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="unbounded" name="dRegulationDocumentVerificationHistoryTypes" nillable="true" type="tns:dRegulationDocumentVerificationHistoryTypes" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="dRegulationDocumentVerificationHistoryTypes">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id_RegulationDocumentVerificationHistoryType" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="RegulationDocumentVerificationHistoryTypeName" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:element name="RegulationDocumentsGet">
@@ -12518,6 +12939,7 @@
           <s:element minOccurs="1" maxOccurs="1" name="ExistQuotasCiloviy" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="PozakonEntranceCode" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Id_Course" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="InformationOriginalDocumentLocation" type="s:int" />
         </s:sequence>
       </s:complexType>
       <s:element name="UniversityEntrantWavesRequestsStatusChange">
@@ -12530,6 +12952,7 @@
             <s:element minOccurs="1" maxOccurs="1" name="IsBudejt" type="s:int" />
             <s:element minOccurs="1" maxOccurs="1" name="IsContract" type="s:int" />
             <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="InformationOriginalDocumentLocation" type="s:int" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -13161,33 +13584,6 @@
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="Id_OrderOfDocumentType" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="OrderOfDocumentTypeName" type="s:string" />
-        </s:sequence>
-      </s:complexType>
-      <s:element name="OrderOfDocumentRenewTypesGet">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="ActualDate" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="Id_Language" type="s:int" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="OrderOfDocumentRenewTypesGetResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="OrderOfDocumentRenewTypesGetResult" type="tns:ArrayOfDOrderOfDocumentRenewTypes" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="ArrayOfDOrderOfDocumentRenewTypes">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="dOrderOfDocumentRenewTypes" nillable="true" type="tns:dOrderOfDocumentRenewTypes" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="dOrderOfDocumentRenewTypes">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="Id_OrderOfDocumentRenewType" type="s:int" />
-          <s:element minOccurs="0" maxOccurs="1" name="OrderOfDocumentRenewTypeName" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:element name="StateOrdersGenerateHtml">
@@ -16447,6 +16843,24 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="UniversityGroupsCopy">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_Language" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="UniversityKode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_AcademicYear_From" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Id_AcademicYear_To" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UniversityGroupsCopyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UniversityGroupsCopyResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="UniversityGroupsEdit">
         <s:complexType>
           <s:sequence>
@@ -16638,35 +17052,20 @@
           <s:element minOccurs="0" maxOccurs="1" name="RegulationDocumentDataTypeCode" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:element name="RegulationDocumentVerificationHistoryTypesGet">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="SessionGUID" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="Id_Language" type="s:int" />
-            <s:element minOccurs="0" maxOccurs="1" name="ActualDate" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="RegulationDocumentVerificationHistoryTypesGetResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="RegulationDocumentVerificationHistoryTypesGetResult" type="tns:ArrayOfDRegulationDocumentVerificationHistoryTypes" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="ArrayOfDRegulationDocumentVerificationHistoryTypes">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="dRegulationDocumentVerificationHistoryTypes" nillable="true" type="tns:dRegulationDocumentVerificationHistoryTypes" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="dRegulationDocumentVerificationHistoryTypes">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="Id_RegulationDocumentVerificationHistoryType" type="s:int" />
-          <s:element minOccurs="0" maxOccurs="1" name="RegulationDocumentVerificationHistoryTypeName" type="s:string" />
-        </s:sequence>
-      </s:complexType>
     </s:schema>
   </wsdl:types>
+  <wsdl:message name="ReportEmploymentsDataDelSoapIn">
+    <wsdl:part name="parameters" element="tns:ReportEmploymentsDataDel" />
+  </wsdl:message>
+  <wsdl:message name="ReportEmploymentsDataDelSoapOut">
+    <wsdl:part name="parameters" element="tns:ReportEmploymentsDataDelResponse" />
+  </wsdl:message>
+  <wsdl:message name="ReportEmploymentsAutoFillSoapIn">
+    <wsdl:part name="parameters" element="tns:ReportEmploymentsAutoFill" />
+  </wsdl:message>
+  <wsdl:message name="ReportEmploymentsAutoFillSoapOut">
+    <wsdl:part name="parameters" element="tns:ReportEmploymentsAutoFillResponse" />
+  </wsdl:message>
   <wsdl:message name="ReportEmploymentsMonCheckChangeSoapIn">
     <wsdl:part name="parameters" element="tns:ReportEmploymentsMonCheckChange" />
   </wsdl:message>
@@ -17231,6 +17630,54 @@
   <wsdl:message name="UniversityCoursesStudentsDataSubjectsChangeSoapOut">
     <wsdl:part name="parameters" element="tns:UniversityCoursesStudentsDataSubjectsChangeResponse" />
   </wsdl:message>
+  <wsdl:message name="WebPersonsGetSoapIn">
+    <wsdl:part name="parameters" element="tns:WebPersonsGet" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsGetSoapOut">
+    <wsdl:part name="parameters" element="tns:WebPersonsGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsEducationGetSoapIn">
+    <wsdl:part name="parameters" element="tns:WebPersonsEducationGet" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsEducationGetSoapOut">
+    <wsdl:part name="parameters" element="tns:WebPersonsEducationGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsForeignGetSoapIn">
+    <wsdl:part name="parameters" element="tns:WebPersonsForeignGet" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsForeignGetSoapOut">
+    <wsdl:part name="parameters" element="tns:WebPersonsForeignGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsTrusteeGetSoapIn">
+    <wsdl:part name="parameters" element="tns:WebPersonsTrusteeGet" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsTrusteeGetSoapOut">
+    <wsdl:part name="parameters" element="tns:WebPersonsTrusteeGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsStatusHistoryGetSoapIn">
+    <wsdl:part name="parameters" element="tns:WebPersonsStatusHistoryGet" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsStatusHistoryGetSoapOut">
+    <wsdl:part name="parameters" element="tns:WebPersonsStatusHistoryGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsStatusTypeGetSoapIn">
+    <wsdl:part name="parameters" element="tns:WebPersonsStatusTypeGet" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsStatusTypeGetSoapOut">
+    <wsdl:part name="parameters" element="tns:WebPersonsStatusTypeGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsPhotoGetSoapIn">
+    <wsdl:part name="parameters" element="tns:WebPersonsPhotoGet" />
+  </wsdl:message>
+  <wsdl:message name="WebPersonsPhotoGetSoapOut">
+    <wsdl:part name="parameters" element="tns:WebPersonsPhotoGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeliveryOfDocumentsErrorsCheckSoapIn">
+    <wsdl:part name="parameters" element="tns:DeliveryOfDocumentsErrorsCheck" />
+  </wsdl:message>
+  <wsdl:message name="DeliveryOfDocumentsErrorsCheckSoapOut">
+    <wsdl:part name="parameters" element="tns:DeliveryOfDocumentsErrorsCheckResponse" />
+  </wsdl:message>
   <wsdl:message name="DeliveryOfDocumentsDataFindSoapIn">
     <wsdl:part name="parameters" element="tns:DeliveryOfDocumentsDataFind" />
   </wsdl:message>
@@ -17380,6 +17827,12 @@
   </wsdl:message>
   <wsdl:message name="ExaminationSheetsGetSoapOut">
     <wsdl:part name="parameters" element="tns:ExaminationSheetsGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="ExaminationSheetsGet2SoapIn">
+    <wsdl:part name="parameters" element="tns:ExaminationSheetsGet2" />
+  </wsdl:message>
+  <wsdl:message name="ExaminationSheetsGet2SoapOut">
+    <wsdl:part name="parameters" element="tns:ExaminationSheetsGet2Response" />
   </wsdl:message>
   <wsdl:message name="ExaminationSheetsRequestsGetSoapIn">
     <wsdl:part name="parameters" element="tns:ExaminationSheetsRequestsGet" />
@@ -17987,17 +18440,11 @@
   <wsdl:message name="ReportEmploymentsDataEditSoapOut">
     <wsdl:part name="parameters" element="tns:ReportEmploymentsDataEditResponse" />
   </wsdl:message>
-  <wsdl:message name="ReportEmploymentsDataDelSoapIn">
-    <wsdl:part name="parameters" element="tns:ReportEmploymentsDataDel" />
+  <wsdl:message name="OrderOfDocumentRenewTypesGetSoapIn">
+    <wsdl:part name="parameters" element="tns:OrderOfDocumentRenewTypesGet" />
   </wsdl:message>
-  <wsdl:message name="ReportEmploymentsDataDelSoapOut">
-    <wsdl:part name="parameters" element="tns:ReportEmploymentsDataDelResponse" />
-  </wsdl:message>
-  <wsdl:message name="ReportEmploymentsAutoFillSoapIn">
-    <wsdl:part name="parameters" element="tns:ReportEmploymentsAutoFill" />
-  </wsdl:message>
-  <wsdl:message name="ReportEmploymentsAutoFillSoapOut">
-    <wsdl:part name="parameters" element="tns:ReportEmploymentsAutoFillResponse" />
+  <wsdl:message name="OrderOfDocumentRenewTypesGetSoapOut">
+    <wsdl:part name="parameters" element="tns:OrderOfDocumentRenewTypesGetResponse" />
   </wsdl:message>
   <wsdl:message name="OrderOfDocumentsForAddRequestsGetSoapIn">
     <wsdl:part name="parameters" element="tns:OrderOfDocumentsForAddRequestsGet" />
@@ -18755,11 +19202,11 @@
   <wsdl:message name="DeliveryOfDocumentsDataChangeSoapOut">
     <wsdl:part name="parameters" element="tns:DeliveryOfDocumentsDataChangeResponse" />
   </wsdl:message>
-  <wsdl:message name="DeliveryOfDocumentsErrorsCheckSoapIn">
-    <wsdl:part name="parameters" element="tns:DeliveryOfDocumentsErrorsCheck" />
+  <wsdl:message name="RegulationDocumentVerificationHistoryTypesGetSoapIn">
+    <wsdl:part name="parameters" element="tns:RegulationDocumentVerificationHistoryTypesGet" />
   </wsdl:message>
-  <wsdl:message name="DeliveryOfDocumentsErrorsCheckSoapOut">
-    <wsdl:part name="parameters" element="tns:DeliveryOfDocumentsErrorsCheckResponse" />
+  <wsdl:message name="RegulationDocumentVerificationHistoryTypesGetSoapOut">
+    <wsdl:part name="parameters" element="tns:RegulationDocumentVerificationHistoryTypesGetResponse" />
   </wsdl:message>
   <wsdl:message name="RegulationDocumentsGetSoapIn">
     <wsdl:part name="parameters" element="tns:RegulationDocumentsGet" />
@@ -19517,12 +19964,6 @@
   <wsdl:message name="OrderOfDocumentsTypesGetSoapOut">
     <wsdl:part name="parameters" element="tns:OrderOfDocumentsTypesGetResponse" />
   </wsdl:message>
-  <wsdl:message name="OrderOfDocumentRenewTypesGetSoapIn">
-    <wsdl:part name="parameters" element="tns:OrderOfDocumentRenewTypesGet" />
-  </wsdl:message>
-  <wsdl:message name="OrderOfDocumentRenewTypesGetSoapOut">
-    <wsdl:part name="parameters" element="tns:OrderOfDocumentRenewTypesGetResponse" />
-  </wsdl:message>
   <wsdl:message name="StateOrdersGenerateHtmlSoapIn">
     <wsdl:part name="parameters" element="tns:StateOrdersGenerateHtml" />
   </wsdl:message>
@@ -20087,6 +20528,12 @@
   <wsdl:message name="UniversityGroupsAddSoapOut">
     <wsdl:part name="parameters" element="tns:UniversityGroupsAddResponse" />
   </wsdl:message>
+  <wsdl:message name="UniversityGroupsCopySoapIn">
+    <wsdl:part name="parameters" element="tns:UniversityGroupsCopy" />
+  </wsdl:message>
+  <wsdl:message name="UniversityGroupsCopySoapOut">
+    <wsdl:part name="parameters" element="tns:UniversityGroupsCopyResponse" />
+  </wsdl:message>
   <wsdl:message name="UniversityGroupsEditSoapIn">
     <wsdl:part name="parameters" element="tns:UniversityGroupsEdit" />
   </wsdl:message>
@@ -20129,13 +20576,15 @@
   <wsdl:message name="RegulationDocumentDataTypesGetSoapOut">
     <wsdl:part name="parameters" element="tns:RegulationDocumentDataTypesGetResponse" />
   </wsdl:message>
-  <wsdl:message name="RegulationDocumentVerificationHistoryTypesGetSoapIn">
-    <wsdl:part name="parameters" element="tns:RegulationDocumentVerificationHistoryTypesGet" />
-  </wsdl:message>
-  <wsdl:message name="RegulationDocumentVerificationHistoryTypesGetSoapOut">
-    <wsdl:part name="parameters" element="tns:RegulationDocumentVerificationHistoryTypesGetResponse" />
-  </wsdl:message>
   <wsdl:portType name="EDBOGuidesSoap">
+    <wsdl:operation name="ReportEmploymentsDataDel">
+      <wsdl:input message="tns:ReportEmploymentsDataDelSoapIn" />
+      <wsdl:output message="tns:ReportEmploymentsDataDelSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ReportEmploymentsAutoFill">
+      <wsdl:input message="tns:ReportEmploymentsAutoFillSoapIn" />
+      <wsdl:output message="tns:ReportEmploymentsAutoFillSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="ReportEmploymentsMonCheckChange">
       <wsdl:input message="tns:ReportEmploymentsMonCheckChangeSoapIn" />
       <wsdl:output message="tns:ReportEmploymentsMonCheckChangeSoapOut" />
@@ -20512,6 +20961,38 @@
       <wsdl:input message="tns:UniversityCoursesStudentsDataSubjectsChangeSoapIn" />
       <wsdl:output message="tns:UniversityCoursesStudentsDataSubjectsChangeSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="WebPersonsGet">
+      <wsdl:input message="tns:WebPersonsGetSoapIn" />
+      <wsdl:output message="tns:WebPersonsGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsEducationGet">
+      <wsdl:input message="tns:WebPersonsEducationGetSoapIn" />
+      <wsdl:output message="tns:WebPersonsEducationGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsForeignGet">
+      <wsdl:input message="tns:WebPersonsForeignGetSoapIn" />
+      <wsdl:output message="tns:WebPersonsForeignGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsTrusteeGet">
+      <wsdl:input message="tns:WebPersonsTrusteeGetSoapIn" />
+      <wsdl:output message="tns:WebPersonsTrusteeGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsStatusHistoryGet">
+      <wsdl:input message="tns:WebPersonsStatusHistoryGetSoapIn" />
+      <wsdl:output message="tns:WebPersonsStatusHistoryGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsStatusTypeGet">
+      <wsdl:input message="tns:WebPersonsStatusTypeGetSoapIn" />
+      <wsdl:output message="tns:WebPersonsStatusTypeGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsPhotoGet">
+      <wsdl:input message="tns:WebPersonsPhotoGetSoapIn" />
+      <wsdl:output message="tns:WebPersonsPhotoGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DeliveryOfDocumentsErrorsCheck">
+      <wsdl:input message="tns:DeliveryOfDocumentsErrorsCheckSoapIn" />
+      <wsdl:output message="tns:DeliveryOfDocumentsErrorsCheckSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="DeliveryOfDocumentsDataFind">
       <wsdl:input message="tns:DeliveryOfDocumentsDataFindSoapIn" />
       <wsdl:output message="tns:DeliveryOfDocumentsDataFindSoapOut" />
@@ -20611,6 +21092,10 @@
     <wsdl:operation name="ExaminationSheetsGet">
       <wsdl:input message="tns:ExaminationSheetsGetSoapIn" />
       <wsdl:output message="tns:ExaminationSheetsGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ExaminationSheetsGet2">
+      <wsdl:input message="tns:ExaminationSheetsGet2SoapIn" />
+      <wsdl:output message="tns:ExaminationSheetsGet2SoapOut" />
     </wsdl:operation>
     <wsdl:operation name="ExaminationSheetsRequestsGet">
       <wsdl:input message="tns:ExaminationSheetsRequestsGetSoapIn" />
@@ -21016,13 +21501,9 @@
       <wsdl:input message="tns:ReportEmploymentsDataEditSoapIn" />
       <wsdl:output message="tns:ReportEmploymentsDataEditSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="ReportEmploymentsDataDel">
-      <wsdl:input message="tns:ReportEmploymentsDataDelSoapIn" />
-      <wsdl:output message="tns:ReportEmploymentsDataDelSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="ReportEmploymentsAutoFill">
-      <wsdl:input message="tns:ReportEmploymentsAutoFillSoapIn" />
-      <wsdl:output message="tns:ReportEmploymentsAutoFillSoapOut" />
+    <wsdl:operation name="OrderOfDocumentRenewTypesGet">
+      <wsdl:input message="tns:OrderOfDocumentRenewTypesGetSoapIn" />
+      <wsdl:output message="tns:OrderOfDocumentRenewTypesGetSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="OrderOfDocumentsForAddRequestsGet">
       <wsdl:input message="tns:OrderOfDocumentsForAddRequestsGetSoapIn" />
@@ -21529,9 +22010,9 @@
       <wsdl:input message="tns:DeliveryOfDocumentsDataChangeSoapIn" />
       <wsdl:output message="tns:DeliveryOfDocumentsDataChangeSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="DeliveryOfDocumentsErrorsCheck">
-      <wsdl:input message="tns:DeliveryOfDocumentsErrorsCheckSoapIn" />
-      <wsdl:output message="tns:DeliveryOfDocumentsErrorsCheckSoapOut" />
+    <wsdl:operation name="RegulationDocumentVerificationHistoryTypesGet">
+      <wsdl:input message="tns:RegulationDocumentVerificationHistoryTypesGetSoapIn" />
+      <wsdl:output message="tns:RegulationDocumentVerificationHistoryTypesGetSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="RegulationDocumentsGet">
       <wsdl:input message="tns:RegulationDocumentsGetSoapIn" />
@@ -22040,10 +22521,6 @@
       <wsdl:input message="tns:OrderOfDocumentsTypesGetSoapIn" />
       <wsdl:output message="tns:OrderOfDocumentsTypesGetSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="OrderOfDocumentRenewTypesGet">
-      <wsdl:input message="tns:OrderOfDocumentRenewTypesGetSoapIn" />
-      <wsdl:output message="tns:OrderOfDocumentRenewTypesGetSoapOut" />
-    </wsdl:operation>
     <wsdl:operation name="StateOrdersGenerateHtml">
       <wsdl:input message="tns:StateOrdersGenerateHtmlSoapIn" />
       <wsdl:output message="tns:StateOrdersGenerateHtmlSoapOut" />
@@ -22421,6 +22898,10 @@
       <wsdl:input message="tns:UniversityGroupsAddSoapIn" />
       <wsdl:output message="tns:UniversityGroupsAddSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="UniversityGroupsCopy">
+      <wsdl:input message="tns:UniversityGroupsCopySoapIn" />
+      <wsdl:output message="tns:UniversityGroupsCopySoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="UniversityGroupsEdit">
       <wsdl:input message="tns:UniversityGroupsEditSoapIn" />
       <wsdl:output message="tns:UniversityGroupsEditSoapOut" />
@@ -22449,13 +22930,27 @@
       <wsdl:input message="tns:RegulationDocumentDataTypesGetSoapIn" />
       <wsdl:output message="tns:RegulationDocumentDataTypesGetSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="RegulationDocumentVerificationHistoryTypesGet">
-      <wsdl:input message="tns:RegulationDocumentVerificationHistoryTypesGetSoapIn" />
-      <wsdl:output message="tns:RegulationDocumentVerificationHistoryTypesGetSoapOut" />
-    </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="EDBOGuidesSoap" type="tns:EDBOGuidesSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ReportEmploymentsDataDel">
+      <soap:operation soapAction="http://edboservice.ua/ReportEmploymentsDataDel" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReportEmploymentsAutoFill">
+      <soap:operation soapAction="http://edboservice.ua/ReportEmploymentsAutoFill" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="ReportEmploymentsMonCheckChange">
       <soap:operation soapAction="http://edboservice.ua/ReportEmploymentsMonCheckChange" style="document" />
       <wsdl:input>
@@ -23302,6 +23797,78 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="WebPersonsGet">
+      <soap:operation soapAction="http://edboservice.ua/WebPersonsGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsEducationGet">
+      <soap:operation soapAction="http://edboservice.ua/WebPersonsEducationGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsForeignGet">
+      <soap:operation soapAction="http://edboservice.ua/WebPersonsForeignGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsTrusteeGet">
+      <soap:operation soapAction="http://edboservice.ua/WebPersonsTrusteeGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsStatusHistoryGet">
+      <soap:operation soapAction="http://edboservice.ua/WebPersonsStatusHistoryGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsStatusTypeGet">
+      <soap:operation soapAction="http://edboservice.ua/WebPersonsStatusTypeGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsPhotoGet">
+      <soap:operation soapAction="http://edboservice.ua/WebPersonsPhotoGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeliveryOfDocumentsErrorsCheck">
+      <soap:operation soapAction="http://edboservice.ua/DeliveryOfDocumentsErrorsCheck" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="DeliveryOfDocumentsDataFind">
       <soap:operation soapAction="http://edboservice.ua/DeliveryOfDocumentsDataFind" style="document" />
       <wsdl:input>
@@ -23520,6 +24087,15 @@
     </wsdl:operation>
     <wsdl:operation name="ExaminationSheetsGet">
       <soap:operation soapAction="http://edboservice.ua/ExaminationSheetsGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ExaminationSheetsGet2">
+      <soap:operation soapAction="http://edboservice.ua/ExaminationSheetsGet2" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -24436,17 +25012,8 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="ReportEmploymentsDataDel">
-      <soap:operation soapAction="http://edboservice.ua/ReportEmploymentsDataDel" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="ReportEmploymentsAutoFill">
-      <soap:operation soapAction="http://edboservice.ua/ReportEmploymentsAutoFill" style="document" />
+    <wsdl:operation name="OrderOfDocumentRenewTypesGet">
+      <soap:operation soapAction="http://edboservice.ua/OrderOfDocumentRenewTypesGet" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -25588,8 +26155,8 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="DeliveryOfDocumentsErrorsCheck">
-      <soap:operation soapAction="http://edboservice.ua/DeliveryOfDocumentsErrorsCheck" style="document" />
+    <wsdl:operation name="RegulationDocumentVerificationHistoryTypesGet">
+      <soap:operation soapAction="http://edboservice.ua/RegulationDocumentVerificationHistoryTypesGet" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -26731,15 +27298,6 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="OrderOfDocumentRenewTypesGet">
-      <soap:operation soapAction="http://edboservice.ua/OrderOfDocumentRenewTypesGet" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="StateOrdersGenerateHtml">
       <soap:operation soapAction="http://edboservice.ua/StateOrdersGenerateHtml" style="document" />
       <wsdl:input>
@@ -27586,6 +28144,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UniversityGroupsCopy">
+      <soap:operation soapAction="http://edboservice.ua/UniversityGroupsCopy" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="UniversityGroupsEdit">
       <soap:operation soapAction="http://edboservice.ua/UniversityGroupsEdit" style="document" />
       <wsdl:input>
@@ -27649,18 +28216,27 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="RegulationDocumentVerificationHistoryTypesGet">
-      <soap:operation soapAction="http://edboservice.ua/RegulationDocumentVerificationHistoryTypesGet" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="EDBOGuidesSoap12" type="tns:EDBOGuidesSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ReportEmploymentsDataDel">
+      <soap12:operation soapAction="http://edboservice.ua/ReportEmploymentsDataDel" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReportEmploymentsAutoFill">
+      <soap12:operation soapAction="http://edboservice.ua/ReportEmploymentsAutoFill" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="ReportEmploymentsMonCheckChange">
       <soap12:operation soapAction="http://edboservice.ua/ReportEmploymentsMonCheckChange" style="document" />
       <wsdl:input>
@@ -28507,6 +29083,78 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="WebPersonsGet">
+      <soap12:operation soapAction="http://edboservice.ua/WebPersonsGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsEducationGet">
+      <soap12:operation soapAction="http://edboservice.ua/WebPersonsEducationGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsForeignGet">
+      <soap12:operation soapAction="http://edboservice.ua/WebPersonsForeignGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsTrusteeGet">
+      <soap12:operation soapAction="http://edboservice.ua/WebPersonsTrusteeGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsStatusHistoryGet">
+      <soap12:operation soapAction="http://edboservice.ua/WebPersonsStatusHistoryGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsStatusTypeGet">
+      <soap12:operation soapAction="http://edboservice.ua/WebPersonsStatusTypeGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebPersonsPhotoGet">
+      <soap12:operation soapAction="http://edboservice.ua/WebPersonsPhotoGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeliveryOfDocumentsErrorsCheck">
+      <soap12:operation soapAction="http://edboservice.ua/DeliveryOfDocumentsErrorsCheck" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="DeliveryOfDocumentsDataFind">
       <soap12:operation soapAction="http://edboservice.ua/DeliveryOfDocumentsDataFind" style="document" />
       <wsdl:input>
@@ -28725,6 +29373,15 @@
     </wsdl:operation>
     <wsdl:operation name="ExaminationSheetsGet">
       <soap12:operation soapAction="http://edboservice.ua/ExaminationSheetsGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ExaminationSheetsGet2">
+      <soap12:operation soapAction="http://edboservice.ua/ExaminationSheetsGet2" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -29641,17 +30298,8 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="ReportEmploymentsDataDel">
-      <soap12:operation soapAction="http://edboservice.ua/ReportEmploymentsDataDel" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="ReportEmploymentsAutoFill">
-      <soap12:operation soapAction="http://edboservice.ua/ReportEmploymentsAutoFill" style="document" />
+    <wsdl:operation name="OrderOfDocumentRenewTypesGet">
+      <soap12:operation soapAction="http://edboservice.ua/OrderOfDocumentRenewTypesGet" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -30793,8 +31441,8 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="DeliveryOfDocumentsErrorsCheck">
-      <soap12:operation soapAction="http://edboservice.ua/DeliveryOfDocumentsErrorsCheck" style="document" />
+    <wsdl:operation name="RegulationDocumentVerificationHistoryTypesGet">
+      <soap12:operation soapAction="http://edboservice.ua/RegulationDocumentVerificationHistoryTypesGet" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -31936,15 +32584,6 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="OrderOfDocumentRenewTypesGet">
-      <soap12:operation soapAction="http://edboservice.ua/OrderOfDocumentRenewTypesGet" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="StateOrdersGenerateHtml">
       <soap12:operation soapAction="http://edboservice.ua/StateOrdersGenerateHtml" style="document" />
       <wsdl:input>
@@ -32791,6 +33430,15 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UniversityGroupsCopy">
+      <soap12:operation soapAction="http://edboservice.ua/UniversityGroupsCopy" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="UniversityGroupsEdit">
       <soap12:operation soapAction="http://edboservice.ua/UniversityGroupsEdit" style="document" />
       <wsdl:input>
@@ -32847,15 +33495,6 @@
     </wsdl:operation>
     <wsdl:operation name="RegulationDocumentDataTypesGet">
       <soap12:operation soapAction="http://edboservice.ua/RegulationDocumentDataTypesGet" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="RegulationDocumentVerificationHistoryTypesGet">
-      <soap12:operation soapAction="http://edboservice.ua/RegulationDocumentVerificationHistoryTypesGet" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

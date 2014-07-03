@@ -205,7 +205,7 @@ public class EdboDocuments {
                     if (edboId == 0) {
                         submitStatus.setError(true);
                         submitStatus.setBackTransaction(false);
-                        submitStatus.setMessage(submitStatus.getMessage() + number + "  :  " + soap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
+                        submitStatus.setMessage(submitStatus.getMessage() + number + "  :  " + edbo.processErrors() + "<br />");
 //                            System.out.println(number + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
                     }
                     document.updateInt("edboID", edboId);
