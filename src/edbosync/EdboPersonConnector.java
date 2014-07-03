@@ -73,10 +73,11 @@ public class EdboPersonConnector {
     protected final boolean login() {
         // wsdl connection url:
         // http://10.1.103.99:8080/EDBOPerson/EDBOPerson.asmx?WSDL
+        // http://iskt-1.znu.edu.ua:9091/EDBOPerson/EDBOPerson.asmx?WSDL
         SoapConnectionData data = new SoapConnectionData();
         soap = edboPerson.getEDBOPersonSoap();
         sessionGuid = soap.login(data.getSoapUser(), data.getSoapPassword(), 0, data.getApplicationKey());
-//        sessionGuid = personSoap.login("davidovskij.v@edbo.gov.ua", "testpass1917", 0, ""); //// TEST !!!!!!!!!!!!!!!!
+//        sessionGuid = soap.login("davidovskij.v@edbo.gov.ua", "testpass1917", 0, ""); //// TEST !!!!!!!!!!!!!!!!
         if (sessionGuid.length() != 36) {
             // при соединении возникла ошибка
             System.err.println(sessionGuid);

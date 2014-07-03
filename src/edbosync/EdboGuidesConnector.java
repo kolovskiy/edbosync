@@ -73,6 +73,7 @@ public class EdboGuidesConnector {
     protected final boolean login() {
         // wsdl connection url:
         // http://10.1.103.99:8080/EDBOGuides/EDBOGuides.asmx?WSDL
+        // http://iskt-1.znu.edu.ua:9091/EDBOGuides/EDBOGuides.asmx?WSDL
         SoapConnectionData data = new SoapConnectionData();
         soap = edboGuides.getEDBOGuidesSoap();
         sessionGuid = soap.login(data.getSoapUser(), data.getSoapPassword(), 0, data.getApplicationKey());
