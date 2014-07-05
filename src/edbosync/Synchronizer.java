@@ -1192,7 +1192,7 @@ public class Synchronizer {
                     String dateGet = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(document.getDate("DateGet"));
                     String issued = document.getString("Issued");
                     int awardTypeId = document.getInt("PersonDocumentsAwardsTypesID");
-                    float attestatval = (typeId == 11 || typeId == 12) ? document.getFloat("AtestatValue") * 10.0f : document.getFloat("AtestatValue");
+                    float attestatval = document.getFloat("AtestatValue");
                     String attestatValue = Float.toString(attestatval);
                     if (personSoap.personDocumentsEdit(
                             sessionGuid,

@@ -120,15 +120,19 @@ public class EdboRequest {
                 int edboId = request.getInt("edboID");
                 // если запись уже была добавлена, то обновляем ее поля в ЕДБО
                 if (edboId != 0) {
-                    if (soap.personRequestEdit(sessionGuid,
-                            request.getInt("edboID"),
-                            originalDocumentsAdd,
-                            isNeedHostel,
-                            codeOfBusiness,
-                            isBudget,
-                            isContract,
-                            isHigherEducation,
-                            skipDocumentValue) == 0) {
+                    if (soap.personRequestEdit2(sessionGuid, // SessionGUID
+                            request.getInt("edboID"), // Id_PersonRequest
+                            originalDocumentsAdd, // OriginalDocumentsAdd
+                            isNeedHostel, // IsNeedHostel
+                            codeOfBusiness, // CodeOfBusiness
+                            isBudget, // IsBudget
+                            isContract, // IsContract
+                            isHigherEducation, // IsHigherEducation
+                            skipDocumentValue, // SkipDocumentValue
+                            languageExId, // Id_LanguageEx
+                            0, // Id_ForeignType
+                            (isResident == 1) ? 0 : 1 // IsForeignWay
+                            ) == 0) {
                         submitStatus.setError(true);
                         submitStatus.setBackTransaction(false);
                         submitStatus.setMessage(submitStatus.getMessage() + "Помилка редагування заявки  :  " + edbo.processErrors() + "<br />");

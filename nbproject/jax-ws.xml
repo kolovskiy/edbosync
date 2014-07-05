@@ -2,38 +2,6 @@
 <jax-ws xmlns="http://www.netbeans.org/ns/jax-ws/1">
   <services/>
   <clients>
-    <client name="EDBOPerson">
-      <wsdl-url>http://10.1.103.99:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsdl-url>
-      <local-wsdl-file>10.1.103.99_8080/EDBOPerson/EDBOPerson.asmx.wsdl</local-wsdl-file>
-      <package-name>ua.edboservice</package-name>
-      <catalog-file>catalog.xml</catalog-file>
-      <wsimport-options>
-        <wsimport-option>
-          <wsimport-option-name>extension</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>verbose</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>fork</wsimport-option-name>
-          <wsimport-option-value>false</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>wsdlLocation</wsimport-option-name>
-          <wsimport-option-value>http://10.1.103.99:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>xnocompile</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>xendorsed</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-      </wsimport-options>
-    </client>
     <client name="EDBOGuides">
       <wsdl-url>http://10.1.103.99:8080/EDBOGuides/EDBOGuides.asmx?WSDL</wsdl-url>
       <local-wsdl-file>10.1.103.99_8080/EDBOGuides/EDBOGuides.asmx.wsdl</local-wsdl-file>
@@ -55,6 +23,38 @@
         <wsimport-option>
           <wsimport-option-name>wsdlLocation</wsimport-option-name>
           <wsimport-option-value>http://10.1.103.99:8080/EDBOGuides/EDBOGuides.asmx?WSDL</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>xnocompile</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>xendorsed</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+      </wsimport-options>
+    </client>
+    <client name="EDBOPerson">
+      <wsdl-url>http://10.1.103.99:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsdl-url>
+      <local-wsdl-file>10.1.103.99_8080/EDBOPerson/EDBOPerson.asmx.wsdl</local-wsdl-file>
+      <package-name>ua.edboservice</package-name>
+      <catalog-file>catalog.xml</catalog-file>
+      <wsimport-options>
+        <wsimport-option>
+          <wsimport-option-name>extension</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>verbose</wsimport-option-name>
+          <wsimport-option-value>true</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>fork</wsimport-option-name>
+          <wsimport-option-value>false</wsimport-option-value>
+        </wsimport-option>
+        <wsimport-option>
+          <wsimport-option-name>wsdlLocation</wsimport-option-name>
+          <wsimport-option-value>http://10.1.103.99:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsimport-option-value>
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>xnocompile</wsimport-option-name>
