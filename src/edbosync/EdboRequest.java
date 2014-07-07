@@ -8,8 +8,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import ua.edboservice.ArrayOfDPersonCourses;
 import ua.edboservice.ArrayOfDPersonRequests2;
+import ua.edboservice.ArrayOfDPersonRequestsStatuses2;
 import ua.edboservice.DPersonCourses;
 import ua.edboservice.DPersonRequests2;
+import ua.edboservice.DPersonRequestsStatuses2;
 import ua.edboservice.EDBOPersonSoap;
 
 /**
@@ -132,7 +134,7 @@ public class EdboRequest {
                             languageExId, // Id_LanguageEx
                             0, // Id_ForeignType
                             (isResident == 1) ? 0 : 1 // IsForeignWay
-                            ) == 0) {
+                    ) == 0) {
                         submitStatus.setError(true);
                         submitStatus.setBackTransaction(false);
                         submitStatus.setMessage(submitStatus.getMessage() + "Помилка редагування заявки  :  " + edbo.processErrors() + "<br />");
@@ -360,5 +362,58 @@ public class EdboRequest {
             System.out.println(dpr.getUniversitySpecialitiesKode());
         }
         return json.toJson(dprs);
+    }
+
+    /**
+     * Изменить статус заявок
+     *
+     * @param from Исходный статус
+     * @param to Целевой статус
+     * @param dateRequests Дата создания заявок
+     * @param numberProtocol Номер протокола обработки заявок комиссией
+     * @param dateProtocol Дата проотокола обработки заявок комиссией
+     * @return Статус попытки в формате json
+     */
+    public String changeStatuses(int from, int to, String dateRequests, String numberProtocol, String dateProtocol) {
+        SubmitStatus submitStatus = new SubmitStatus();
+        Gson json = new Gson();
+        submitStatus.setError(false);
+        submitStatus.setBackTransaction(false);
+        String sql = "SELECT * FROM abiturient.personspeciality where DATE(CreateDate) = \""
+                + dateRequests + "\" and StatusID = "
+                + from + ";";
+        ResultSet resultSet = dbc.executeQuery(sql);
+        try {
+            while (resultSet.next()) {
+                int idPersonRequest = resultSet.getInt("edboID");
+                ArrayOfDPersonRequestsStatuses2 arrayOfDPersonRequestsStatuses2 = soap.personRequestsStatusesGet2(sessionGuid, languageId, idPersonRequest);
+                if (arrayOfDPersonRequestsStatuses2 == null) {
+                    System.err.println(idPersonRequest + " : " + edbo.processErrors());
+                }
+                List<DPersonRequestsStatuses2> dPersonRequestsStatuses2s = arrayOfDPersonRequestsStatuses2.getDPersonRequestsStatuses2();
+                DPersonRequestsStatuses2 lastStatus = dPersonRequestsStatuses2s.get(0);
+                int idUniversityEntrantWave = lastStatus.getIdUniversityEntrantWave();
+                int submitResult = soap.personRequestsStatusChange2(sessionGuid, // SessionGUID
+                        idPersonRequest, // Id_PersonRequest
+                        to, // Id_PersonRequestStatusType
+                        "", // Descryption
+                        idUniversityEntrantWave, // Id_UniversityEntrantWave
+                        -1, // IsBudejt
+                        -1, // IsContract
+                        numberProtocol, // NumberProtocol
+                        dateProtocol // DateProtocol
+                );
+                if (submitResult == 0) {
+                    System.err.println(edbo.processErrors());
+                } else {
+                    resultSet.updateInt("StatusID", to);
+                    resultSet.updateRow();
+                    System.out.println(idPersonRequest + "\t:\tстатус заявки змінено.");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EdboRequest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return json.toJson(submitStatus);
     }
 }

@@ -51,7 +51,7 @@ public class EdboDocuments {
         Gson json = new Gson();
         ArrayList<PersonDocument> documents = new ArrayList<PersonDocument>();
 
-        ArrayOfDPersonDocuments documentsArray = soap.personDocumentsGet(sessionGuid, actualDate, languageId, personCodeU, 0, 0, "", -1);
+        ArrayOfDPersonDocuments documentsArray = soap.personDocumentsGet(sessionGuid, actualDate, languageId, personCodeU, 0, 0, edbo.getUniversityKey(), -1);
         if (documentsArray == null) {
             // возникла ошибка при получении данных из ЕДБО
             return edbo.processErrorsJson();
