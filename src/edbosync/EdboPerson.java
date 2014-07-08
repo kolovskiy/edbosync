@@ -214,7 +214,7 @@ public class EdboPerson {
                     String housing = person.getString("Housing");
                     
                     // данные документа об образовании
-                    String sqlEntrantDocument = "SELECT * FROM abiturient.documents WHERE `documents`.`idDocuments` = " + entrantDocumentIdMySql + ";";
+                    String sqlEntrantDocument = "SELECT * FROM documents WHERE `documents`.`idDocuments` = " + entrantDocumentIdMySql + ";";
                     ResultSet entrantDocument = db.executeQuery(sqlEntrantDocument);
                     if (!entrantDocument.next()) {
                         Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор документа об образовании");
@@ -234,7 +234,7 @@ public class EdboPerson {
                     System.out.println(entrantDocumentValue);
 
                     // удостоверение личности
-                    String sqlPersonalDocument = "SELECT * FROM abiturient.documents WHERE `documents`.`idDocuments` = " + personalDocumentIdMySql + ";";
+                    String sqlPersonalDocument = "SELECT * FROM documents WHERE `documents`.`idDocuments` = " + personalDocumentIdMySql + ";";
                     ResultSet personalDocument = db.executeQuery(sqlPersonalDocument);
                     if (!personalDocument.next()) {
                         Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор документа об удостоверении личности");
@@ -249,7 +249,7 @@ public class EdboPerson {
 
 //                    System.out.println(documentSeries + documentNumber + documentDate + documentIssued + documentTypeId);
 
-                    String sqlLanguage = "SELECT * FROM abiturient.languages WHERE idLanguages = " + languageIdPerson + ";";
+                    String sqlLanguage = "SELECT * FROM languages WHERE idLanguages = " + languageIdPerson + ";";
                     ResultSet languageResult = db.executeQuery(sqlLanguage);
                     if (!languageResult.next()) {
                         Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор иностранного языка персоны");
@@ -258,7 +258,7 @@ public class EdboPerson {
                     }
                     String languages = languageResult.getString("LanguagesName");
 
-                    String sqlContacts = "SELECT * FROM abiturient.personcontacts WHERE PersonID = " + personIdMySql + ";";
+                    String sqlContacts = "SELECT * FROM personcontacts WHERE PersonID = " + personIdMySql + ";";
                     ResultSet contacts = db.executeQuery(sqlContacts);
                     String phone = "";
                     String mobile = "";
@@ -331,7 +331,7 @@ public class EdboPerson {
                         personIdEdbo = personRet.getIdPerson();
                     }
                     // Обновление кода и идентификатора персоны             
-                    String sqlUpdatePersonCode = "UPDATE `abiturient`.`person`\n"
+                    String sqlUpdatePersonCode = "UPDATE `person`\n"
                             + "SET\n"
                             + "`codeU` = \"" + personCodeU + "\",\n"
                             + "`edboID` = " + personIdEdbo + "\n"
@@ -341,13 +341,13 @@ public class EdboPerson {
 //                    ArrayList<PersonDocument> personDocuments = getPersonDocumentEdbo(personCodeU);
 //                    for (PersonDocument document : personDocuments) {
 //                        if (entrantDocumentNumber.equalsIgnoreCase(document.getNumber())) {
-//                            mySqlStatement.executeUpdate("UPDATE `abiturient`.`documents`\n"
+//                            mySqlStatement.executeUpdate("UPDATE `documents`\n"
 //                                    + "SET\n"
 //                                    + "`edboID` = " + document.getId_Document() + "\n"
 //                                    + "WHERE idDocuments = " + entrantDocumentIdMySql + ";");
 //                        }
 //                        if (documentNumber.equalsIgnoreCase(document.getNumber()) && documentSeries.equalsIgnoreCase(document.getSeries())) {
-//                            mySqlStatement.executeUpdate("UPDATE `abiturient`.`documents`\n"
+//                            mySqlStatement.executeUpdate("UPDATE `documents`\n"
 //                                    + "SET\n"
 //                                    + "`edboID` = " + document.getId_Document() + "\n"
 //                                    + "WHERE idDocuments = " + personalDocumentIdMySql + ";");

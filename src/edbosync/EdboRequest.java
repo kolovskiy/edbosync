@@ -57,7 +57,7 @@ public class EdboRequest {
         int isResident;
         try {
             // идентификатор персоны в базе ЕДБО
-            ResultSet person = dbc.executeQuery("SELECT `person`.`edboID`, `person`.`codeU`, `person`.`IsResident` FROM abiturient.person WHERE idPerson = " + personIdMySql + ";");
+            ResultSet person = dbc.executeQuery("SELECT `person`.`edboID`, `person`.`codeU`, `person`.`IsResident` FROM person WHERE idPerson = " + personIdMySql + ";");
             person.next();
             edboIdPerson = person.getInt(1);
             codeUPerson = person.getString(2);
@@ -70,7 +70,7 @@ public class EdboRequest {
             }
             ResultSet personRequestOlympiadRS = dbc.executeQuery(""
                     + "SELECT `personspeciality`.`OlympiadID` "
-                    + "FROM abiturient.personspeciality "
+                    + "FROM personspeciality "
                     + "WHERE idPersonSpeciality = " + personSpeciality + ";");
             int idOlympiadAward = 0; // идентификатор олимпиады персоны
             int personOlympiadIdEdbo = 0; // идентификатор записи об олимпиаде персоны в ЕДБО
@@ -81,7 +81,7 @@ public class EdboRequest {
             if (idOlympiadAward != 0) {
                 // в заявке есть олимпиада
                 // дополнительный балл
-                ResultSet olympBonus = dbc.executeQuery("SELECT OlympiadAwardBonus FROM abiturient.olympiadsawards WHERE OlympiadAwardID = " + idOlympiadAward + ";");
+                ResultSet olympBonus = dbc.executeQuery("SELECT OlympiadAwardBonus FROM olympiadsawards WHERE OlympiadAwardID = " + idOlympiadAward + ";");
                 if (olympBonus.next()) {
                     personRequestOlympiadAwardBonus = olympBonus.getString(1);
                 }
@@ -92,7 +92,7 @@ public class EdboRequest {
             }
             ResultSet request = dbc.executeQuery(""
                     + "SELECT * "
-                    + "FROM abiturient.personspeciality "
+                    + "FROM personspeciality "
                     + "WHERE idPersonSpeciality = " + personSpeciality + ";");
             if (request.next()) {
                 int originalDocumentsAdd = (request.getInt("isCopyEntrantDoc") == 1) ? 0 : 1;
@@ -154,7 +154,7 @@ public class EdboRequest {
                         // есть первый предмет сертификата: выбираем его идентификатор из таблицы предметов
                         ResultSet subject1 = dbc.executeQuery(""
                                 + "SELECT edboID "
-                                + "FROM abiturient.documentsubject "
+                                + "FROM documentsubject "
                                 + "WHERE idDocumentSubject = " + idDocumentSubject1 + ";");
                         if (subject1.next()) {
                             idDocumentSubject1 = subject1.getInt(1);
@@ -164,7 +164,7 @@ public class EdboRequest {
                         // есть второй предмет сертификата: выбираем его идентификатор из таблицы предметов
                         ResultSet subject2 = dbc.executeQuery(""
                                 + "SELECT edboID "
-                                + "FROM abiturient.documentsubject "
+                                + "FROM documentsubject "
                                 + "WHERE idDocumentSubject = " + idDocumentSubject2 + ";");
                         if (subject2.next()) {
                             idDocumentSubject2 = subject2.getInt(1);
@@ -174,7 +174,7 @@ public class EdboRequest {
                         // есть третий предмет сертификата: выбираем его идентификатор из таблицы предметов
                         ResultSet subject3 = dbc.executeQuery(""
                                 + "SELECT edboID "
-                                + "FROM abiturient.documentsubject "
+                                + "FROM documentsubject "
                                 + "WHERE idDocumentSubject = " + idDocumentSubject3 + ";");
                         if (subject3.next()) {
                             idDocumentSubject3 = subject3.getInt(1);
@@ -182,14 +182,14 @@ public class EdboRequest {
                     }
                     ResultSet specCodeRS = dbc.executeQuery(""
                             + "SELECT SpecialityKode "
-                            + "FROM abiturient.specialities "
+                            + "FROM specialities "
                             + "WHERE idSpeciality = " + specialityId + ";");
                     if (specCodeRS.next()) {
                         universitySpecialitiesCode = specCodeRS.getString(1);
                     }
                     ResultSet docCodeRs = dbc.executeQuery(""
                             + "SELECT edboID "
-                            + "FROM abiturient.documents "
+                            + "FROM documents "
                             + "WHERE idDocuments = " + idPersonDocument + ";");
                     if (docCodeRs.next()) {
                         idPersonDocument = docCodeRs.getInt(1);
@@ -202,14 +202,14 @@ public class EdboRequest {
                         List<DPersonCourses> coursesList = coursesArray.getDPersonCourses();
                         for (DPersonCourses courses : coursesList) {
                             ResultSet coursesIdRS = dbc.executeQuery("SELECT idCourseDP \n"
-                                    + "FROM abiturient.coursedp\n"
+                                    + "FROM coursedp\n"
                                     + "WHERE guid LIKE \"" + courses.getUniversityCourseCode() + "\";");
                             coursesIdRS.next();
                             int coursesIdLocal = coursesIdRS.getInt(1);
                             coursesIdRS.close();
                             ResultSet coursesRS = dbc.executeQuery(""
                                     + "SELECT * \n"
-                                    + "FROM abiturient.personcoursesdp \n"
+                                    + "FROM personcoursesdp \n"
                                     + "WHERE \n"
                                     + "PersonID = " + personIdMySql + " \n"
                                     + "AND\n"
@@ -227,14 +227,14 @@ public class EdboRequest {
                         }
                         // 2 проверяем наличие строки соответствующими курсами у персоны
                         ResultSet coursesGuidRS = dbc.executeQuery("SELECT guid\n"
-                                + "FROM `abiturient`.`coursedp` \n"
+                                + "FROM `coursedp` \n"
                                 + "WHERE \n"
                                 + "idCourseDP = " + personCourseIdold + ";");
                         coursesGuidRS.next();
                         String coursesGuid = coursesGuidRS.getString(1);
                         ResultSet coursesRS = dbc.executeQuery(""
                                 + "SELECT * \n"
-                                + "FROM abiturient.personcoursesdp \n"
+                                + "FROM personcoursesdp \n"
                                 + "WHERE \n"
                                 + "PersonID = " + personIdMySql + " \n"
                                 + "AND\n"
@@ -315,7 +315,7 @@ public class EdboRequest {
                     submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання заявки  :  " + edbo.processErrors() + "<br />");
                     return json.toJson(submitStatus);
                 } else {
-                    dbc.executeUpdate("UPDATE `abiturient`.`personspeciality`\n"
+                    dbc.executeUpdate("UPDATE `personspeciality`\n"
                             + "SET\n"
                             + "`edboID` = " + edboId + "\n"
                             + "WHERE idPersonSpeciality = " + personSpeciality + ";");
@@ -379,7 +379,7 @@ public class EdboRequest {
         Gson json = new Gson();
         submitStatus.setError(false);
         submitStatus.setBackTransaction(false);
-        String sql = "SELECT * FROM abiturient.personspeciality where DATE(CreateDate) = \""
+        String sql = "SELECT * FROM personspeciality where DATE(CreateDate) = \""
                 + dateRequests + "\" and StatusID = "
                 + from + ";";
         ResultSet resultSet = dbc.executeQuery(sql);

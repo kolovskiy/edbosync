@@ -132,7 +132,7 @@ public class EdboBenefits {
         List<DPersonBenefits2> benefitsList = benefitsArray.getDPersonBenefits2();
         for (DPersonBenefits2 dPersonBenefits : benefitsList) {
             ResultSet benefitMysql = dbc.executeQuery("SELECT * "
-                    + "FROM abiturient.personbenefits "
+                    + "FROM personbenefits "
                     + "WHERE PersonID = " + personIdMysql + " AND BenefitID = " + dPersonBenefits.getIdBenefit() + ";");
             try {
                 if (benefitMysql.next()) {

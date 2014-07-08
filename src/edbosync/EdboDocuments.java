@@ -129,7 +129,7 @@ public class EdboDocuments {
         }
         // ЕДБО ----> БД
         // очистим идентифкаторы документов оо образовании для ресинхронизации
-        dbc.executeUpdate("UPDATE `abiturient`.`documents`\n"
+        dbc.executeUpdate("UPDATE `documents`\n"
                 + "SET\n"
                 + "`documents`.`edboID` = null\n"
                 + "WHERE `documents`.`TypeID` in (2, 7,8,9,10,11,12,13,14,15) AND `documents`.`PersonID` = " + personIdMysql + ";");
@@ -140,7 +140,7 @@ public class EdboDocuments {
         }
         List<DPersonDocuments> documentsList = documentsArray.getDPersonDocuments();
         for (DPersonDocuments dDocument : documentsList) {
-            ResultSet documentMySql = dbc.executeQuery("SELECT * FROM `abiturient`.`documents` "
+            ResultSet documentMySql = dbc.executeQuery("SELECT * FROM `documents` "
                     + "WHERE PersonID = " + personIdMysql + " AND Numbers = \"" + dDocument.getDocumentNumbers() + "\";");
             try {
                 if (documentMySql.next()) {
@@ -169,7 +169,7 @@ public class EdboDocuments {
                 Logger.getLogger(EdboDocuments.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        String sqlSelectDocuments = "SELECT * FROM abiturient.documents WHERE PersonID = " + personIdMysql + ";";
+        String sqlSelectDocuments = "SELECT * FROM documents WHERE PersonID = " + personIdMysql + ";";
         ResultSet document;
         document = dbc.executeQuery(sqlSelectDocuments);
         try {
@@ -235,7 +235,7 @@ public class EdboDocuments {
         for (DocumentSubject subject : subjects) {
             ResultSet docsubRs = dbc.executeQuery(""
                     + "SELECT idDocumentSubject, edboID, SubjectValue "
-                    + "FROM abiturient.documentsubject "
+                    + "FROM documentsubject "
                     + "WHERE DocumentID = " + subject.getDocumentId() + " AND SubjectID = " + subject.getId_Subject() + ";");
             try {
                 if (docsubRs.next()) {
@@ -251,7 +251,7 @@ public class EdboDocuments {
                     }
                 } else {
                     // вставляем новую запись
-                    dbc.executeUpdate("INSERT INTO `abiturient`.`documentsubject`\n"
+                    dbc.executeUpdate("INSERT INTO `documentsubject`\n"
                             + "(\n"
                             + "`DocumentID`,\n"
                             + "`SubjectID`,\n"

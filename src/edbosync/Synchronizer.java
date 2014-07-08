@@ -248,7 +248,7 @@ public class Synchronizer {
                     } else {
                         mon_kod = speciality.getSpecSpecialityClasifierCode();
                     }
-                    String sql = "INSERT INTO `abiturient`.`specialities`"
+                    String sql = "INSERT INTO `specialities`"
                             + "(`idSpeciality`,"
                             + "`SpecialityName`,"
                             + "`SpecialityDirectionName`,"
@@ -283,7 +283,7 @@ public class Synchronizer {
                             + " end " + speciality.getDateEndPersonRequestSeason().toString());
                     System.out.println("");
                     try {
-                        ResultSet facultetInMysql = mySqlStatement.executeQuery("SELECT * FROM abiturient.facultets WHERE facultets.idFacultet = "
+                        ResultSet facultetInMysql = mySqlStatement.executeQuery("SELECT * FROM facultets WHERE facultets.idFacultet = "
                                 + facultet.getIdUniversityFacultet() + ";");
                         if (!facultetInMysql.next()) {
                             System.out.println("ОШИБКА ФАКУЛЬТЕТА!!!! " + sql);
@@ -293,7 +293,7 @@ public class Synchronizer {
                     }
                     try {
                         mySqlStatement.executeUpdate(sql);
-//                        mySqlStatement.executeUpdate("UPDATE `abiturient`.`specialities`\n"
+//                        mySqlStatement.executeUpdate("UPDATE `specialities`\n"
 //                                + "SET\n"
 //                                + "SpecialityKode = \"" + speciality.getUniversitySpecialitiesKode() + "\"\n"
 //                                + "WHERE idSpeciality = " + speciality.getIdUniversitySpecialities() + ";");
@@ -362,7 +362,7 @@ public class Synchronizer {
                         try {
                             ResultSet koatuu_full = mySqlStatement.executeQuery("SELECT idKOATUULevel3, KOATUULevel2ID, "
                                     + "(SELECT `koatuulevel2`.`KOATUULevel1ID` FROM koatuulevel2 WHERE `koatuulevel2`.`idKOATUULevel2` = KOATUULevel2ID) "
-                                    + "FROM abiturient.koatuulevel3 WHERE KOATUULevel3FullName like \""
+                                    + "FROM koatuulevel3 WHERE KOATUULevel3FullName like \""
                                     + adress.getKOATUUFullName().replaceAll("'", "\\\\'")
                                     + "\";");
                             if (koatuu_full.next()) {
@@ -374,7 +374,7 @@ public class Synchronizer {
                                 // Если запись на третьем уровне отсутствует (например, у жителей крупных городов),
                                 // то поиск осуществляем по второму уровню
                                 ResultSet koatuu2 = mySqlStatement.executeQuery("SELECT idKOATUULevel2, KOATUULevel1ID "
-                                        + "FROM abiturient.koatuulevel2 WHERE KOATUULevel2FullName like \""
+                                        + "FROM koatuulevel2 WHERE KOATUULevel2FullName like \""
                                         + adress.getKOATUUFullName().replaceAll("'", "\\\\'")
                                         + "\";");
                                 if (koatuu2.next()) {
@@ -451,7 +451,7 @@ public class Synchronizer {
                         try {
                             ResultSet koatuu_full = mySqlStatement.executeQuery("SELECT idKOATUULevel3, KOATUULevel2ID, "
                                     + "(SELECT `koatuulevel2`.`KOATUULevel1ID` FROM koatuulevel2 WHERE `koatuulevel2`.`idKOATUULevel2` = KOATUULevel2ID) "
-                                    + "FROM abiturient.koatuulevel3 WHERE KOATUULevel3FullName like \""
+                                    + "FROM koatuulevel3 WHERE KOATUULevel3FullName like \""
                                     + adress.getKOATUUFullName().replaceAll("'", "\\\\'")
                                     + "\";");
                             if (koatuu_full.next()) {
@@ -463,7 +463,7 @@ public class Synchronizer {
                                 // Если запись на третьем уровне отсутствует (например, у жителей крупных городов),
                                 // то поиск осуществляем по второму уровню
                                 ResultSet koatuu2 = mySqlStatement.executeQuery("SELECT idKOATUULevel2, KOATUULevel1ID "
-                                        + "FROM abiturient.koatuulevel2 WHERE KOATUULevel2FullName like \""
+                                        + "FROM koatuulevel2 WHERE KOATUULevel2FullName like \""
                                         + adress.getKOATUUFullName().replaceAll("'", "\\\\'")
                                         + "\";");
                                 if (koatuu2.next()) {
@@ -623,7 +623,7 @@ public class Synchronizer {
                 List<DPersonOlympiadsAwards> awardsList = awardsArray.getDPersonOlympiadsAwards();
                 for (DPersonOlympiadsAwards award : awardsList) {
                     String sql = "SELECT * "
-                            + "FROM abiturient.personolympiad "
+                            + "FROM personolympiad "
                             + "WHERE PersonID = " + personId + " AND OlympiadAwarID = " + award.getIdOlympiadAward() + ";";
                     try {
                         ResultSet personOlympiadsRS = mySqlStatement.executeQuery(sql);
@@ -647,7 +647,7 @@ public class Synchronizer {
                 }
             }
             String sql = "SELECT * "
-                    + "FROM abiturient.personolympiad "
+                    + "FROM personolympiad "
                     + "WHERE PersonID = " + personId + ";";
             try {
                 ResultSet olympiad = mySqlStatement.executeQuery(sql);
@@ -721,7 +721,7 @@ public class Synchronizer {
             ArrayOfDRequestExaminationCauses causesArray = personSoap.personRequestExaminationCausesGet(sessionGuid, languageId);
             List<DRequestExaminationCauses> causesList = causesArray.getDRequestExaminationCauses();
             for (DRequestExaminationCauses dCause : causesList) {
-                String sql = "INSERT INTO `abiturient`.`causality`\n"
+                String sql = "INSERT INTO `causality`\n"
                         + "(`idCausality`,\n"
                         + "`CausalityName`,\n"
                         + "`CausalityDescription`)\n"
@@ -821,7 +821,7 @@ public class Synchronizer {
                     }
 
                     // данные документа об образовании
-                    String sqlEntrantDocument = "SELECT * FROM abiturient.documents WHERE `documents`.`idDocuments` = " + entrantDocumentIdMySql + ";";
+                    String sqlEntrantDocument = "SELECT * FROM documents WHERE `documents`.`idDocuments` = " + entrantDocumentIdMySql + ";";
                     ResultSet entrantDocument = mySqlStatement.executeQuery(sqlEntrantDocument);
                     if (!entrantDocument.next()) {
                         Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор документа об образовании");
@@ -841,7 +841,7 @@ public class Synchronizer {
                     System.out.println(entrantDocumentValue);
 
                     // удостоверение личности
-                    String sqlPersonalDocument = "SELECT * FROM abiturient.documents WHERE `documents`.`idDocuments` = " + personalDocumentIdMySql + ";";
+                    String sqlPersonalDocument = "SELECT * FROM documents WHERE `documents`.`idDocuments` = " + personalDocumentIdMySql + ";";
                     ResultSet personalDocument = mySqlStatement.executeQuery(sqlPersonalDocument);
                     if (!personalDocument.next()) {
                         Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор документа об удостоверении личности");
@@ -856,7 +856,7 @@ public class Synchronizer {
 
 //                    System.out.println(documentSeries + documentNumber + documentDate + documentIssued + documentTypeId);
 
-                    String sqlLanguage = "SELECT * FROM abiturient.languages WHERE idLanguages = " + languageIdPerson + ";";
+                    String sqlLanguage = "SELECT * FROM languages WHERE idLanguages = " + languageIdPerson + ";";
                     ResultSet languageResult = mySqlStatement.executeQuery(sqlLanguage);
                     if (!languageResult.next()) {
                         Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор иностранного языка персоны");
@@ -865,7 +865,7 @@ public class Synchronizer {
                     }
                     String languages = languageResult.getString("LanguagesName");
 
-                    String sqlContacts = "SELECT * FROM abiturient.personcontacts WHERE PersonID = " + personIdMySql + ";";
+                    String sqlContacts = "SELECT * FROM personcontacts WHERE PersonID = " + personIdMySql + ";";
                     ResultSet contacts = mySqlStatement.executeQuery(sqlContacts);
                     String phone = "";
                     String mobile = "";
@@ -938,7 +938,7 @@ public class Synchronizer {
                         personIdEdbo = personRet.getIdPerson();
                     }
                     // Обновление кода и идентификатора персоны             
-                    String sqlUpdatePersonCode = "UPDATE `abiturient`.`person`\n"
+                    String sqlUpdatePersonCode = "UPDATE `person`\n"
                             + "SET\n"
                             + "`codeU` = \"" + personCodeU + "\",\n"
                             + "`edboID` = " + personIdEdbo + "\n"
@@ -948,13 +948,13 @@ public class Synchronizer {
                     ArrayList<PersonDocument> personDocuments = getPersonDocumentEdbo(personCodeU);
                     for (PersonDocument document : personDocuments) {
                         if (entrantDocumentNumber.equalsIgnoreCase(document.getNumber())) {
-                            mySqlStatement.executeUpdate("UPDATE `abiturient`.`documents`\n"
+                            mySqlStatement.executeUpdate("UPDATE `documents`\n"
                                     + "SET\n"
                                     + "`edboID` = " + document.getId_Document() + "\n"
                                     + "WHERE idDocuments = " + entrantDocumentIdMySql + ";");
                         }
                         if (documentNumber.equalsIgnoreCase(document.getNumber()) && documentSeries.equalsIgnoreCase(document.getSeries())) {
-                            mySqlStatement.executeUpdate("UPDATE `abiturient`.`documents`\n"
+                            mySqlStatement.executeUpdate("UPDATE `documents`\n"
                                     + "SET\n"
                                     + "`edboID` = " + document.getId_Document() + "\n"
                                     + "WHERE idDocuments = " + personalDocumentIdMySql + ";");
@@ -997,7 +997,7 @@ public class Synchronizer {
             String codeUPerson;
             try {
                 // идентификатор персоны в базе ЕДБО
-                ResultSet person = mySqlStatement.executeQuery("SELECT `person`.`edboID`, `person`.`codeU` FROM abiturient.person WHERE idPerson = " + personIdMySql + ";");
+                ResultSet person = mySqlStatement.executeQuery("SELECT `person`.`edboID`, `person`.`codeU` FROM person WHERE idPerson = " + personIdMySql + ";");
                 person.next();
                 edboIdPerson = person.getInt(1);
                 codeUPerson = person.getString(2);
@@ -1008,16 +1008,16 @@ public class Synchronizer {
                     return json.toJson(submitStatus);
                 }
                 // очистим идентифкатор документа оо образовании для ресинхронизации
-                mySqlStatement.executeUpdate("UPDATE `abiturient`.`documents`\n"
+                mySqlStatement.executeUpdate("UPDATE `documents`\n"
                         + "SET\n"
                         + "`documents`.`edboID` = null\n"
                         + "WHERE `documents`.`TypeID` in (2, 7,8,9,10,11,12,13,14,15) AND `documents`.`PersonID` = " + personIdMySql + ";");
                 ArrayList<PersonDocument> personDocuments = getPersonDocumentEdbo(codeUPerson);
                 for (PersonDocument personDocument : personDocuments) {
 //                    System.out.println(personDocument.getSeries() + personDocument.getNumber());
-                    ResultSet documentMySql = mySqlStatement.executeQuery("SELECT * FROM `abiturient`.`documents` "
+                    ResultSet documentMySql = mySqlStatement.executeQuery("SELECT * FROM `documents` "
                             + "WHERE PersonID = " + personIdMySql + " AND Numbers = \"" + personDocument.getNumber() + "\";");
-//                    mySqlStatement.executeUpdate("UPDATE `abiturient`.`documents`\n"
+//                    mySqlStatement.executeUpdate("UPDATE `documents`\n"
 //                            + "SET\n"
 //                            + "`edboID` = " + personDocument.getId_Document() + "\n"
 //                            //                                    + "WHERE PersonID = " + personIdMySql + " AND Series = \"" + personDocument.getSeries() + "\" AND Numbers = \"" + personDocument.getNumber() + "\";");
@@ -1042,7 +1042,7 @@ public class Synchronizer {
                 submitStatus.setMessage("Помилка з’єднання: " + ex.getLocalizedMessage());
                 return json.toJson(submitStatus);
             }
-            String sqlSelectDocuments = "SELECT * FROM abiturient.documents WHERE PersonID = " + personIdMySql + ";";
+            String sqlSelectDocuments = "SELECT * FROM documents WHERE PersonID = " + personIdMySql + ";";
             ResultSet document;
 
             try {
@@ -1106,7 +1106,7 @@ public class Synchronizer {
                 for (DocumentSubject subject : documentSubject) {
                     ResultSet docsubRs = mySqlStatement.executeQuery(""
                             + "SELECT idDocumentSubject, edboID, SubjectValue "
-                            + "FROM abiturient.documentsubject "
+                            + "FROM documentsubject "
                             + "WHERE DocumentID = " + subject.getDocumentId() + " AND SubjectID = " + subject.getId_Subject() + ";");
                     if (docsubRs.next()) {
                         // найдена подходящая запись
@@ -1121,7 +1121,7 @@ public class Synchronizer {
                         }
                     } else {
                         // вставляем новую запись
-                        mySqlStatement.executeUpdate("INSERT INTO `abiturient`.`documentsubject`\n"
+                        mySqlStatement.executeUpdate("INSERT INTO `documentsubject`\n"
                                 + "(\n"
                                 + "`DocumentID`,\n"
                                 + "`SubjectID`,\n"
@@ -1176,7 +1176,7 @@ public class Synchronizer {
         submitStatus.setBackTransaction(false);
 
         if (mySqlConnect() && personConnect()) {
-            String sql = "SELECT * FROM abiturient.documents WHERE idDocuments = " + documentIdMySql + ";";
+            String sql = "SELECT * FROM documents WHERE idDocuments = " + documentIdMySql + ";";
             try {
                 ResultSet document = mySqlStatement.executeQuery(sql);
                 if (document.next()) {
@@ -1239,7 +1239,7 @@ public class Synchronizer {
                     try {
                         benefitMysql = mySqlStatement.executeQuery(""
                           + "SELECT * "
-                          + "FROM abiturient.personbenefits "
+                          + "FROM personbenefits "
                           + "WHERE edboID = " + benefit.getId_PersonBenefit() + ";");
                         if (benefitMysql.next()) {
                             System.err.println("Льгота есть в базе. Персона № " + 
@@ -1301,7 +1301,7 @@ public class Synchronizer {
             String codeUPerson;
             try {
                 // идентификатор персоны в базе ЕДБО
-                ResultSet person = mySqlStatement.executeQuery("SELECT `person`.`edboID`, `person`.`codeU` FROM abiturient.person WHERE idPerson = " + personIdMySql + ";");
+                ResultSet person = mySqlStatement.executeQuery("SELECT `person`.`edboID`, `person`.`codeU` FROM person WHERE idPerson = " + personIdMySql + ";");
                 person.next();
                 edboIdPerson = person.getInt(1);
                 codeUPerson = person.getString(2);
@@ -1316,7 +1316,7 @@ public class Synchronizer {
                     for (PersonBenefit benEdbo : benefitsEdbo) {
                         ResultSet benifitMysql = mySqlStatement.executeQuery(""
                                 + "SELECT * "
-                                + "FROM abiturient.personbenefits "
+                                + "FROM personbenefits "
                                 + "WHERE PersonID = " + personIdMySql + " AND BenefitID = " + benEdbo.getId_Benefit() + ";");
                         if (benifitMysql.next()) {
                             benifitMysql.updateInt("edboID", benEdbo.getId_PersonBenefit());
@@ -1335,7 +1335,7 @@ public class Synchronizer {
 
                 ResultSet personBenefits = mySqlStatement.executeQuery(""
                         + "SELECT * "
-                        + "FROM abiturient.personbenefits "
+                        + "FROM personbenefits "
                         + "WHERE PersonID = " + personIdMySql + ";");
                 while (personBenefits.next()) {
                     if (personBenefits.getInt("edboID") == 0) {
@@ -1379,7 +1379,7 @@ public class Synchronizer {
             String codeUPerson;
             try {
                 // идентификатор персоны в базе ЕДБО
-                ResultSet person = mySqlStatement.executeQuery("SELECT `person`.`edboID`, `person`.`codeU` FROM abiturient.person WHERE idPerson = " + personIdMySql + ";");
+                ResultSet person = mySqlStatement.executeQuery("SELECT `person`.`edboID`, `person`.`codeU` FROM person WHERE idPerson = " + personIdMySql + ";");
                 person.next();
                 edboIdPerson = person.getInt(1);
                 codeUPerson = person.getString(2);
@@ -1391,7 +1391,7 @@ public class Synchronizer {
                 }
                 ResultSet personRequestOlympiadRS = mySqlStatement.executeQuery(""
                         + "SELECT `personspeciality`.`OlympiadID` "
-                        + "FROM abiturient.personspeciality "
+                        + "FROM personspeciality "
                         + "WHERE idPersonSpeciality = " + personSpeciality + ";");
                 int idOlympiadAward = 0; // идентификатор олимпиады персоны
                 int personOlympiadIdEdbo = 0; // идентификатор записи об олимпиаде персоны в ЕДБО
@@ -1402,7 +1402,7 @@ public class Synchronizer {
                 if (idOlympiadAward != 0) {
                     // в заявке есть олимпиада
                     // дополнительный балл
-                    ResultSet olympBonus = mySqlStatement.executeQuery("SELECT OlympiadAwardBonus FROM abiturient.olympiadsawards WHERE OlympiadAwardID = " + idOlympiadAward + ";");
+                    ResultSet olympBonus = mySqlStatement.executeQuery("SELECT OlympiadAwardBonus FROM olympiadsawards WHERE OlympiadAwardID = " + idOlympiadAward + ";");
                     if (olympBonus.next()) {
                         personRequestOlympiadAwardBonus = olympBonus.getString(1);
                     }
@@ -1410,7 +1410,7 @@ public class Synchronizer {
                     syncPersonOlympiadsEdbo(codeUPerson, personIdMySql);
                     ResultSet personOlympiadsRS = mySqlStatement.executeQuery(""
                             + "SELECT * "
-                            + "FROM abiturient.personolympiad "
+                            + "FROM personolympiad "
                             + "WHERE PersonID = " + personIdMySql + " AND OlympiadAwarID = " + idOlympiadAward + ";");
                     if (!personOlympiadsRS.next()) {
                         // такой олимпиады нет в списке персон и едбо - добавляем
@@ -1442,7 +1442,7 @@ public class Synchronizer {
                 }
                 ResultSet request = mySqlStatement.executeQuery(""
                         + "SELECT * "
-                        + "FROM abiturient.personspeciality "
+                        + "FROM personspeciality "
                         + "WHERE idPersonSpeciality = " + personSpeciality + ";");
                 if (request.next()) {
                     int originalDocumentsAdd = (request.getInt("isCopyEntrantDoc") == 1) ? 0 : 1;
@@ -1499,7 +1499,7 @@ public class Synchronizer {
                         // есть первый предмет сертификата: выбираем его идентификатор из таблицы предметов
                         ResultSet subject1 = mySqlStatement.executeQuery(""
                                 + "SELECT edboID "
-                                + "FROM abiturient.documentsubject "
+                                + "FROM documentsubject "
                                 + "WHERE idDocumentSubject = " + idDocumentSubject1 + ";");
                         if (subject1.next()) {
                             idDocumentSubject1 = subject1.getInt(1);
@@ -1509,7 +1509,7 @@ public class Synchronizer {
                         // есть второй предмет сертификата: выбираем его идентификатор из таблицы предметов
                         ResultSet subject2 = mySqlStatement.executeQuery(""
                                 + "SELECT edboID "
-                                + "FROM abiturient.documentsubject "
+                                + "FROM documentsubject "
                                 + "WHERE idDocumentSubject = " + idDocumentSubject2 + ";");
                         if (subject2.next()) {
                             idDocumentSubject2 = subject2.getInt(1);
@@ -1519,7 +1519,7 @@ public class Synchronizer {
                         // есть третий предмет сертификата: выбираем его идентификатор из таблицы предметов
                         ResultSet subject3 = mySqlStatement.executeQuery(""
                                 + "SELECT edboID "
-                                + "FROM abiturient.documentsubject "
+                                + "FROM documentsubject "
                                 + "WHERE idDocumentSubject = " + idDocumentSubject3 + ";");
                         if (subject3.next()) {
                             idDocumentSubject3 = subject3.getInt(1);
@@ -1527,14 +1527,14 @@ public class Synchronizer {
                     }
                     ResultSet specCodeRS = mySqlStatement.executeQuery(""
                             + "SELECT SpecialityKode "
-                            + "FROM abiturient.specialities "
+                            + "FROM specialities "
                             + "WHERE idSpeciality = " + specialityId + ";");
                     if (specCodeRS.next()) {
                         universitySpecialitiesCode = specCodeRS.getString(1);
                     }
                     ResultSet docCodeRs = mySqlStatement.executeQuery(""
                             + "SELECT edboID "
-                            + "FROM abiturient.documents "
+                            + "FROM documents "
                             + "WHERE idDocuments = " + idPersonDocument + ";");
                     if (docCodeRs.next()) {
                         idPersonDocument = docCodeRs.getInt(1);
@@ -1547,14 +1547,14 @@ public class Synchronizer {
                         List<DPersonCourses> coursesList = coursesArray.getDPersonCourses();
                         for (DPersonCourses courses : coursesList) {
                             ResultSet coursesIdRS = mySqlStatement.executeQuery("SELECT idCourseDP \n"
-                                    + "FROM abiturient.coursedp\n"
+                                    + "FROM coursedp\n"
                                     + "WHERE guid LIKE \"" + courses.getUniversityCourseCode() + "\";");
                             coursesIdRS.next();
                             int coursesIdLocal = coursesIdRS.getInt(1);
                             coursesIdRS.close();
                             ResultSet coursesRS = mySqlStatement.executeQuery(""
                                     + "SELECT * \n"
-                                    + "FROM abiturient.personcoursesdp \n"
+                                    + "FROM personcoursesdp \n"
                                     + "WHERE \n"
                                     + "PersonID = " + personIdMySql + " \n"
                                     + "AND\n"
@@ -1572,14 +1572,14 @@ public class Synchronizer {
                         }
                         // 2 проверяем наличие строки соответствующими курсами у персоны
                         ResultSet coursesGuidRS = mySqlStatement.executeQuery("SELECT guid\n"
-                                + "FROM `abiturient`.`coursedp` \n"
+                                + "FROM `coursedp` \n"
                                 + "WHERE \n"
                                 + "idCourseDP = " + personCourseIdold + ";");
                         coursesGuidRS.next();
                         String coursesGuid = coursesGuidRS.getString(1);
                         ResultSet coursesRS = mySqlStatement.executeQuery(""
                                 + "SELECT * \n"
-                                + "FROM abiturient.personcoursesdp \n"
+                                + "FROM personcoursesdp \n"
                                 + "WHERE \n"
                                 + "PersonID = " + personIdMySql + " \n"
                                 + "AND\n"
@@ -1654,13 +1654,13 @@ public class Synchronizer {
                         submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання заявки  :  " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription() + "<br />");
                         return json.toJson(submitStatus);
                     } else {
-                        mySqlStatement.executeUpdate("UPDATE `abiturient`.`personspeciality`\n"
+                        mySqlStatement.executeUpdate("UPDATE `personspeciality`\n"
                                 + "SET\n"
                                 + "`edboID` = " + edboId + "\n"
                                 + "WHERE idPersonSpeciality = " + personSpeciality + ";");
                         ResultSet benefitsRS = mySqlStatement.executeQuery(""
                                 + "SELECT * "
-                                + "FROM abiturient.personbenefits "
+                                + "FROM personbenefits "
                                 + "WHERE PersonID = " + personIdMySql + ";");
                         while (benefitsRS.next()) {
                             int idBenefit = benefitsRS.getInt("BenefitID");
@@ -1700,7 +1700,7 @@ public class Synchronizer {
 
     public void editRequestsAll() {
         if (mySqlConnect() && personConnect()) {
-            String sql = "SELECT * FROM abiturient.personspeciality WHERE edboID is not null;";
+            String sql = "SELECT * FROM personspeciality WHERE edboID is not null;";
             try {
                 ResultSet request = mySqlStatement.executeQuery(sql);
                 while (request.next()) {
@@ -1733,7 +1733,7 @@ public class Synchronizer {
 
     public void syncRequestsAll() {
         if (mySqlConnect()) {
-            String sql = "SELECT * FROM abiturient.personspeciality WHERE edboID is null;";
+            String sql = "SELECT * FROM personspeciality WHERE edboID is null;";
             try {
                 ResultSet request = mySqlStatement.executeQuery(sql);
                 while (request.next()) {
@@ -1755,7 +1755,7 @@ public class Synchronizer {
             for (DUniversityCourses course : coursesList) {
                 System.out.println(course.getIdUniversityCourse() + " " + course.getUniversityCourseName() + "   " + course.getUniversityCourseCode());
                 try {
-                    mySqlStatement.executeUpdate("UPDATE `abiturient`.`coursedp`\n"
+                    mySqlStatement.executeUpdate("UPDATE `coursedp`\n"
                             + "SET\n"
                             + "guid = '" + course.getUniversityCourseCode() + "'\n"
                             + "WHERE idCourseDP = " + course.getIdUniversityCourse() + ";");
@@ -1779,9 +1779,9 @@ public class Synchronizer {
                     + "`personspeciality`.`edboID` as `idPersonRequest`, \n"
                     + "`personbenefits`.`edboID` AS `idPersonBenefit`\n"
                     + "from\n"
-                    + "`abiturient`.`personspeciality` join `abiturient`.`personbenefits`\n"
+                    + "`personspeciality` join `personbenefits`\n"
                     + "on `personspeciality`.`PersonID` = `personbenefits`.`PersonID` \n"
-                    + "join `abiturient`.`person`\n"
+                    + "join `person`\n"
                     + "on `personspeciality`.`PersonID` = `person`.`idPerson`\n"
                     + "where\n"
                     + "`personbenefits`.`BenefitID` = 39;";
@@ -1824,7 +1824,7 @@ public class Synchronizer {
         if (personConnect() && mySqlConnect()) {
             try {
                 // синхронизация списка льгот
-                ResultSet benefits = mySqlStatement.executeQuery("SELECT * FROM abiturient.personbenefits where edboID is null;");
+                ResultSet benefits = mySqlStatement.executeQuery("SELECT * FROM personbenefits where edboID is null;");
                 while (benefits.next()) {
                     String status = addPersonBenefits(benefits.getInt("PersonID"));
                     System.out.println("Пільга " + benefits.getInt("idPersonBenefits") + ": " + status);
@@ -1834,7 +1834,7 @@ public class Synchronizer {
             } // try - catch
             try {
                 ResultSet requestBenefits = mySqlStatement.executeQuery("select `personspeciality`.`idPersonSpeciality` AS `idPersonSpeciality`, `personspeciality`.`edboID` AS `idPersonRequest`, `personbenefits`.`edboID` AS `idPersonBenefit`, `personbenefits`.`BenefitID` AS `idBenefit`, `personspeciality`.`CoursedpID` AS `idCourseDP`\n"
-                        + "from `abiturient`.`personspeciality` join `abiturient`.`personbenefits`\n"
+                        + "from `personspeciality` join `personbenefits`\n"
                         + "    on `personspeciality`.`PersonID` = `personbenefits`.`PersonID`;");
                 while (requestBenefits.next()) {
                     int idBenefit = requestBenefits.getInt("idBenefit");
@@ -1888,8 +1888,8 @@ public class Synchronizer {
         submitStatus.setBackTransaction(false);
 
         if (mySqlConnect() && personConnect()) {
-//            String sql = "SELECT * FROM abiturient.personspeciality where edboID is not null;";
-            String sql = "SELECT * FROM abiturient.personspeciality where edboID is not null and StatusID = 1;";
+//            String sql = "SELECT * FROM personspeciality where edboID is not null;";
+            String sql = "SELECT * FROM personspeciality where edboID is not null and StatusID = 1;";
             try {
                 ResultSet request = mySqlStatement.executeQuery(sql);
                 while (request.next()) {
@@ -1963,7 +1963,7 @@ public class Synchronizer {
      */
     public void syncRequestsStatuses() {
         if (mySqlConnect() && personConnect()) {
-            String sql = "SELECT * FROM abiturient.personspeciality where edboID is not null;";
+            String sql = "SELECT * FROM personspeciality where edboID is not null;";
             try {
                 ResultSet request = mySqlStatement.executeQuery(sql);
                 while (request.next()) {
@@ -1999,7 +1999,7 @@ public class Synchronizer {
                         + award.getOlympiadAwardBonus() + '\t'
                         + award.getIdOlimpiad() + '\t'
                         + award.getOlimpiadName());
-                String sql = "INSERT INTO `abiturient`.`olympiadsawards`\n"
+                String sql = "INSERT INTO `olympiadsawards`\n"
                         + "(`idOlimpiad`,\n"
                         + "`OlimpiadName`,\n"
                         + "`OlympiadAwardID`,\n"
@@ -2032,7 +2032,7 @@ public class Synchronizer {
     protected String getSpecialityGuid(int idSpeciality) {
         String guid = "";
         if (mySqlConnect()) {
-            String sql = "SELECT `specialities`.`SpecialityKode` FROM abiturient.specialities WHERE `specialities`.`idSpeciality` = " + idSpeciality + ";";
+            String sql = "SELECT `specialities`.`SpecialityKode` FROM specialities WHERE `specialities`.`idSpeciality` = " + idSpeciality + ";";
             try {
                 ResultSet specRS = mySqlStatement.executeQuery(sql);
                 if (specRS.next()) {
@@ -2073,7 +2073,7 @@ public class Synchronizer {
         if (mySqlConnect() && personConnect()) {
             // Выбор из БД заявок с экзаменами
             String sql = "SELECT * \n"
-                    + "FROM abiturient.personspeciality \n"
+                    + "FROM personspeciality \n"
                     + "WHERE\n"
                     + "`personspeciality`.`Exam1ID` is not null OR `personspeciality`.`Exam2ID` is not null OR `personspeciality`.`Exam3ID` is not null;";
             try {
@@ -2138,7 +2138,7 @@ public class Synchronizer {
         if (mySqlConnect() && personConnect()) {
             // Выбор из БД заявок с экзаменами
             String sql = "SELECT * \n"
-                    + "FROM abiturient.personspeciality \n"
+                    + "FROM personspeciality \n"
                     + "WHERE\n"
                     + "`personspeciality`.`Exam1ID` is not null OR `personspeciality`.`Exam2ID` is not null OR `personspeciality`.`Exam3ID` is not null;";
             try {
@@ -2197,7 +2197,7 @@ public class Synchronizer {
         if (mySqlConnect() && personConnect()) {
             // Выбор из БД заявок с экзаменами
             String sql = "SELECT * \n"
-                    + "FROM abiturient.personspeciality \n"
+                    + "FROM personspeciality \n"
                     + "WHERE\n"
                     + "`personspeciality`.`Exam1ID` is not null OR `personspeciality`.`Exam2ID` is not null OR `personspeciality`.`Exam3ID` is not null;";
             try {
@@ -2261,7 +2261,7 @@ public class Synchronizer {
         if (mySqlConnect() && personConnect()) {
             // Выбор из БД заявок с экзаменами
             String sql = "SELECT * \n"
-                    + "FROM abiturient.personspeciality \n"
+                    + "FROM personspeciality \n"
                     + "WHERE\n"
                     + "(`personspeciality`.`Exam1ID` is not null OR `personspeciality`.`Exam2ID` is not null OR `personspeciality`.`Exam3ID` is not null);";
             try {
@@ -2316,7 +2316,7 @@ public class Synchronizer {
      */
     public void addRequestAdditionalBallEdbo() {
         if (mySqlConnect() && personConnect()) {
-            String sql = "SELECT * FROM abiturient.personspeciality where `personspeciality`.`AdditionalBall` is not null;";
+            String sql = "SELECT * FROM personspeciality where `personspeciality`.`AdditionalBall` is not null;";
             try {
                 ResultSet request = mySqlStatement.executeQuery(sql);
                 while (request.next()) {
