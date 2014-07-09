@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ua.edboservice.ArrayOfDPersonCourses;
+import ua.edboservice.ArrayOfDPersonRequestDocumentSubjects;
 import ua.edboservice.ArrayOfDPersonRequests2;
 import ua.edboservice.ArrayOfDPersonRequestsStatuses2;
 import ua.edboservice.DPersonCourses;
+import ua.edboservice.DPersonRequestDocumentSubjects;
 import ua.edboservice.DPersonRequests2;
 import ua.edboservice.DPersonRequestsStatuses2;
 import ua.edboservice.EDBOPersonSoap;
@@ -97,10 +99,10 @@ public class EdboRequest {
             if (request.next()) {
                 int originalDocumentsAdd = (request.getInt("isCopyEntrantDoc") == 1) ? 0 : 1;
                 int isNeedHostel = request.getInt("isNeedHostel");
-                String codeOfBusiness = "";
-                int qualificationId = request.getInt("QualificationID");
-                String courseId = Integer.toString(request.getInt("CourseID"));
-                codeOfBusiness = String.format("%05d", request.getInt("RequestNumber"));
+                String codeOfBusiness = String.format("%05d", request.getInt("RequestNumber"));
+//                int qualificationId = request.getInt("QualificationID");
+//                String courseId = Integer.toString(request.getInt("CourseID"));
+//                codeOfBusiness = String.format("%05d", request.getInt("RequestNumber"));
                 int idPersonEntranceType = request.getInt("EntranceTypeID");
                 int idPersonExamenationCause = request.getInt("CausalityID");
                 int idUniversityQuota1 = (request.getInt("Quota1") == 1) ? 1506 : 0;
@@ -351,9 +353,17 @@ public class EdboRequest {
         return json.toJson(submitStatus);
     }
 
+    /**
+     * Получить заявки персоны из ЕДБО
+     *
+     * @param personCodeU Код персоны в ЕДБО
+     * @param personRequestId Идентификатор заяки (если указать ноль, то
+     * выбираются все заявки)
+     * @return Список заявок персоны в формате json
+     */
     public String load(String personCodeU, int personRequestId) {
         Gson json = new Gson();
-        ArrayOfDPersonRequests2 aodpr = soap.personRequestsGet2(sessionGuid, actualDate, languageId, personCodeU, edbo.getSeasonId(), personRequestId, "", 1, 0, "");
+        ArrayOfDPersonRequests2 aodpr = soap.personRequestsGet2(sessionGuid, actualDate, languageId, personCodeU, edbo.getSeasonId(), personRequestId, "", 0, 0, "");
         if (aodpr == null) {
             return edbo.processErrorsJson();
         }
@@ -415,5 +425,22 @@ public class EdboRequest {
             Logger.getLogger(EdboRequest.class.getName()).log(Level.SEVERE, null, ex);
         }
         return json.toJson(submitStatus);
+    }
+
+    /**
+     * Получение данных о предметах сертификатов ЗНО для заявки из ЕДБО
+     *
+     * @param idPersonRequest Идентификатор заявки (ЕДБО) персоны для которой
+     * выбираются предметы
+     * @return В случае успешного выполнения список прдметов в формате json
+     */
+    public String loadSubjects(int idPersonRequest) {
+        Gson json = new Gson();
+        ArrayOfDPersonRequestDocumentSubjects aodprds = soap.personRequestDocumentSubjectsGet(sessionGuid, actualDate, languageId, idPersonRequest);
+        if (aodprds == null) {
+            return edbo.processErrorsJson();
+        }
+        List<DPersonRequestDocumentSubjects> dprds = aodprds.getDPersonRequestDocumentSubjects();
+        return json.toJson(dprds);
     }
 }
