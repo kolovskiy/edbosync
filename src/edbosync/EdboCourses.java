@@ -29,7 +29,7 @@ public class EdboCourses {
         }
         List<DUniversityCourses> coursesList = arrayOfDUniversityCourses.getDUniversityCourses();
         for (DUniversityCourses duc : coursesList) {
-            System.out.println(duc.getIdUniversityCourse() + "\t" + duc.getUniversityCourseName() + "\t" + duc.getUniversityKode());
+            System.out.println(duc.getIdUniversityCourse() + "\t" + duc.getUniversityCourseName() + "\t" + duc.getUniversityCourseCode());
         }
     }
     
