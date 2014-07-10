@@ -90,6 +90,26 @@ public class EdboRequest {
                 // синхронизация списка олимпиад с ЕДБО
                 EdboOlympiads edboOlympiads = new EdboOlympiads();
                 edboOlympiads.sync(codeUPerson, personIdMySql);
+                ResultSet personOlympiadsRS = dbc.executeQuery(""
+                        + "SELECT * "
+                        + "FROM personolympiad "
+                        + "WHERE PersonID = " + personIdMySql + " AND OlympiadAwarID = " + idOlympiadAward + ";");
+                if (personOlympiadsRS.first()) {
+                    personOlympiadIdEdbo = personOlympiadsRS.getInt("edboID");
+
+                } else {
+                    // данная олимпиада вводится впервые ее нужно ставаить в БД
+                    personOlympiadIdEdbo = soap.personOlympiadsAwardsAdd(sessionGuid, languageId, edboIdPerson, idOlympiadAward);
+                }
+
+                if (personOlympiadIdEdbo == 0) {
+                    submitStatus.setError(true);
+                    submitStatus.setBackTransaction(false);
+                    submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання олімпіади до ЄДЕБО :  " + edbo.processErrors() + "<br />");
+                    return json.toJson(submitStatus);
+                } else {
+                    submitStatus.setMessage(submitStatus.getMessage() + "До заявки додано олімпіаду, додатковий бал:" + personRequestOlympiadAwardBonus + ".<br />");
+                }
 
             }
             ResultSet request = dbc.executeQuery(""
@@ -135,7 +155,7 @@ public class EdboRequest {
                             skipDocumentValue, // SkipDocumentValue
                             languageExId, // Id_LanguageEx
                             0, // Id_ForeignType
-                            (isResident == 1) ? 0 : 1 // IsForeignWay
+                            0 // (isResident == 1) ? 0 : 1 // IsForeignWay
                     ) == 0) {
                         submitStatus.setError(true);
                         submitStatus.setBackTransaction(false);
@@ -307,7 +327,7 @@ public class EdboRequest {
                             0, // Id_PersonBenefit3,
                             languageExId, // Id_LanguageEx,
                             0, // Id_ForeignType
-                            (isResident == 1) ? 0 : 1, // IsForeignWay
+                            0, //(isResident == 1) ? 0 : 1, // IsForeignWay
                             0 // RequestPriority
                     );
                 }
