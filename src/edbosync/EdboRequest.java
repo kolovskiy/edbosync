@@ -8,10 +8,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import ua.edboservice.ArrayOfDPersonCourses;
 import ua.edboservice.ArrayOfDPersonRequestDocumentSubjects;
+import ua.edboservice.ArrayOfDPersonRequestStatusTypes;
 import ua.edboservice.ArrayOfDPersonRequests2;
 import ua.edboservice.ArrayOfDPersonRequestsStatuses2;
 import ua.edboservice.DPersonCourses;
 import ua.edboservice.DPersonRequestDocumentSubjects;
+import ua.edboservice.DPersonRequestStatusTypes;
 import ua.edboservice.DPersonRequests2;
 import ua.edboservice.DPersonRequestsStatuses2;
 import ua.edboservice.EDBOPersonSoap;
@@ -226,25 +228,27 @@ public class EdboRequest {
                             ResultSet coursesIdRS = dbc.executeQuery("SELECT idCourseDP \n"
                                     + "FROM coursedp\n"
                                     + "WHERE guid LIKE \"" + courses.getUniversityCourseCode() + "\";");
-                            coursesIdRS.next();
-                            int coursesIdLocal = coursesIdRS.getInt(1);
-                            coursesIdRS.close();
-                            ResultSet coursesRS = dbc.executeQuery(""
-                                    + "SELECT * \n"
-                                    + "FROM personcoursesdp \n"
-                                    + "WHERE \n"
-                                    + "PersonID = " + personIdMySql + " \n"
-                                    + "AND\n"
-                                    + "guid LIKE \"" + courses.getUniversityCourseCode() + "\";");
-                            if (!coursesRS.next()) {
-                                // если нет то заносим
-                                coursesRS.moveToInsertRow();
-                                coursesRS.updateInt("PersonID", personIdMySql);
-                                coursesRS.updateInt("CourseDPID", coursesIdLocal);
-                                coursesRS.updateInt("edboID", courses.getIdPersonCourse());
-                                coursesRS.updateString("guid", courses.getUniversityCourseCode());
-                                coursesRS.insertRow();
-                                coursesRS.moveToCurrentRow();
+                            System.out.println(courses.getUniversityCourseCode());
+                            if (coursesIdRS.next()) {
+                                int coursesIdLocal = coursesIdRS.getInt(1);
+                                coursesIdRS.close();
+                                ResultSet coursesRS = dbc.executeQuery(""
+                                        + "SELECT * \n"
+                                        + "FROM personcoursesdp \n"
+                                        + "WHERE \n"
+                                        + "PersonID = " + personIdMySql + " \n"
+                                        + "AND\n"
+                                        + "guid LIKE \"" + courses.getUniversityCourseCode() + "\";");
+                                if (!coursesRS.next()) {
+                                    // если нет то заносим
+                                    coursesRS.moveToInsertRow();
+                                    coursesRS.updateInt("PersonID", personIdMySql);
+                                    coursesRS.updateInt("CourseDPID", coursesIdLocal);
+                                    coursesRS.updateInt("edboID", courses.getIdPersonCourse());
+                                    coursesRS.updateString("guid", courses.getUniversityCourseCode());
+                                    coursesRS.insertRow();
+                                    coursesRS.moveToCurrentRow();
+                                }
                             }
                         }
                         // 2 проверяем наличие строки соответствующими курсами у персоны
@@ -462,5 +466,17 @@ public class EdboRequest {
         }
         List<DPersonRequestDocumentSubjects> dprds = aodprds.getDPersonRequestDocumentSubjects();
         return json.toJson(dprds);
+    }
+    
+    public void loadRequestStatusTypes(){
+        ArrayOfDPersonRequestStatusTypes aodprst = soap.personRequestStatusTypesGet(sessionGuid, actualDate, languageId);
+        if (aodprst == null){
+            System.err.println(edbo.processErrors());
+            return;
+        }
+        List<DPersonRequestStatusTypes> statusTypeses = aodprst.getDPersonRequestStatusTypes();
+        for (DPersonRequestStatusTypes dprst : statusTypeses){
+            System.out.println(dprst.getIdPersonRequestStatusType() + " " + dprst.getPersonRequestStatusCode() + " " + dprst.getPersonRequestStatusTypeName() + " " + dprst.getPersonRequestStatusTypeDescription());
+        }
     }
 }

@@ -32,18 +32,18 @@ public class EdboCourses {
         List<DUniversityCourses> coursesList = arrayOfDUniversityCourses.getDUniversityCourses();
         for (DUniversityCourses duc : coursesList) {
             System.out.println(duc.getIdUniversityCourse() + "\t" + duc.getUniversityCourseName() + "\t" + duc.getUniversityCourseCode());
-            String query = "INSERT INTO `abiturient`.`coursedp`\n"
-                    + "(`idCourseDP`,\n"
-                    + "`CourseDPName`,\n"
-                    + "`guid`)\n"
-                    + "VALUES\n"
-                    + "("
-                    + duc.getIdUniversityCourse() + ",\n"
-                    + "'" + duc.getUniversityCourseName().replace("'", "\\'") + "'" + ",\n"
-                    + "'" + duc.getUniversityCourseCode() + "'" + ");";
-            if (dbc.executeUpdate(query) > 0){
-                System.out.println("\t\t\tдобавлено в БД");
-            }
+//            String query = "INSERT INTO `abiturient`.`coursedp`\n"
+//                    + "(`idCourseDP`,\n"
+//                    + "`CourseDPName`,\n"
+//                    + "`guid`)\n"
+//                    + "VALUES\n"
+//                    + "("
+//                    + duc.getIdUniversityCourse() + ",\n"
+//                    + "'" + duc.getUniversityCourseName().replace("'", "\\'") + "'" + ",\n"
+//                    + "'" + duc.getUniversityCourseCode() + "'" + ");";
+//            if (dbc.executeUpdate(query) > 0){
+//                System.out.println("\t\t\tдобавлено в БД");
+//            }
         }
     }
 

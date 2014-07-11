@@ -142,11 +142,13 @@ public class EdboDocuments {
         for (DPersonDocuments dDocument : documentsList) {
             ResultSet documentMySql = dbc.executeQuery("SELECT * FROM `documents` "
                     + "WHERE PersonID = " + personIdMysql + " AND Numbers = \"" + dDocument.getDocumentNumbers() + "\";");
+            System.out.println(dDocument.getDocumentNumbers() + "\t" + dDocument.getIdPersonDocument());
             try {
                 if (documentMySql.next()) {
                     int docId = documentMySql.getInt("idDocuments");
                     documentMySql.updateInt("edboID", dDocument.getIdPersonDocument());
                     documentMySql.updateRow();
+                    System.out.println("updated");
                     if (dDocument.getIdPersonDocumentType() == 4) {
                         // документ является сертификатом ЗНО
 

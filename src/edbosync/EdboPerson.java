@@ -3,18 +3,15 @@ package edbosync;
 import com.google.gson.Gson;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ua.edboservice.ArrayOfDPersonAddRet;
 import ua.edboservice.ArrayOfDPersonAddresses2;
-import ua.edboservice.ArrayOfDPersonsFind;
 import ua.edboservice.ArrayOfDPersonsFind2;
 import ua.edboservice.DPersonAddRet;
 import ua.edboservice.DPersonAddresses2;
-import ua.edboservice.DPersonsFind;
 import ua.edboservice.DPersonsFind2;
 import ua.edboservice.EDBOPersonSoap;
 
@@ -51,7 +48,6 @@ public class EdboPerson {
      * Идентификатор языка
      */
     protected int languageId = edbo.getLanguageId();
-    
 
     /**
      * Поиск в базе ЕДБО по серии и номеру документа
@@ -88,7 +84,7 @@ public class EdboPerson {
             // возникла ошибка при получении данных из ЕДБО
             return edbo.processErrorsJson();
         }
-        
+
         List<DPersonsFind2> personList = personArray.getDPersonsFind2();
         if (personList.size() > 0) {
             ArrayList<Person> person;
@@ -161,7 +157,7 @@ public class EdboPerson {
         }
         return "0";
     }
-    
+
     /**
      * Добавить персону в базу ЕДБО
      *
@@ -178,98 +174,115 @@ public class EdboPerson {
         String personCodeU = "";
         int personIdEdbo = -1;
         Gson json = new Gson();
-            String sql = "SELECT * FROM person WHERE idPerson = " + personIdMySql + ";";
-            try {
-                ResultSet person = db.executeQuery(sql);
-                if (person.next()) {
-                    personCodeU = person.getString("codeU");
-                    personIdEdbo = person.getInt("edboID");
+        String sql = "SELECT * FROM person WHERE idPerson = " + personIdMySql + ";";
+        try {
+            ResultSet person = db.executeQuery(sql);
+            if (person.next()) {
+                personCodeU = person.getString("codeU");
+                personIdEdbo = person.getInt("edboID");
 
-                    if (personCodeU != null && (!personCodeU.isEmpty())) {
-                        submitStatus.setError(false);
-                        submitStatus.setGuid(personCodeU);
-                        submitStatus.setId(personIdEdbo);
-                        submitStatus.setBackTransaction(false);
-                        submitStatus.setMessage("У персоны пристуствует код ЕДБО. Необходимость добавдения отсутствует.");
-                        return json.toJson(submitStatus);
-                    }
-                    String birthday = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(person.getDate("Birthday"));
-                    int personSexId = person.getInt("PersonSexID");
-                    String firstName = person.getString("FirstName");
-                    String middleName = person.getString("MiddleName");
-                    String lastName = person.getString("LastName");
-                    int resident = person.getInt("IsResident");
-                    String adress = person.getString("Address");
-                    String homeNumber = person.getString("HomeNumber");
-                    String postIndex = person.getString("PostIndex");
-                    int idStreetType = person.getInt("StreetTypeID");
-                    int languageIdPerson = person.getInt("LanguageID");
-                    String birthPlace = person.getString("BirthPlace");
-                    int countryId = person.getInt("CountryID");
-                    String koatuu = person.getString("KOATUUCode");
-                    String firstNameEn = person.getString("FirstNameEn");
-                    String middleNameEn = person.getString("MiddleNameEn");
-                    String lastNameEn = person.getString("LastNameEn");
-                    String apartment = person.getString("Apartment");
-                    String housing = person.getString("Housing");
-                    
-                    // данные документа об образовании
-                    String sqlEntrantDocument = "SELECT * FROM documents WHERE `documents`.`idDocuments` = " + entrantDocumentIdMySql + ";";
-                    ResultSet entrantDocument = db.executeQuery(sqlEntrantDocument);
-                    if (!entrantDocument.next()) {
-                        Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор документа об образовании");
-                        submitStatus.setMessage("Неверный идентификатор документа об образовании");
-                        return json.toJson(submitStatus);
-                    }
-                    String entrantDocumentSeries = entrantDocument.getString("Series");
-                    String entrantDocumentNumber = entrantDocument.getString("Numbers");
-                    String entrantDocumentDate = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(entrantDocument.getDate("DateGet"));
-                    String entrantDocumentValue = Float.toString(entrantDocument.getFloat("AtestatValue"));
-                    String entrantDocumentIssued = entrantDocument.getString("Issued");
-                    int entrantDocumentAwardTypeId = entrantDocument.getInt("PersonDocumentsAwardsTypesID");
-                    int entrantDocumentTypeId = entrantDocument.getInt("TypeID");
-                    int isForeigner = entrantDocument.getInt("isForeinghEntrantDocument");
-                    int isNotCheckAttestat = entrantDocument.getInt("isNotCheckAttestat");
+                if (personCodeU != null && (!personCodeU.isEmpty())) {
+                    submitStatus.setError(false);
+                    submitStatus.setGuid(personCodeU);
+                    submitStatus.setId(personIdEdbo);
+                    submitStatus.setBackTransaction(false);
+                    submitStatus.setMessage("У персоны пристуствует код ЕДБО. Необходимость добавдения отсутствует.");
+                    return json.toJson(submitStatus);
+                }
+                String birthday = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(person.getDate("Birthday"));
+                int personSexId = person.getInt("PersonSexID");
+                String firstName = person.getString("FirstName");
+                String middleName = person.getString("MiddleName");
+                String lastName = person.getString("LastName");
+                int resident = person.getInt("IsResident");
+                String adress = person.getString("Address");
+                String homeNumber = person.getString("HomeNumber");
+                String postIndex = person.getString("PostIndex");
+                int idStreetType = person.getInt("StreetTypeID");
+                int languageIdPerson = person.getInt("LanguageID");
+                String birthPlace = person.getString("BirthPlace");
+                int countryId = person.getInt("CountryID");
+                String koatuu = person.getString("KOATUUCode");
+                String firstNameEn = person.getString("FirstNameEn");
+                String middleNameEn = person.getString("MiddleNameEn");
+                String lastNameEn = person.getString("LastNameEn");
+                String apartment = person.getString("Apartment");
+                String housing = person.getString("Housing");
 
-                    System.out.println(entrantDocumentValue);
+                // данные документа об образовании
+                String sqlEntrantDocument = "SELECT * FROM documents WHERE `documents`.`idDocuments` = " + entrantDocumentIdMySql + ";";
+                ResultSet entrantDocument = db.executeQuery(sqlEntrantDocument);
+                if (!entrantDocument.next()) {
+                    Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор документа об образовании");
+                    submitStatus.setMessage("Неверный идентификатор документа об образовании");
+                    return json.toJson(submitStatus);
+                }
+                String entrantDocumentSeries = entrantDocument.getString("Series");
+                String entrantDocumentNumber = entrantDocument.getString("Numbers");
+                String entrantDocumentDate = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(entrantDocument.getDate("DateGet"));
+                String entrantDocumentValue = Float.toString(entrantDocument.getFloat("AtestatValue"));
+                String entrantDocumentIssued = entrantDocument.getString("Issued");
+                int entrantDocumentAwardTypeId = entrantDocument.getInt("PersonDocumentsAwardsTypesID");
+                int entrantDocumentTypeId = entrantDocument.getInt("TypeID");
+                int isForeigner = entrantDocument.getInt("isForeinghEntrantDocument");
+                int isNotCheckAttestat = entrantDocument.getInt("isNotCheckAttestat");
 
-                    // удостоверение личности
-                    String sqlPersonalDocument = "SELECT * FROM documents WHERE `documents`.`idDocuments` = " + personalDocumentIdMySql + ";";
-                    ResultSet personalDocument = db.executeQuery(sqlPersonalDocument);
-                    if (!personalDocument.next()) {
-                        Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор документа об удостоверении личности");
-                        submitStatus.setMessage("Неверный идентификатор документа об удостоверении личности");
-                        return json.toJson(submitStatus);
-                    }
-                    String documentSeries = personalDocument.getString("Series");
-                    String documentNumber = personalDocument.getString("Numbers");
-                    String documentDate = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(personalDocument.getDate("DateGet"));
-                    String documentIssued = personalDocument.getString("Issued");
-                    int documentTypeId = personalDocument.getInt("TypeID");
+                System.out.println(entrantDocumentValue);
+
+                // удостоверение личности
+                String sqlPersonalDocument = "SELECT * FROM documents WHERE `documents`.`idDocuments` = " + personalDocumentIdMySql + ";";
+                ResultSet personalDocument = db.executeQuery(sqlPersonalDocument);
+                if (!personalDocument.next()) {
+                    Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор документа об удостоверении личности");
+                    submitStatus.setMessage("Неверный идентификатор документа об удостоверении личности");
+                    return json.toJson(submitStatus);
+                }
+                String documentSeries = personalDocument.getString("Series");
+                String documentNumber = personalDocument.getString("Numbers");
+                String documentDate = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(personalDocument.getDate("DateGet"));
+                String documentIssued = personalDocument.getString("Issued");
+                int documentTypeId = personalDocument.getInt("TypeID");
 
 //                    System.out.println(documentSeries + documentNumber + documentDate + documentIssued + documentTypeId);
+                String sqlLanguage = "SELECT * FROM languages WHERE idLanguages = " + languageIdPerson + ";";
+                ResultSet languageResult = db.executeQuery(sqlLanguage);
+                if (!languageResult.next()) {
+                    Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор иностранного языка персоны");
+                    submitStatus.setMessage("Неверный идентификатор иностранного языка персоны");
+                    return json.toJson(submitStatus);
+                }
+                String languages = languageResult.getString("LanguagesName");
 
-                    String sqlLanguage = "SELECT * FROM languages WHERE idLanguages = " + languageIdPerson + ";";
-                    ResultSet languageResult = db.executeQuery(sqlLanguage);
-                    if (!languageResult.next()) {
-                        Logger.getLogger(Synchronizer.class.getName()).log(Level.OFF, "Неверный идентификатор иностранного языка персоны");
-                        submitStatus.setMessage("Неверный идентификатор иностранного языка персоны");
-                        return json.toJson(submitStatus);
+                String sqlContacts = "SELECT * FROM personcontacts WHERE PersonID = " + personIdMySql + ";";
+                ResultSet contacts = db.executeQuery(sqlContacts);
+                String phone = "";
+                String mobile = "";
+                while (contacts.next()) {
+                    if (contacts.getInt("PersonContactTypeID") == 1) {
+                        phone = contacts.getString("Value");
                     }
-                    String languages = languageResult.getString("LanguagesName");
-
-                    String sqlContacts = "SELECT * FROM personcontacts WHERE PersonID = " + personIdMySql + ";";
-                    ResultSet contacts = db.executeQuery(sqlContacts);
-                    String phone = "";
-                    String mobile = "";
-                    while (contacts.next()) {
-                        if (contacts.getInt("PersonContactTypeID") == 1) {
-                            phone = contacts.getString("Value");
-                        }
-                        if (contacts.getInt("PersonContactTypeID") == 2) {
-                            mobile = contacts.getString("Value");
-                        }
+                    if (contacts.getInt("PersonContactTypeID") == 2) {
+                        mobile = contacts.getString("Value");
                     }
+                }
+                // проверка наличи в ЕДБО
+//                ArrayOfDPersonsFind2 personArray2 = soap.personsFind2(sessionGuid, actualDate, languageId, "*", "", entrantDocumentNumber, "", 1, "", "");
+//                if (personArray2 != null) {
+//                    List<DPersonsFind2> personList2 = personArray2.getDPersonsFind2();
+//                    String fio = "";
+//                    String bith = "";
+//                    for (DPersonsFind2 dpf : personList2){
+//                        personCodeU = dpf.getPersonCodeU();
+//                        personIdEdbo = dpf.getIdPerson();
+//                        fio = dpf.getFIO();
+//                        bith = dpf.getBirthday().toString();
+//                        System.out.println(dpf.getPersonCodeU() + dpf.getFirstName());
+//                    }
+//                    submitStatus.setMessage("Персона з документом для вступу:" + entrantDocumentSeries + " " + entrantDocumentNumber + " знайдена в ЄДЕБО:"
+//                            + fio + " " + bith + "р.н."
+//                            + " Уважно перевірте введені дані! Наступного разу обов’язково використовуйте пошук перед додаванням персони!");
+//
+//                } else {
                     // загрузка персоны
                     ArrayOfDPersonAddRet personRetArray = soap.personEntrantAdd2(
                             sessionGuid, // SessionGUID
@@ -320,8 +333,9 @@ public class EdboPerson {
                             lastNameEn, // LastNameEn
                             apartment, // Apartment
                             housing); // Housing
+                    System.out.println(entrantDocumentTypeId + " " + documentTypeId );
                     if (personRetArray == null) {
-                        submitStatus.setMessage(edbo.processErrors());
+                        submitStatus.setMessage("Помилка додавання персони в ЄДЕБО:" + edbo.processErrors());
                         return json.toJson(submitStatus);
                     }
                     List<DPersonAddRet> personRetList = personRetArray.getDPersonAddRet();
@@ -330,35 +344,20 @@ public class EdboPerson {
                         personCodeU = personRet.getPersonCodeU();
                         personIdEdbo = personRet.getIdPerson();
                     }
-                    // Обновление кода и идентификатора персоны             
-                    String sqlUpdatePersonCode = "UPDATE `person`\n"
-                            + "SET\n"
-                            + "`codeU` = \"" + personCodeU + "\",\n"
-                            + "`edboID` = " + personIdEdbo + "\n"
-                            + "WHERE `idPerson` = " + personIdMySql + ";";
-                    db.executeUpdate(sqlUpdatePersonCode);
-//                    // Обновление кодов документов
-//                    ArrayList<PersonDocument> personDocuments = getPersonDocumentEdbo(personCodeU);
-//                    for (PersonDocument document : personDocuments) {
-//                        if (entrantDocumentNumber.equalsIgnoreCase(document.getNumber())) {
-//                            mySqlStatement.executeUpdate("UPDATE `documents`\n"
-//                                    + "SET\n"
-//                                    + "`edboID` = " + document.getId_Document() + "\n"
-//                                    + "WHERE idDocuments = " + entrantDocumentIdMySql + ";");
-//                        }
-//                        if (documentNumber.equalsIgnoreCase(document.getNumber()) && documentSeries.equalsIgnoreCase(document.getSeries())) {
-//                            mySqlStatement.executeUpdate("UPDATE `documents`\n"
-//                                    + "SET\n"
-//                                    + "`edboID` = " + document.getId_Document() + "\n"
-//                                    + "WHERE idDocuments = " + personalDocumentIdMySql + ";");
-//                        }
-//                    }
-                    EdboDocuments edboDocuments = new EdboDocuments();
-                    edboDocuments.sync(personIdMySql);
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                // Обновление кода и идентификатора персоны             
+                String sqlUpdatePersonCode = "UPDATE `person`\n"
+                        + "SET\n"
+                        + "`codeU` = \"" + personCodeU + "\",\n"
+                        + "`edboID` = " + personIdEdbo + "\n"
+                        + "WHERE `idPerson` = " + personIdMySql + ";";
+                db.executeUpdate(sqlUpdatePersonCode);
+                EdboDocuments edboDocuments = new EdboDocuments();
+                edboDocuments.sync(personIdMySql);
+//            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
+        }
 //            mySqlConnectionClose();
         submitStatus.setError(false);
         submitStatus.setBackTransaction(false);
