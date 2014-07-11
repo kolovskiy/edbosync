@@ -7,9 +7,11 @@ import ua.edboservice.EDBOGuidesSoap;
 
 /**
  * Класс для работы с подготовительными курсами
+ *
  * @author Сергей Чопоров
  */
 public class EdboCourses {
+
     /**
      * Получить справочник курсов из ЕДБО
      */
@@ -23,14 +25,26 @@ public class EdboCourses {
         String universityCode = edbo.getUniversityKey();
         int idSeason = edbo.getSeasonId();
         ArrayOfDUniversityCourses arrayOfDUniversityCourses = soap.universityCoursesGet(sessionGuid, idLanguage, actualDate, universityCode, idSeason); //"ab1bc732-51f3-475c-bcfe-368363369020"
-        if (arrayOfDUniversityCourses == null){
+        if (arrayOfDUniversityCourses == null) {
             System.err.println(edbo.processErrors());
             return;
         }
         List<DUniversityCourses> coursesList = arrayOfDUniversityCourses.getDUniversityCourses();
         for (DUniversityCourses duc : coursesList) {
             System.out.println(duc.getIdUniversityCourse() + "\t" + duc.getUniversityCourseName() + "\t" + duc.getUniversityCourseCode());
+            String query = "INSERT INTO `abiturient`.`coursedp`\n"
+                    + "(`idCourseDP`,\n"
+                    + "`CourseDPName`,\n"
+                    + "`guid`)\n"
+                    + "VALUES\n"
+                    + "("
+                    + duc.getIdUniversityCourse() + ",\n"
+                    + "'" + duc.getUniversityCourseName().replace("'", "\\'") + "'" + ",\n"
+                    + "'" + duc.getUniversityCourseCode() + "'" + ");";
+            if (dbc.executeUpdate(query) > 0){
+                System.out.println("\t\t\tдобавлено в БД");
+            }
         }
     }
-    
+
 }
