@@ -423,6 +423,7 @@ public class EdboRequest {
                 ArrayOfDPersonRequestsStatuses2 arrayOfDPersonRequestsStatuses2 = soap.personRequestsStatusesGet2(sessionGuid, languageId, idPersonRequest);
                 if (arrayOfDPersonRequestsStatuses2 == null) {
                     System.err.println(idPersonRequest + " : " + edbo.processErrors());
+                    break;
                 }
                 List<DPersonRequestsStatuses2> dPersonRequestsStatuses2s = arrayOfDPersonRequestsStatuses2.getDPersonRequestsStatuses2();
                 DPersonRequestsStatuses2 lastStatus = dPersonRequestsStatuses2s.get(0);
