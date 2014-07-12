@@ -127,6 +127,8 @@ public class EdboDocuments {
             submitStatus.setMessage("Неможливо синхронізувати Документи персони, яка не пройшла синхронизацію з ЄДБО.");
             return json.toJson(submitStatus);
         }
+        submitStatus.setGuid(codeUPerson);
+        submitStatus.setId(edboIdPerson);
         // ЕДБО ----> БД
         // очистим идентифкаторы документов оо образовании для ресинхронизации
         dbc.executeUpdate("UPDATE `documents`\n"
@@ -160,13 +162,13 @@ public class EdboDocuments {
                         List<DPersonDocumentsSubjects> subjectsList = subjectsArray.getDPersonDocumentsSubjects();
                         for (DPersonDocumentsSubjects dSubject : subjectsList) {
                             DocumentSubject subject = new DocumentSubject();
-                                subject.setDocumentId(docId);
-                                subject.setId_DocumentSubject(dSubject.getIdPersonDocumentSubject());
-                                subject.setId_Subject(dSubject.getIdSubject());
-                                subject.setSubjectName(dSubject.getSubjectName());
-                                subject.setSubjectValue(dSubject.getPersonDocumentSubjectValue());
-                                subjects.add(subject);
-//                            System.out.println(dSubject.getIdSubject() + " " + dSubject.getPersonDocumentSubjectValue() + " " + dSubject.getIdPersonDocumentSubject());
+                            subject.setDocumentId(docId);
+                            subject.setId_DocumentSubject(dSubject.getIdPersonDocumentSubject());
+                            subject.setId_Subject(dSubject.getIdSubject());
+                            subject.setSubjectName(dSubject.getSubjectName());
+                            subject.setSubjectValue(dSubject.getPersonDocumentSubjectValue());
+                            subjects.add(subject);
+                            System.out.println(dSubject.getIdSubject() + " " + dSubject.getSubjectName() + " " + dSubject.getPersonDocumentSubjectValue() + " " + dSubject.getIdPersonDocumentSubject());
                         }
                     }
                 }
@@ -242,18 +244,20 @@ public class EdboDocuments {
                     + "SELECT idDocumentSubject, edboID, SubjectValue "
                     + "FROM documentsubject "
                     + "WHERE DocumentID = " + subject.getDocumentId() + " AND SubjectID = " + subject.getId_Subject() + ";");
+            System.out.println("SELECT idDocumentSubject, edboID, SubjectValue "
+                    + "FROM documentsubject "
+                    + "WHERE DocumentID = " + subject.getDocumentId() + " AND SubjectID = " + subject.getId_Subject() + ";");
+
             try {
                 if (docsubRs.next()) {
                     // найдена подходящая запись
-                    if (docsubRs.getInt("edboID") == 0) {
-                        // запись о предмете не была синхронизирована
-                        docsubRs.updateDouble("SubjectValue", subject.getSubjectValue());
-                        docsubRs.updateInt("edboID", subject.getId_DocumentSubject());
-                        docsubRs.updateRow();
-                        submitStatus.setError(true);
-                        submitStatus.setBackTransaction(false);
-                        submitStatus.setMessage(submitStatus.getMessage() + "У сертифікаті оновлено предмет: \" " + subject.getSubjectName() + "\" " + "бал: " + Double.toString(subject.getSubjectValue()) + "<br />");
-                    }
+                    // запись о предмете не была синхронизирована
+                    docsubRs.updateDouble("SubjectValue", subject.getSubjectValue());
+                    docsubRs.updateInt("edboID", subject.getId_DocumentSubject());
+                    docsubRs.updateRow();
+                    submitStatus.setError(true);
+                    submitStatus.setBackTransaction(false);
+                    submitStatus.setMessage(submitStatus.getMessage() + "У сертифікаті оновлено предмет: \" " + subject.getSubjectName() + "\" " + "бал: " + Double.toString(subject.getSubjectValue()) + "<br />");
                 } else {
                     // вставляем новую запись
                     dbc.executeUpdate("INSERT INTO `documentsubject`\n"
@@ -279,5 +283,5 @@ public class EdboDocuments {
         }
         return json.toJson(submitStatus);
     }
-    
+
 }
