@@ -160,10 +160,13 @@ public class EdboDocuments {
                         List<DPersonDocumentsSubjects> subjectsList = subjectsArray.getDPersonDocumentsSubjects();
                         for (DPersonDocumentsSubjects dSubject : subjectsList) {
                             DocumentSubject subject = new DocumentSubject();
-                            subject.setId_Subject(dSubject.getIdSubject());
-                            subject.setSubjectValue(dSubject.getPersonDocumentSubjectValue());
-                            subject.setId_DocumentSubject(dSubject.getIdPersonDocumentSubject());
-                            subjects.add(subject);
+                                subject.setDocumentId(docId);
+                                subject.setId_DocumentSubject(dSubject.getIdPersonDocumentSubject());
+                                subject.setId_Subject(dSubject.getIdSubject());
+                                subject.setSubjectName(dSubject.getSubjectName());
+                                subject.setSubjectValue(dSubject.getPersonDocumentSubjectValue());
+                                subjects.add(subject);
+//                            System.out.println(dSubject.getIdSubject() + " " + dSubject.getPersonDocumentSubjectValue() + " " + dSubject.getIdPersonDocumentSubject());
                         }
                     }
                 }
