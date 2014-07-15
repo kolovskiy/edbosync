@@ -68,30 +68,30 @@ public class EdboSpecialities {
                             + speciality.getIdPersonEducationForm() + ", begin " + speciality.getDateBeginPersonRequestSeason().toString()
                             + " end " + speciality.getDateEndPersonRequestSeason().toString());
                     System.out.println("");
-//                    String sql = "INSERT INTO `specialities`"
-//                            + "(`idSpeciality`,"
-//                            + "`SpecialityName`,"
-//                            + "`SpecialityDirectionName`,"
-//                            + "`SpecialitySpecializationName`,"
-//                            + "`SpecialityKode`,"
-//                            + "`FacultetID`,"
-//                            + "`SpecialityClasifierCode`,"
-//                            + "`SpecialityContractCount`,"
-//                            + "`PersonEducationFormID`"
-//                            + ")"
-//                            + "VALUES"
-//                            + "("
-//                            + speciality.getIdUniversitySpecialities() + ","
-//                            + "'" + speciality.getSpecSpecialityName() + "',"
-//                            + "'" + speciality.getSpecDirectionName() + "',"
-//                            + "'" + speciality.getSpecSpecializationName() + "',"
-//                            + "'" + speciality.getUniversitySpecialitiesKode() + "',"
-//                            + facultet.getIdUniversityFacultet() + ","
-//                            + mon_kod + ","
-//                            + speciality.getUniversitySpecialitiesContractCount() + ","
-//                            + speciality.getIdPersonEducationForm()
-//                            + ");";
-//                    dbc.executeUpdate(sql);
+                    String sql = "INSERT INTO `specialities`"
+                            + "(`idSpeciality`,"
+                            + "`SpecialityName`,"
+                            + "`SpecialityDirectionName`,"
+                            + "`SpecialitySpecializationName`,"
+                            + "`SpecialityKode`,"
+                            + "`FacultetID`,"
+                            + "`SpecialityClasifierCode`,"
+                            + "`SpecialityContractCount`,"
+                            + "`PersonEducationFormID`"
+                            + ")"
+                            + "VALUES"
+                            + "("
+                            + speciality.getIdUniversitySpecialities() + ","
+                            + "'" + speciality.getSpecSpecialityName() + "',"
+                            + "'" + speciality.getSpecDirectionName() + "',"
+                            + "'" + speciality.getSpecSpecializationName() + "',"
+                            + "'" + speciality.getUniversitySpecialitiesKode() + "',"
+                            + facultet.getIdUniversityFacultet() + ","
+                            + mon_kod + ","
+                            + speciality.getUniversitySpecialitiesContractCount() + ","
+                            + speciality.getIdPersonEducationForm()
+                            + ");";
+                    dbc.executeUpdate(sql);
                 }
             }
         }

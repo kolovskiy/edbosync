@@ -3,6 +3,7 @@ package edbosync;
 import com.google.gson.Gson;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -399,6 +400,80 @@ public class EdboRequest {
     }
 
     /**
+     * Получить список идентификаторов заявок с заданными статусом,
+     * квалификацией и датой создания
+     *
+     * @param idStatus Идентификатор статуса заявки
+     * @param idQualification Идентификатор квлафикации заявки
+     * @param createDate Дата создания заявки
+     * @return Список идентификаторов в формате json
+     */
+    public String getIds(int idStatus, int idQualification, String createDate) {
+        ArrayList<Integer> idPersonRequest = new ArrayList<Integer>();
+        Gson json = new Gson();
+        String sql = "SELECT * FROM personspeciality where DATE(CreateDate) = \""
+                + createDate + "\" and StatusID = "
+                + idStatus + " and QualificationID = " + idQualification + " and edboID is not null;";
+        ResultSet resultSet = dbc.executeQuery(sql);
+        try {
+            while (resultSet.next()) {
+                idPersonRequest.add(resultSet.getInt("edboID"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EdboRequest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return json.toJson(idPersonRequest);
+    }
+
+    /**
+     * Изменить статус заявки
+     *
+     * @param idPersonRequest Идентификатор заявки в ЕДБО
+     * @param idStatus Идентификатор статуса (новый)
+     * @param numberProtocol Номер протокола решения приемной комисси
+     * @param dateProtocol Дата протокола решения приемной комисси
+     * @return Стаус попытки в формате json
+     */
+    public String changeStatus(int idPersonRequest, int idStatus, String numberProtocol, String dateProtocol) {
+        SubmitStatus submitStatus = new SubmitStatus();
+        Gson json = new Gson();
+        submitStatus.setError(false);
+        submitStatus.setBackTransaction(false);
+        ArrayOfDPersonRequestsStatuses2 arrayOfDPersonRequestsStatuses2 = soap.personRequestsStatusesGet2(sessionGuid, languageId, idPersonRequest);
+        if (arrayOfDPersonRequestsStatuses2 == null) {
+            submitStatus.setError(true);
+            submitStatus.setMessage(edbo.processErrors());
+            return json.toJson(submitStatus);
+        }
+        List<DPersonRequestsStatuses2> dPersonRequestsStatuses2s = arrayOfDPersonRequestsStatuses2.getDPersonRequestsStatuses2();
+        DPersonRequestsStatuses2 lastStatus = dPersonRequestsStatuses2s.get(0);
+        int idUniversityEntrantWave = lastStatus.getIdUniversityEntrantWave();
+        int submitResult = soap.personRequestsStatusChange2(sessionGuid, // SessionGUID
+                idPersonRequest, // Id_PersonRequest
+                idStatus, // Id_PersonRequestStatusType
+                "", // Descryption
+                idUniversityEntrantWave, // Id_UniversityEntrantWave
+                -1, // IsBudejt
+                -1, // IsContract
+                numberProtocol, // NumberProtocol
+                dateProtocol // DateProtocol
+        );
+        if (submitResult == 0) {
+            submitStatus.setError(true);
+            submitStatus.setMessage(edbo.processErrors());
+            return json.toJson(submitStatus);
+        } else {
+            String query = "UPDATE `personspeciality`\n"
+                    + "SET\n"
+                    + "`StatusID` = " + idStatus + "\n"
+                    + "WHERE `edboID` = " + idPersonRequest + ";";
+            dbc.executeUpdate(query);
+            submitStatus.setMessage("Статус заявки змінено");
+        }
+        return json.toJson(submitStatus);
+    }
+
+    /**
      * Изменить статус заявок
      *
      * @param from Исходный статус
@@ -415,7 +490,7 @@ public class EdboRequest {
         submitStatus.setBackTransaction(false);
         String sql = "SELECT * FROM personspeciality where DATE(CreateDate) = \""
                 + dateRequests + "\" and StatusID = "
-                + from + ";";
+                + from + " and edboID is not null;";
         ResultSet resultSet = dbc.executeQuery(sql);
         try {
             while (resultSet.next()) {
@@ -439,7 +514,8 @@ public class EdboRequest {
                         dateProtocol // DateProtocol
                 );
                 if (submitResult == 0) {
-                    System.err.println(edbo.processErrors());
+                    System.err.println(idPersonRequest + ": " + edbo.processErrors());
+//                    break;
                 } else {
                     resultSet.updateInt("StatusID", to);
                     resultSet.updateRow();
@@ -468,15 +544,15 @@ public class EdboRequest {
         List<DPersonRequestDocumentSubjects> dprds = aodprds.getDPersonRequestDocumentSubjects();
         return json.toJson(dprds);
     }
-    
-    public void loadRequestStatusTypes(){
+
+    public void loadRequestStatusTypes() {
         ArrayOfDPersonRequestStatusTypes aodprst = soap.personRequestStatusTypesGet(sessionGuid, actualDate, languageId);
-        if (aodprst == null){
+        if (aodprst == null) {
             System.err.println(edbo.processErrors());
             return;
         }
         List<DPersonRequestStatusTypes> statusTypeses = aodprst.getDPersonRequestStatusTypes();
-        for (DPersonRequestStatusTypes dprst : statusTypeses){
+        for (DPersonRequestStatusTypes dprst : statusTypeses) {
             System.out.println(dprst.getIdPersonRequestStatusType() + " " + dprst.getPersonRequestStatusCode() + " " + dprst.getPersonRequestStatusTypeName() + " " + dprst.getPersonRequestStatusTypeDescription());
         }
     }
