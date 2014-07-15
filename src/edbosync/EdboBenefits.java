@@ -114,7 +114,7 @@ public class EdboBenefits {
                 if (result == 0) {
                     submitStatus.setError(true);
                     submitStatus.setBackTransaction(false);
-                    submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання пільги  :  " + edbo.processErrors() + "<br />");
+                    submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання пільги  :  " + edbo.processErrors() + "<br />\n");
                 } else {
                     personBenefits.updateInt("edboID", result);
                     personBenefits.updateRow();

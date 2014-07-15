@@ -162,12 +162,12 @@ public class EdboRequest {
                     ) == 0) {
                         submitStatus.setError(true);
                         submitStatus.setBackTransaction(false);
-                        submitStatus.setMessage(submitStatus.getMessage() + "Помилка редагування заявки  :  " + edbo.processErrors() + "<br />");
+                        submitStatus.setMessage(submitStatus.getMessage() + "Помилка редагування заявки  :  " + edbo.processErrors() + "<br />\n");
 //                        return json.toJson(submitStatus);
                     } else {
                         submitStatus.setError(false);
                         submitStatus.setBackTransaction(false);
-                        submitStatus.setMessage(submitStatus.getMessage() + "Заявку успішно відредаговано.<br />");
+                        submitStatus.setMessage(submitStatus.getMessage() + "Заявку успішно відредаговано.<br />\n");
 //                        return json.toJson(submitStatus);
                     } // if - else
                 } else {
@@ -282,7 +282,7 @@ public class EdboRequest {
                             submitStatus.setError(true);
                             submitStatus.setBackTransaction(false);
                             System.out.println(coursesGuid);
-                            submitStatus.setMessage(submitStatus.getMessage() + "Неможливо додати курси  :  " + edbo.processErrors() + "<br />");
+                            submitStatus.setMessage(submitStatus.getMessage() + "Неможливо додати курси  :  " + edbo.processErrors() + "<br />\n");
                             System.out.println(edbo.getSeasonId() + " " + codeUPerson + " " + universitySpecialitiesCode + " " + idPersonEducationForm + " " + idPersonDocument);
                             return json.toJson(submitStatus);
                         }
@@ -292,7 +292,7 @@ public class EdboRequest {
                     if (soap.personRequestCheckCanAdd(sessionGuid, edbo.getSeasonId(), codeUPerson, universitySpecialitiesCode, 0, idPersonEducationForm, idPersonDocument, 0, "") == 0) {
                         submitStatus.setError(true);
                         submitStatus.setBackTransaction(false);
-                        submitStatus.setMessage(submitStatus.getMessage() + "Неможливо додати заявку  :  " + edbo.processErrors() + "<br />");
+                        submitStatus.setMessage(submitStatus.getMessage() + "Неможливо додати заявку  :  " + edbo.processErrors() + "<br />\n");
                         System.out.println(edbo.getSeasonId() + " " + codeUPerson + " " + universitySpecialitiesCode + " " + idPersonEducationForm + " " + idPersonDocument);
                         return json.toJson(submitStatus);
                     } else {
@@ -339,13 +339,17 @@ public class EdboRequest {
                 if (edboId == 0) {
                     submitStatus.setError(true);
                     submitStatus.setBackTransaction(false);
-                    submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання заявки  :  " + edbo.processErrors() + "<br />");
+                    submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання заявки  :  " + edbo.processErrors() + "<br />\n");
                     return json.toJson(submitStatus);
                 } else {
                     dbc.executeUpdate("UPDATE `personspeciality`\n"
                             + "SET\n"
                             + "`edboID` = " + edboId + "\n"
                             + "WHERE idPersonSpeciality = " + personSpeciality + ";");
+                    // льготы
+                    EdboBenefits benefits = new EdboBenefits();
+                    benefits.sync(personIdMySql); // принудительная синхронизация
+                    //закидывание в заявку
                     ResultSet benefitsRS = dbc.executeQuery("SELECT * FROM personspecialitybenefits join personbenefits on PersonBenefitID = idPersonBenefits where `PersonSpecialityID` = "
                             + personSpeciality + ";");
                     while (benefitsRS.next()) {
@@ -355,9 +359,9 @@ public class EdboRequest {
                         if (result == 0) {
                             submitStatus.setError(true);
                             submitStatus.setBackTransaction(false);
-                            submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання пільги до заявки  :  " + edbo.processErrors() + "<br />");
+                            submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання пільги до заявки  :  " + edbo.processErrors() + "<br />\n");
                         } else {
-                            submitStatus.setMessage(submitStatus.getMessage() + "До заявки успішно додано пільгу<br />");
+                            submitStatus.setMessage(submitStatus.getMessage() + "До заявки успішно додано пільгу<br />\n");
                         }
 //                            }
 
@@ -554,6 +558,54 @@ public class EdboRequest {
         List<DPersonRequestStatusTypes> statusTypeses = aodprst.getDPersonRequestStatusTypes();
         for (DPersonRequestStatusTypes dprst : statusTypeses) {
             System.out.println(dprst.getIdPersonRequestStatusType() + " " + dprst.getPersonRequestStatusCode() + " " + dprst.getPersonRequestStatusTypeName() + " " + dprst.getPersonRequestStatusTypeDescription());
+        }
+    }
+
+    /**
+     * Добавить к заявкам с курсами льготы (чистка хвостов)
+     */
+    public void addCoursesBenefit() {
+        String query = "SELECT \n"
+                + "    *\n"
+                + "FROM\n"
+                + "    personspeciality\n"
+                + "where\n"
+                + "    CoursedpID > 0\n"
+                + "        and edboID is not null;";
+        ResultSet resultSet = dbc.executeQuery(query);
+        class RequestWithCourses {
+
+            public int edboID; //!< Идентификатор ЕДБО заявки
+            public int idPersonSpeciality; //!< Идентификатор записи о специальности
+            public int idPerson; //!< Идентификатор персоны
+        }
+        ArrayList<RequestWithCourses> rwcs = new ArrayList<RequestWithCourses>();
+        try {
+            while (resultSet.next()) {
+                RequestWithCourses courses = new RequestWithCourses();
+                courses.edboID = resultSet.getInt("edboID");
+                courses.idPerson = resultSet.getInt("PersonID");
+                courses.idPersonSpeciality = resultSet.getInt("idPersonSpeciality");
+                rwcs.add(courses);
+            }
+            for (RequestWithCourses courses : rwcs) {
+                EdboBenefits benefits = new EdboBenefits();
+                benefits.sync(courses.idPerson);
+                ResultSet benefitsRS = dbc.executeQuery("SELECT * FROM personspecialitybenefits join personbenefits on PersonBenefitID = idPersonBenefits where `PersonSpecialityID` = "
+                        + courses.idPersonSpeciality + ";");
+                EdboPersonConnector edboLocal = new EdboPersonConnector();
+                EDBOPersonSoap soapLocal = edboLocal.getSoap();
+                while (benefitsRS.next()) {
+                    int result = soapLocal.personRequestBenefitsAdd(edboLocal.getSessionGuid(), actualDate, languageId, courses.edboID, benefitsRS.getInt("edboID"));
+                    if (result == 0) {
+                        System.err.println(courses.idPersonSpeciality + ": " + edboLocal.processErrors());
+                    } else {
+                        System.out.println(courses.idPersonSpeciality + ": " + "Добавлено льготу: " + benefitsRS.getInt("BenefitID"));
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EdboRequest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
