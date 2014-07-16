@@ -191,9 +191,9 @@ public class EdboPerson {
                 }
                 String birthday = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(person.getDate("Birthday"));
                 int personSexId = person.getInt("PersonSexID");
-                String firstName = person.getString("FirstName");
-                String middleName = person.getString("MiddleName");
-                String lastName = person.getString("LastName");
+                String firstName = person.getString("FirstName").replace("'", "`");
+                String middleName = person.getString("MiddleName").replace("'", "`");
+                String lastName = person.getString("LastName").replace("'", "`");
                 int resident = person.getInt("IsResident");
                 String adress = person.getString("Address");
                 String homeNumber = person.getString("HomeNumber");

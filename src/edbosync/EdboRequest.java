@@ -506,24 +506,28 @@ public class EdboRequest {
                 }
                 List<DPersonRequestsStatuses2> dPersonRequestsStatuses2s = arrayOfDPersonRequestsStatuses2.getDPersonRequestsStatuses2();
                 DPersonRequestsStatuses2 lastStatus = dPersonRequestsStatuses2s.get(0);
-                int idUniversityEntrantWave = lastStatus.getIdUniversityEntrantWave();
-                int submitResult = soap.personRequestsStatusChange2(sessionGuid, // SessionGUID
-                        idPersonRequest, // Id_PersonRequest
-                        to, // Id_PersonRequestStatusType
-                        "", // Descryption
-                        idUniversityEntrantWave, // Id_UniversityEntrantWave
-                        -1, // IsBudejt
-                        -1, // IsContract
-                        numberProtocol, // NumberProtocol
-                        dateProtocol // DateProtocol
-                );
-                if (submitResult == 0) {
-                    System.err.println(idPersonRequest + ": " + edbo.processErrors());
+                if (lastStatus.getIdPersonRequestStatusType() == from) {
+                    int idUniversityEntrantWave = lastStatus.getIdUniversityEntrantWave();
+                    int submitResult = soap.personRequestsStatusChange2(sessionGuid, // SessionGUID
+                            idPersonRequest, // Id_PersonRequest
+                            to, // Id_PersonRequestStatusType
+                            "", // Descryption
+                            idUniversityEntrantWave, // Id_UniversityEntrantWave
+                            -1, // IsBudejt
+                            -1, // IsContract
+                            numberProtocol, // NumberProtocol
+                            dateProtocol // DateProtocol
+                    );
+                    if (submitResult == 0) {
+                        System.err.println(idPersonRequest + ": " + edbo.processErrors());
 //                    break;
-                } else {
-                    resultSet.updateInt("StatusID", to);
-                    resultSet.updateRow();
-                    System.out.println(idPersonRequest + "\t:\tстатус заявки змінено.");
+                    } else {
+                        resultSet.updateInt("StatusID", to);
+                        resultSet.updateRow();
+                        System.out.println(idPersonRequest + "\t:\tстатус заявки змінено.");
+                    }
+                }else{
+                    System.err.println(idPersonRequest + "\tСтатус заявки не відповідає введеному: " + lastStatus.getIdPersonRequestStatusType() + "!=" + from);
                 }
             }
         } catch (SQLException ex) {
