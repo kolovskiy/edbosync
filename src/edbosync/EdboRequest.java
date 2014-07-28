@@ -470,6 +470,8 @@ public class EdboRequest {
             String query = "UPDATE `personspeciality`\n"
                     + "SET\n"
                     + "`StatusID` = " + idStatus + "\n"
+                    + "`NumberProtocol` = '" + numberProtocol + "'\n"
+                    + "`DateProtocol` = '" + dateProtocol + "'\n"
                     + "WHERE `edboID` = " + idPersonRequest + ";";
             dbc.executeUpdate(query);
             submitStatus.setMessage("Статус заявки змінено");
@@ -523,6 +525,8 @@ public class EdboRequest {
 //                    break;
                     } else {
                         resultSet.updateInt("StatusID", to);
+                        resultSet.updateString("NumberProtocol", numberProtocol);
+                        resultSet.updateString("DateProtocol", dateProtocol);
                         resultSet.updateRow();
                         System.out.println(idPersonRequest + "\t:\tстатус заявки змінено.");
                     }
