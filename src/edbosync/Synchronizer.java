@@ -2323,7 +2323,7 @@ public class Synchronizer {
      */
     public void getRequestExaminationsValueEdbo() {
         if (mySqlConnect()) {
-            int idQualification = 2;
+            int idQualification = 1;
             // Выбор из БД заявок с экзаменами
             String sql = "SELECT * \n"
                     + "FROM abiturient.personspeciality \n"
@@ -2344,32 +2344,32 @@ public class Synchronizer {
                         List<DPersonRequestExaminations> examinationsList = examinationsArray.getDPersonRequestExaminations();
                         for (DPersonRequestExaminations examination : examinationsList) {
                             int idSubject = examination.getIdSubject();
-                            int examValue = examination.getPersonRequestExaminationValue().toBigInteger().intValue();
+                            float examValue = examination.getPersonRequestExaminationValue().floatValue();
                             if (examValue > 0) {
                                 if (idSubject == 40) {
                                     System.out.println("");
                                     System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену : " + examValue);
                                 }
-//                                if (idSubject == idSubject1 || (idSubject1 == 3 && 30 <= idSubject && idSubject <= 33)) {
-//                                    request.updateInt("Exam1ID", idSubject);
-//                                    request.updateInt("Exam1Ball", examValue);
-////                                request.updateBigDecimal("Exam1Ball", examination.getPersonRequestExaminationValue());
-//                                    request.updateInt("IdPersonRequestExamination1", examination.getIdPersonRequestExamination());
-//                                    request.updateRow();
-//                                    System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 1: " + examValue);
-//                                } else if (idSubject == idSubject2 || (idSubject2 == 3 && 30 <= idSubject && idSubject <= 33)) {
-//                                    request.updateInt("Exam2ID", idSubject);
-//                                    request.updateInt("Exam2Ball", examValue);
-//                                    request.updateInt("IdPersonRequestExamination2", examination.getIdPersonRequestExamination());
-//                                    request.updateRow();
-//                                    System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 2: " + examValue);
-//                                } else if (idSubject == idSubject3 || (idSubject3 == 3 && 30 <= idSubject && idSubject <= 33)) {
-//                                    request.updateInt("Exam3ID", idSubject);
-//                                    request.updateInt("Exam3Ball", examValue);
-//                                    request.updateInt("IdPersonRequestExamination3", examination.getIdPersonRequestExamination());
-//                                    request.updateRow();
-//                                    System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 3: " + examValue);
-//                                } // if
+                                if (idSubject == idSubject1 || (idSubject1 == 3 && 30 <= idSubject && idSubject <= 33)) {
+                                    request.updateInt("Exam1ID", idSubject);
+                                    request.updateFloat("Exam1Ball", examValue);
+//                                request.updateBigDecimal("Exam1Ball", examination.getPersonRequestExaminationValue());
+                                    request.updateInt("IdPersonRequestExamination1", examination.getIdPersonRequestExamination());
+                                    request.updateRow();
+                                    System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 1: " + examValue);
+                                } else if (idSubject == idSubject2 || (idSubject2 == 3 && 30 <= idSubject && idSubject <= 33)) {
+                                    request.updateInt("Exam2ID", idSubject);
+                                    request.updateFloat("Exam2Ball", examValue);
+                                    request.updateInt("IdPersonRequestExamination2", examination.getIdPersonRequestExamination());
+                                    request.updateRow();
+                                    System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 2: " + examValue);
+                                } else if (idSubject == idSubject3 || (idSubject3 == 3 && 30 <= idSubject && idSubject <= 33)) {
+                                    request.updateInt("Exam3ID", idSubject);
+                                    request.updateFloat("Exam3Ball", examValue);
+                                    request.updateInt("IdPersonRequestExamination3", examination.getIdPersonRequestExamination());
+                                    request.updateRow();
+                                    System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 3: " + examValue);
+                                } // if
                             }
                         } // for
                     } // if

@@ -474,6 +474,22 @@ public class EdboRequest {
                     + "`DateProtocol` = '" + dateProtocol + "'\n"
                     + "WHERE `edboID` = " + idPersonRequest + ";";
             dbc.executeUpdate(query);
+            String insQuery = "INSERT INTO `requeststatuseshistory`\n"
+                    + "("
+                    + "`PersonSpecialityID`,\n"
+                    + "`PersonRequestStatusTypeID`,\n"
+                    + "`NumberProtocol`,\n"
+                    + "`DateProtocol`,\n"
+                    + "`DateLastChange`)\n"
+                    + "SELECT "
+                    + "`idPersonSpeciality`, "
+                    + "`StatusID`, "
+                    + "`personspeciality`.`NumberProtocol`, "
+                    + "STR_TO_DATE(`personspeciality`.`DateProtocol`, '%d.%m.%Y'), "
+                    + "`personspeciality`.`Modified`\n"
+                    + "FROM `personspeciality` "
+                    + "WHERE edboID = " + idPersonRequest + ";";
+            dbc.executeUpdate(insQuery);
             submitStatus.setMessage("Статус заявки змінено");
         }
         return json.toJson(submitStatus);
@@ -530,7 +546,7 @@ public class EdboRequest {
                         resultSet.updateRow();
                         System.out.println(idPersonRequest + "\t:\tстатус заявки змінено.");
                     }
-                }else{
+                } else {
                     System.err.println(idPersonRequest + "\tСтатус заявки не відповідає введеному: " + lastStatus.getIdPersonRequestStatusType() + "!=" + from);
                 }
             }
