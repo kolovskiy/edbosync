@@ -2282,7 +2282,13 @@ public class Synchronizer {
                         }
                     }
                     List<DPersonRequestsStatuses2> dPersonRequestsStatuses2s = arrayOfDPersonRequestsStatuses2.getDPersonRequestsStatuses2();
-                    for (DPersonRequestsStatuses2 dprs : dPersonRequestsStatuses2s) {
+//                    for (DPersonRequestsStatuses2 dprs : dPersonRequestsStatuses2s) {
+                    DPersonRequestsStatuses2 dprs = dPersonRequestsStatuses2s.get(0);
+                    if (dprs.getIdPersonRequestStatusType() != requests.getInt("StatusID")){
+                        requests.updateInt("StatusID", dprs.getIdPersonRequestStatusType());
+                        requests.updateString("NumberProtocol", dprs.getNumberProtocol());
+                        requests.updateString("DateProtocol", dprs.getDateProtocol().toString());
+                        requests.updateRow();
                         System.out.println(idPersonSpeciality + ": " + dprs.getIdPersonRequestStatusType() + " " + dprs.getNumberProtocol() + " " + dprs.getDateProtocol().toString() + " " + dprs.getDateLastChange());
                         RequestStatusData requestStatusData = new RequestStatusData();
                         requestStatusData.idPersonSpeciality = idPersonSpeciality;
@@ -2323,7 +2329,7 @@ public class Synchronizer {
      */
     public void getRequestExaminationsValueEdbo() {
         if (mySqlConnect()) {
-            int idQualification = 1;
+            int idQualification = 2;
             // Выбор из БД заявок с экзаменами
             String sql = "SELECT * \n"
                     + "FROM abiturient.personspeciality \n"
@@ -2338,153 +2344,83 @@ public class Synchronizer {
                     int idSubject1 = request.getInt("Exam1ID");
                     int idSubject2 = request.getInt("Exam2ID");
                     int idSubject3 = request.getInt("Exam3ID");
+                    int idExamination1 = request.getInt("IdPersonRequestExamination1");
+                    int idExamination2 = request.getInt("IdPersonRequestExamination2");
+                    int idExamination3 = request.getInt("IdPersonRequestExamination3");
                     int idPersonRequest = request.getInt("edboID");
                     ArrayOfDPersonRequestExaminations examinationsArray = personSoap.personRequestExaminationsGet(sessionGuid, actualDate, languageId, idPersonRequest);
-                    if (examinationsArray != null) {
-                        List<DPersonRequestExaminations> examinationsList = examinationsArray.getDPersonRequestExaminations();
-                        for (DPersonRequestExaminations examination : examinationsList) {
-                            int idSubject = examination.getIdSubject();
-                            float examValue = examination.getPersonRequestExaminationValue().floatValue();
-                            if (examValue > 0) {
-                                if (idSubject == 40) {
-                                    System.out.println("");
-                                    System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену : " + examValue);
-                                }
-                                if (idSubject == idSubject1 || (idSubject1 == 3 && 30 <= idSubject && idSubject <= 33)) {
-                                    request.updateInt("Exam1ID", idSubject);
-                                    request.updateFloat("Exam1Ball", examValue);
-//                                request.updateBigDecimal("Exam1Ball", examination.getPersonRequestExaminationValue());
-                                    request.updateInt("IdPersonRequestExamination1", examination.getIdPersonRequestExamination());
-                                    request.updateRow();
-                                    System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 1: " + examValue);
-                                } else if (idSubject == idSubject2 || (idSubject2 == 3 && 30 <= idSubject && idSubject <= 33)) {
-                                    request.updateInt("Exam2ID", idSubject);
-                                    request.updateFloat("Exam2Ball", examValue);
-                                    request.updateInt("IdPersonRequestExamination2", examination.getIdPersonRequestExamination());
-                                    request.updateRow();
-                                    System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 2: " + examValue);
-                                } else if (idSubject == idSubject3 || (idSubject3 == 3 && 30 <= idSubject && idSubject <= 33)) {
-                                    request.updateInt("Exam3ID", idSubject);
-                                    request.updateFloat("Exam3Ball", examValue);
-                                    request.updateInt("IdPersonRequestExamination3", examination.getIdPersonRequestExamination());
-                                    request.updateRow();
-                                    System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 3: " + examValue);
-                                } // if
-                            }
-                        } // for
-                    } // if
+                    if (examinationsArray == null) {
+                        if (personConnect()) { // reconnect
+                            examinationsArray = personSoap.personRequestExaminationsGet(sessionGuid, actualDate, languageId, idPersonRequest);
+                        }
+                        if (examinationsArray == null) {
+                            processEdboPersonErrors();
+                            return;
+                        }
+                    }
+                    List<DPersonRequestExaminations> examinationsList = examinationsArray.getDPersonRequestExaminations();
+                    for (DPersonRequestExaminations examination : examinationsList) {
+                        int idSubject = examination.getIdSubject();
+                        float examValue = examination.getPersonRequestExaminationValue().floatValue();
+                        if (examValue > 0) {
+//                                if (request.getInt("PersonID") == 233) {
+//                                    System.out.println("");
+//                                    System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " предмет " + idSubject + " бал екзамену : " + examValue);
+//                                    return;
+//                                }
+                            if ((idSubject == idSubject1 && idExamination1 == 0) || (idSubject1 == 3 && (30 <= idSubject && idSubject <= 33 || idSubject == 4))) {
+                                request.updateInt("Exam1ID", idSubject);
+                                request.updateFloat("Exam1Ball", examValue);
+                                request.updateInt("IdPersonRequestExamination1", examination.getIdPersonRequestExamination());
+                                idExamination1 = examination.getIdPersonRequestExamination();
+                                request.updateRow();
+                                System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 1: " + examValue);
+                            } else if ((idSubject == idSubject2 && idExamination2 == 0) || (idSubject2 == 3 && (30 <= idSubject && idSubject <= 33 || idSubject == 4))) {
+                                request.updateInt("Exam2ID", idSubject);
+                                request.updateFloat("Exam2Ball", examValue);
+                                request.updateInt("IdPersonRequestExamination2", examination.getIdPersonRequestExamination());
+                                idExamination2 = examination.getIdPersonRequestExamination();
+                                request.updateRow();
+                                System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 2: " + examValue);
+                            } else if ((idSubject == idSubject3 && idExamination3 == 0) || (idSubject3 == 3 && (30 <= idSubject && idSubject <= 33 || idSubject == 4))) {
+                                request.updateInt("Exam3ID", idSubject);
+                                request.updateFloat("Exam3Ball", examValue);
+                                request.updateInt("IdPersonRequestExamination3", examination.getIdPersonRequestExamination());
+                                idExamination3 = examination.getIdPersonRequestExamination();
+                                request.updateRow();
+                                System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + "; екзамен " + examination.getIdPersonRequestExamination() + " бал екзамену 3: " + examValue);
+                            } // if
+                        }
+                    } // for
+                    personSoap.logout(sessionGuid);
                 } // while
                 System.out.println("Обработано " + recordsCount + " записей.");
             } catch (SQLException ex) {
                 Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-//        if (mySqlConnect()) {
-//            String sql = "SELECT * \n"
-//                    + "FROM personspeciality \n"
-//                    + "WHERE\n"
-//                    + "((`personspeciality`.`Exam1ID` is not null OR `personspeciality`.`Exam2ID` is not null OR `personspeciality`.`Exam3ID` is not null) "
-//                    + " and edboID > 0"
-//                    + " and QualificationID = 1);";
-//            ResultSet request;
-//            class RequestRes {
-//
-//                int idPersonRequest;
-//                int idSubject1;
-//                int idSubject2;
-//                int idSubject3;
-////                int idPersonRequestExamination1;
-////                int idPersonRequestExamination2;
-////                int idPersonRequestExamination3;
-//            }
-//            ArrayList<RequestRes> requests = new ArrayList<RequestRes>();
-//            try {
-//                request = mySqlStatement.executeQuery(sql);
-//                while (request.next()) {
-//                    RequestRes res = new RequestRes();
-//                    res.idPersonRequest = request.getInt("edboID");
-//                    res.idSubject1 = request.getInt("Exam1ID");
-//                    res.idSubject2 = request.getInt("Exam2ID");
-//                    res.idSubject3 = request.getInt("Exam3ID");
-////                    res.idPersonRequestExamination1 = request.getInt("IdPersonRequestExamination1");
-////                    res.idPersonRequestExamination2 = request.getInt("IdPersonRequestExamination2");
-////                    res.idPersonRequestExamination3 = request.getInt("IdPersonRequestExamination3");
-//                    requests.add(res);
-//                }
-//                System.out.println("Получено " + requests.size() + " записей...");
-//                for (RequestRes req : requests) {
-//                    if (personConnect()) {
-//                        System.out.print("Запись\t"  + req.idPersonRequest + "\t");
-//                        ArrayOfDPersonRequestExaminations examinationsArray = personSoap.personRequestExaminationsGet(sessionGuid, actualDate, languageId, req.idPersonRequest);
-//                        if (examinationsArray != null) {
-//                            List<DPersonRequestExaminations> examinationsList = examinationsArray.getDPersonRequestExaminations();
-//                            for (DPersonRequestExaminations examination : examinationsList) {
-//                                int idSubject = examination.getIdSubject();
-//                                int examinationValue = examination.getPersonRequestExaminationValue().toBigInteger().intValue();
-//                                int idExamination = examination.getIdPersonRequestExamination();
-//                                System.out.print("балл " + examinationValue + "\t");
-//                                if ((idSubject == req.idSubject1 || (req.idSubject1 == 3 && 30 <= idSubject && idSubject <= 33)) && examinationValue > 0) {
-//                                    String query = "UPDATE abiturient.`personspeciality`\n"
-//                                            + "SET\n"
-//                                            + "`Exam1Ball` = " + examinationValue + ", "
-//                                            + "`IdPersonRequestExamination1` = " + idExamination + "\n"
-//                                            + "WHERE `edboID` = " + req.idPersonRequest + ";";
-//                                    if (mySqlStatement.executeUpdate(query) > 0) {
-//                                        System.out.println("1 Обновлено");
-//                                        System.out.println(query);
-//                                    }
-//                                } else if ((idSubject == req.idSubject2 || (req.idSubject2 == 3 && 30 <= idSubject && idSubject <= 33)) && examinationValue > 0) {
-//                                    String query = "UPDATE abiturient.`personspeciality`\n"
-//                                            + "SET\n"
-//                                            + "`Exam2Ball` = " + examinationValue + ", "
-//                                            + "`IdPersonRequestExamination2` = " + idExamination + "\n"
-//                                            + "WHERE `edboID` = " + req.idPersonRequest + ";";
-//                                    if (mySqlStatement.executeUpdate(query) > 0) {
-//                                        System.out.println("2 Обновлено");
-//                                        System.out.println(query);
-//                                    }
-//                                } else if ((idSubject == req.idSubject3 || (req.idSubject3 == 3 && 30 <= idSubject && idSubject <= 33)) && examinationValue > 0) {
-//                                    String query = "UPDATE abiturient.`personspeciality`\n"
-//                                            + "SET\n"
-//                                            + "`Exam3Ball` = " + examinationValue + ", "
-//                                            + "`IdPersonRequestExamination3` = " + idExamination + "\n"
-//                                            + "WHERE `edboID` = " + req.idPersonRequest + ";";
-//                                    if (mySqlStatement.executeUpdate(query) > 0) {
-//                                        System.out.println("3 Обновлено");
-//                                        System.out.println(query);
-//                                    }
-//                                }
-//                            }
-//                        }else{
-//                            processEdboPersonErrors();
-//                        }
-//                        System.out.println(" ");
-//                    }
-//                }
-//            } catch (SQLException ex) {
-//                Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
     }
 
     /**
      * Метод переноса дополнительного балла из заявок базы MySQL в ЕДБО
      */
     public void addRequestAdditionalBallEdbo() {
-        if (mySqlConnect() && personConnect()) {
+        if (mySqlConnect()) {
             String sql = "SELECT * FROM personspeciality where `personspeciality`.`AdditionalBall` is not null;";
             try {
                 ResultSet request = mySqlStatement.executeQuery(sql);
-                while (request.next()) {
+                while (request.next() && personConnect()) {
                     int idPersonRequest = request.getInt("edboID");
                     String additionalBall = Float.toString(request.getFloat("AdditionalBall"));
                     String description = request.getString("AdditionalBallComment");
                     int result = personSoap.konkursValueCorrectValueChange(sessionGuid, idPersonRequest, additionalBall, description);
                     if (result == 0) {
-                        System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + ". Помилка додавання додаткового балу: " + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
+                        processEdboPersonErrors();
+                        return;
                     } else {
                         System.out.println("Код персони: " + request.getInt("PersonID") + "; № заявки " + request.getInt("idPersonSpeciality") + "; № зявки в ЄДБО: " + idPersonRequest + ". Додатковий бал успышно змінено");
                     }
+                    personSoap.logout(sessionGuid);
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);

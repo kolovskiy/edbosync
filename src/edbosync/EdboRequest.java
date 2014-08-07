@@ -469,8 +469,8 @@ public class EdboRequest {
         } else {
             String query = "UPDATE `personspeciality`\n"
                     + "SET\n"
-                    + "`StatusID` = " + idStatus + "\n"
-                    + "`NumberProtocol` = '" + numberProtocol + "'\n"
+                    + "`StatusID` = " + idStatus + ",\n"
+                    + "`NumberProtocol` = '" + numberProtocol + "',\n"
                     + "`DateProtocol` = '" + dateProtocol + "'\n"
                     + "WHERE `edboID` = " + idPersonRequest + ";";
             dbc.executeUpdate(query);
