@@ -2282,9 +2282,9 @@ public class Synchronizer {
                         }
                     }
                     List<DPersonRequestsStatuses2> dPersonRequestsStatuses2s = arrayOfDPersonRequestsStatuses2.getDPersonRequestsStatuses2();
-//                    for (DPersonRequestsStatuses2 dprs : dPersonRequestsStatuses2s) {
-                    DPersonRequestsStatuses2 dprs = dPersonRequestsStatuses2s.get(0);
-                    if (dprs.getIdPersonRequestStatusType() != requests.getInt("StatusID")){
+//                    for (DPersonRequestsStatuses2 dprs : dPersonRequestsStatuses2s) { // выгрузка всей истории
+                    DPersonRequestsStatuses2 dprs = dPersonRequestsStatuses2s.get(0); // только последний статус
+                    if (dprs.getIdPersonRequestStatusType() != requests.getInt("StatusID")){ // только последний статус
                         requests.updateInt("StatusID", dprs.getIdPersonRequestStatusType());
                         requests.updateString("NumberProtocol", dprs.getNumberProtocol());
                         requests.updateString("DateProtocol", dprs.getDateProtocol().toString());
@@ -2329,7 +2329,7 @@ public class Synchronizer {
      */
     public void getRequestExaminationsValueEdbo() {
         if (mySqlConnect()) {
-            int idQualification = 2;
+            int idQualification = 1;
             // Выбор из БД заявок с экзаменами
             String sql = "SELECT * \n"
                     + "FROM abiturient.personspeciality \n"
