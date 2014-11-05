@@ -3,7 +3,11 @@
     <system systemId="http://test.edbo.gov.ua:8080/EDBOPerson/EDBOPerson.asmx?WSDL" uri="xml-resources/web-service-references/EDBOPerson/wsdl/test.edbo.gov.ua_8080/EDBOPerson/EDBOPerson.asmx.wsdl"/>
     <system systemId="http://iskt-1.znu.edu.ua:8080/EDBOPerson/EDBOPerson.asmx?WSDL" uri="xml-resources/web-service-references/EDBOPerson/wsdl/iskt-1.znu.edu.ua_8080/EDBOPerson/EDBOPerson.asmx.wsdl"/>
     <system systemId="http://iskt-1.znu.edu.ua:9091/EDBOGuides/EDBOGuides.asmx?WSDL" uri="xml-resources/web-service-references/EDBOGuides/wsdl/iskt-1.znu.edu.ua_9091/EDBOGuides/EDBOGuides.asmx.wsdl"/>
-    <system systemId="http://10.1.103.99:8080/EDBOGuides/EDBOGuides.asmx?WSDL" uri="xml-resources/web-service-references/EDBOGuides/wsdl/10.1.103.99_8080/EDBOGuides/EDBOGuides.asmx.wsdl"/>
     <system systemId="http://iskt-1.znu.edu.ua:9091/EDBOPerson/EDBOPerson.asmx?WSDL" uri="xml-resources/web-service-references/EDBOPerson/wsdl/iskt-1.znu.edu.ua_9091/EDBOPerson/EDBOPerson.asmx.wsdl"/>
+    <system systemId="http://10.1.23.147:8080/EDBOPerson/EDBOPerson.asmx?WSDL" uri="xml-resources/web-service-references/EDBOPerson/wsdl/10.1.23.147_8080/EDBOPerson/EDBOPerson.asmx.wsdl"/>
+    <system systemId="http://10.1.23.147:8080/EDBOGuides/EDBOGuides.asmx?WSDL" uri="xml-resources/web-service-references/EDBOGuides/wsdl/10.1.23.147_8080/EDBOGuides/EDBOGuides.asmx.wsdl"/>
+    <system systemId="http://10.1.103.99:8080/EDBOGuides/EDBOGuides.asmx?WSDL" uri="xml-resources/web-service-references/EDBOGuides/wsdl/10.1.103.99_8080/EDBOGuides/EDBOGuides.asmx.wsdl"/>
     <system systemId="http://10.1.103.99:8080/EDBOPerson/EDBOPerson.asmx?WSDL" uri="xml-resources/web-service-references/EDBOPerson/wsdl/10.1.103.99_8080/EDBOPerson/EDBOPerson.asmx.wsdl"/>
+    <system systemId="http://10.1.22.10:8080/EDBOGuides/EDBOGuides.asmx?WSDL" uri="xml-resources/web-service-references/EDBOGuides/wsdl/10.1.22.10_8080/EDBOGuides/EDBOGuides.asmx.wsdl"/>
+    <system systemId="http://10.1.22.10:8080/EDBOPerson/EDBOPerson.asmx?WSDL" uri="xml-resources/web-service-references/EDBOPerson/wsdl/10.1.22.10_8080/EDBOPerson/EDBOPerson.asmx.wsdl"/>
 </catalog>

@@ -2284,40 +2284,42 @@ public class Synchronizer {
                     List<DPersonRequestsStatuses2> dPersonRequestsStatuses2s = arrayOfDPersonRequestsStatuses2.getDPersonRequestsStatuses2();
 //                    for (DPersonRequestsStatuses2 dprs : dPersonRequestsStatuses2s) { // выгрузка всей истории
                     DPersonRequestsStatuses2 dprs = dPersonRequestsStatuses2s.get(0); // только последний статус
-                    if (dprs.getIdPersonRequestStatusType() != requests.getInt("StatusID")){ // только последний статус
+//                    if (dprs.getIdPersonRequestStatusType() != requests.getInt("StatusID")){ // только последний статус
                         requests.updateInt("StatusID", dprs.getIdPersonRequestStatusType());
                         requests.updateString("NumberProtocol", dprs.getNumberProtocol());
                         requests.updateString("DateProtocol", dprs.getDateProtocol().toString());
+                        requests.updateInt("StatusIsBudjet", dprs.getIsBudejt());
+                        requests.updateInt("StatusIsContract", dprs.getIsContract());
                         requests.updateRow();
                         System.out.println(idPersonSpeciality + ": " + dprs.getIdPersonRequestStatusType() + " " + dprs.getNumberProtocol() + " " + dprs.getDateProtocol().toString() + " " + dprs.getDateLastChange());
-                        RequestStatusData requestStatusData = new RequestStatusData();
-                        requestStatusData.idPersonSpeciality = idPersonSpeciality;
-                        requestStatusData.idPersonRequestStatusType = dprs.getIdPersonRequestStatusType();
-                        requestStatusData.numberProtocol = dprs.getNumberProtocol();
-                        requestStatusData.dateProtocol = dprs.getDateProtocol();
-                        requestStatusData.dateLastChange = dprs.getDateLastChange();
-                        rsds.add(requestStatusData);
-                    }
+//                        RequestStatusData requestStatusData = new RequestStatusData();
+//                        requestStatusData.idPersonSpeciality = idPersonSpeciality;
+//                        requestStatusData.idPersonRequestStatusType = dprs.getIdPersonRequestStatusType();
+//                        requestStatusData.numberProtocol = dprs.getNumberProtocol();
+//                        requestStatusData.dateProtocol = dprs.getDateProtocol();
+//                        requestStatusData.dateLastChange = dprs.getDateLastChange();
+//                        rsds.add(requestStatusData);
+//                    }
                     personSoap.logout(sessionGuid);
                 }
-                mySqlStatement.executeUpdate("DELETE FROM `requeststatuseshistory`;");
-                for (RequestStatusData requestStatusData : rsds) {
-                    String insQuery = "INSERT INTO `requeststatuseshistory`\n"
-                            + "("
-                            + "`PersonSpecialityID`,\n"
-                            + "`PersonRequestStatusTypeID`,\n"
-                            + "`NumberProtocol`,\n"
-                            + "`DateProtocol`,\n"
-                            + "`DateLastChange`)\n"
-                            + "VALUES\n"
-                            + "("
-                            + requestStatusData.idPersonSpeciality + ",\n"
-                            + requestStatusData.idPersonRequestStatusType + ",\n"
-                            + "'" + requestStatusData.numberProtocol + "',\n"
-                            + "'" + requestStatusData.dateProtocol + "',\n"
-                            + "'" + requestStatusData.dateLastChange + "');";
-                    mySqlStatement.executeUpdate(insQuery);
-                }
+//                mySqlStatement.executeUpdate("DELETE FROM `requeststatuseshistory`;");
+//                for (RequestStatusData requestStatusData : rsds) {
+//                    String insQuery = "INSERT INTO `requeststatuseshistory`\n"
+//                            + "("
+//                            + "`PersonSpecialityID`,\n"
+//                            + "`PersonRequestStatusTypeID`,\n"
+//                            + "`NumberProtocol`,\n"
+//                            + "`DateProtocol`,\n"
+//                            + "`DateLastChange`)\n"
+//                            + "VALUES\n"
+//                            + "("
+//                            + requestStatusData.idPersonSpeciality + ",\n"
+//                            + requestStatusData.idPersonRequestStatusType + ",\n"
+//                            + "'" + requestStatusData.numberProtocol + "',\n"
+//                            + "'" + requestStatusData.dateProtocol + "',\n"
+//                            + "'" + requestStatusData.dateLastChange + "');";
+//                    mySqlStatement.executeUpdate(insQuery);
+//                }
             } catch (SQLException ex) {
                 Logger.getLogger(Synchronizer.class.getName()).log(Level.SEVERE, null, ex);
             }
