@@ -283,5 +283,22 @@ public class EdboDocuments {
         }
         return json.toJson(submitStatus);
     }
-
+    
+    public String entrantDocumentValueChange(int idPersonDocumentMySql){
+        DataBaseConnector dbc = new DataBaseConnector(); // соедиение с БД
+        Gson json = new Gson();
+        ResultSet document = dbc.executeQuery("SELECT `AtestatValue`, `edboID` FROM documents WHERE `idDocuments` = " + idPersonDocumentMySql + ";");   
+        try {
+            if (document.next()) {
+                String attestatValue = Float.toString(document.getFloat("AtestatValue"));
+                int idEdbo = document.getInt("edboID");
+                if (soap.entrantDocumentValueChange(sessionGuid, attestatValue, 1, edbo.getUniversityKey(), idEdbo) == 0) {
+                    return edbo.processErrorsJson();
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EdboDocuments.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return json.toJson(true);
+    }
 }

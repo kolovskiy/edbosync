@@ -18,8 +18,9 @@
     </target>
     <target name="wsimport-client-EDBOGuides" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/EDBOGuides"/>
-        <property name="wsdl-EDBOGuides" location="xml-resources/web-service-references/EDBOGuides/wsdl/10.1.22.10_8080/EDBOGuides/EDBOGuides.asmx.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/EDBOGuides" destdir="${build.generated.dir}/jax-wsCache/EDBOGuides" wsdl="${wsdl-EDBOGuides}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://10.1.22.10:8080/EDBOGuides/EDBOGuides.asmx?WSDL" xnocompile="true" xendorsed="true">
+        <property name="wsdl-EDBOGuides" location="xml-resources/web-service-references/EDBOGuides/wsdl/edbo.znu.edu.ua_8080/EDBOGuides/EDBOGuides.asmx.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/EDBOGuides" destdir="${build.generated.dir}/jax-wsCache/EDBOGuides" wsdl="${wsdl-EDBOGuides}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://edbo.znu.edu.ua:8080/EDBOGuides/EDBOGuides.asmx?WSDL" xnocompile="true" xendorsed="true">
+            <jvmarg value="-Xmx1024m"/>
             <depends file="${wsdl-EDBOGuides}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/EDBOGuides"/>
         </wsimport>
@@ -35,8 +36,8 @@
     </target>
     <target name="wsimport-client-EDBOPerson" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/EDBOPerson"/>
-        <property name="wsdl-EDBOPerson" location="xml-resources/web-service-references/EDBOPerson/wsdl/10.1.22.10_8080/EDBOPerson/EDBOPerson.asmx.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/EDBOPerson" destdir="${build.generated.dir}/jax-wsCache/EDBOPerson" wsdl="${wsdl-EDBOPerson}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://10.1.22.10:8080/EDBOPerson/EDBOPerson.asmx?WSDL" xnocompile="true" xendorsed="true">
+        <property name="wsdl-EDBOPerson" location="xml-resources/web-service-references/EDBOPerson/wsdl/edbo.znu.edu.ua_8080/EDBOPerson/EDBOPerson.asmx.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/EDBOPerson" destdir="${build.generated.dir}/jax-wsCache/EDBOPerson" wsdl="${wsdl-EDBOPerson}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://edbo.znu.edu.ua:8080/EDBOPerson/EDBOPerson.asmx?WSDL" xnocompile="true" xendorsed="true">
             <depends file="${wsdl-EDBOPerson}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/EDBOPerson"/>
         </wsimport>

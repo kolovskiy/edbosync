@@ -104,7 +104,7 @@ public class Synchronizer {
     /*
      * Идентификатор вступительной компании (2 -- 2012, 3 -- 2013)
      */
-    private int seasonId = 3;
+    private int seasonId = 5;
     /**
      * Ключ университета в Soap
      */

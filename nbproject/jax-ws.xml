@@ -3,8 +3,8 @@
   <services/>
   <clients>
     <client name="EDBOGuides">
-      <wsdl-url>http://10.1.22.10:8080/EDBOGuides/EDBOGuides.asmx?WSDL</wsdl-url>
-      <local-wsdl-file>10.1.22.10_8080/EDBOGuides/EDBOGuides.asmx.wsdl</local-wsdl-file>
+      <wsdl-url>http://edbo.znu.edu.ua:8080/EDBOGuides/EDBOGuides.asmx?WSDL</wsdl-url>
+      <local-wsdl-file>edbo.znu.edu.ua_8080/EDBOGuides/EDBOGuides.asmx.wsdl</local-wsdl-file>
       <package-name>ua.edboservice</package-name>
       <catalog-file>catalog.xml</catalog-file>
       <wsimport-options>
@@ -22,7 +22,7 @@
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>wsdlLocation</wsimport-option-name>
-          <wsimport-option-value>http://10.1.22.10:8080/EDBOGuides/EDBOGuides.asmx?WSDL</wsimport-option-value>
+          <wsimport-option-value>http://edbo.znu.edu.ua:8080/EDBOGuides/EDBOGuides.asmx?WSDL</wsimport-option-value>
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>xnocompile</wsimport-option-name>
@@ -33,10 +33,11 @@
           <wsimport-option-value>true</wsimport-option-value>
         </wsimport-option>
       </wsimport-options>
+      <jvmarg>-Xmx1024m</jvmarg>
     </client>
     <client name="EDBOPerson">
-      <wsdl-url>http://10.1.22.10:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsdl-url>
-      <local-wsdl-file>10.1.22.10_8080/EDBOPerson/EDBOPerson.asmx.wsdl</local-wsdl-file>
+      <wsdl-url>http://edbo.znu.edu.ua:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsdl-url>
+      <local-wsdl-file>edbo.znu.edu.ua_8080/EDBOPerson/EDBOPerson.asmx.wsdl</local-wsdl-file>
       <package-name>ua.edboservice</package-name>
       <catalog-file>catalog.xml</catalog-file>
       <wsimport-options>
@@ -54,7 +55,7 @@
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>wsdlLocation</wsimport-option-name>
-          <wsimport-option-value>http://10.1.22.10:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsimport-option-value>
+          <wsimport-option-value>http://edbo.znu.edu.ua:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsimport-option-value>
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>xnocompile</wsimport-option-name>
