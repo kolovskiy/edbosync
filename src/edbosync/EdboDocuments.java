@@ -192,6 +192,14 @@ public class EdboDocuments {
                 String issued = document.getString("Issued");
                 int awardTypeId = document.getInt("PersonDocumentsAwardsTypesID");
                 int edboId = document.getInt("edboID");
+//                int isNotCheckAttestat = document.getInt("isNotCheckAttestat");
+//                int isForeinghEntrantDocumet = document.getInt("isForeinghEntrantDocument");
+//                int countryId = document.getInt("CountryID");
+//                int endYear = Integer.parseInt(document.getString("GraduatedYear"));
+//                String specClasifierCode = document.getString("SpecKode");
+//                String specClasifierName = document.getString("SpecName");
+//                String quailificationName = document.getString("SpecQualification");
+// 
                 if (document.wasNull() || edboId == 0) {
                     edboId = (typeId == 4)
                             ? soap.personDocumentsZnoAdd(sessionGuid, languageId, edboIdPerson, number, dateGet, znoPin)
@@ -209,6 +217,30 @@ public class EdboDocuments {
                                     attestatValue,
                                     1,
                                     awardTypeId);
+//                    soap.personDocumentsAdd2(
+//                            sessionGuid,
+//                            languageId,
+//                            edboIdPerson, 
+//                            typeId, 
+//                            0, 
+//                            (series != null) ? series : "", 
+//                            (number != null) ? number : "", 
+//                            (dateGet != null) ? dateGet : "",
+//                            (issued != null) ? issued : "", 
+//                            "", 
+//                            znoPin, 
+//                            attestatValue, 
+//                            1, 
+//                            awardTypeId, 
+//                            isNotCheckAttestat, 
+//                            isForeinghEntrantDocumet, 
+//                            documentValueTypeId,
+//                            countryId, 
+//                            endYear, 
+//                            sessionGuid, 
+//                            series, 
+//                            actualDate, 
+//                            idPersonDocumentSourceTypes);
                     if (edboId == 0) {
                         submitStatus.setError(true);
                         submitStatus.setBackTransaction(false);

@@ -11,11 +11,13 @@ import ua.edboservice.ArrayOfDPersonCourses;
 import ua.edboservice.ArrayOfDPersonRequestDocumentSubjects;
 import ua.edboservice.ArrayOfDPersonRequestStatusTypes;
 import ua.edboservice.ArrayOfDPersonRequests2;
+import ua.edboservice.ArrayOfDPersonRequestsAllPriority;
 import ua.edboservice.ArrayOfDPersonRequestsStatuses2;
 import ua.edboservice.DPersonCourses;
 import ua.edboservice.DPersonRequestDocumentSubjects;
 import ua.edboservice.DPersonRequestStatusTypes;
 import ua.edboservice.DPersonRequests2;
+import ua.edboservice.DPersonRequestsAllPriority;
 import ua.edboservice.DPersonRequestsStatuses2;
 import ua.edboservice.EDBOPersonSoap;
 
@@ -145,6 +147,7 @@ public class EdboRequest {
                 int idPersonDocument = request.getInt("EntrantDocumentID");
                 int languageExId = request.getInt("LanguageExID");
                 int edboId = request.getInt("edboID");
+                int priority = request.getInt("priority");
                 // если запись уже была добавлена, то обновляем ее поля в ЕДБО
                 if (edboId != 0) {
                     if (soap.personRequestEdit2(sessionGuid, // SessionGUID
@@ -333,7 +336,7 @@ public class EdboRequest {
                             languageExId, // Id_LanguageEx,
                             0, // Id_ForeignType
                             0, //(isResident == 1) ? 0 : 1, // IsForeignWay
-                            0 // RequestPriority
+                            priority // RequestPriority
                     );
                 }
                 if (edboId == 0) {
@@ -631,5 +634,21 @@ public class EdboRequest {
         } catch (SQLException ex) {
             Logger.getLogger(EdboRequest.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public String allPriorityGet(String personCodeU) {
+        Gson json = new Gson();
+        ArrayOfDPersonRequestsAllPriority aodprapp = soap.personRequestsAllPriorityGet(sessionGuid, personCodeU, edbo.getUniversityKey(), edbo.getSeasonId(), "");
+        if (aodprapp == null) {
+            return edbo.processErrorsJson();
+        }
+        List<DPersonRequestsAllPriority> allPriority = aodprapp.getDPersonRequestsAllPriority();
+        return json.toJson(allPriority);
+    }
+    
+    public String newPriorityGet(String personCodeU) {
+        Gson json = new Gson();
+        int priority = soap.personRequestsNewPriorityGet(sessionGuid, personCodeU, edbo.getUniversityKey(), edbo.getSeasonId());
+        return json.toJson(priority);
     }
 }
