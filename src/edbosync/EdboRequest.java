@@ -150,10 +150,80 @@ public class EdboRequest {
                 int languageExId = request.getInt("LanguageExID");
                 int edboId = request.getInt("edboID");
                 int priority = request.getInt("priority");
+                
+                // синхронизация подготовительных курсов
+                if (idPersonCourse != 0) {
+                    int personCourseIdold = idPersonCourse;
+                    // 1 проверям наличие записий о курсах персоны в нашей базе
+                    ArrayOfDPersonCourses coursesArray = soap.personCoursesGet(sessionGuid, actualDate, languageId, edboIdPerson, edbo.getSeasonId(), edbo.getUniversityKey());
+                    List<DPersonCourses> coursesList = coursesArray.getDPersonCourses();
+                    for (DPersonCourses courses : coursesList) {
+                        ResultSet coursesIdRS = dbc.executeQuery("SELECT idCourseDP \n"
+                                + "FROM coursedp\n"
+                                + "WHERE guid LIKE \"" + courses.getUniversityCourseCode() + "\";");
+                        System.out.println(courses.getUniversityCourseCode());
+                        if (coursesIdRS.next()) {
+                            int coursesIdLocal = coursesIdRS.getInt(1);
+                            coursesIdRS.close();
+                            ResultSet coursesRS = dbc.executeQuery(""
+                                    + "SELECT * \n"
+                                    + "FROM personcoursesdp \n"
+                                    + "WHERE \n"
+                                    + "PersonID = " + personIdMySql + " \n"
+                                    + "AND\n"
+                                    + "guid LIKE \"" + courses.getUniversityCourseCode() + "\";");
+                            if (!coursesRS.next()) {
+                                // если нет то заносим
+                                coursesRS.moveToInsertRow();
+                                coursesRS.updateInt("PersonID", personIdMySql);
+                                coursesRS.updateInt("CourseDPID", coursesIdLocal);
+                                coursesRS.updateInt("edboID", courses.getIdPersonCourse());
+                                coursesRS.updateString("guid", courses.getUniversityCourseCode());
+                                coursesRS.insertRow();
+                                coursesRS.moveToCurrentRow();
+                            }
+                        }
+                    }
+                    // 2 проверяем наличие строки соответствующими курсами у персоны
+                    ResultSet coursesGuidRS = dbc.executeQuery("SELECT guid\n"
+                            + "FROM `coursedp` \n"
+                            + "WHERE \n"
+                            + "idCourseDP = " + personCourseIdold + ";");
+                    coursesGuidRS.next();
+                    String coursesGuid = coursesGuidRS.getString(1);
+                    ResultSet coursesRS = dbc.executeQuery(""
+                            + "SELECT * \n"
+                            + "FROM personcoursesdp \n"
+                            + "WHERE \n"
+                            + "PersonID = " + personIdMySql + " \n"
+                            + "AND\n"
+                            + "CourseDPID = " + personCourseIdold + ";");
+                    if (coursesRS.next() && coursesRS.getInt("edboID") != 0) {
+                        idPersonCourse = coursesRS.getInt("edboID");
+                    } else {
+                        // если не найдено, то нет и в едбо, значит обновляем
+                        idPersonCourse = soap.personCoursesAdd(sessionGuid, languageId, edboIdPerson, coursesGuid, 0, edbo.getSeasonId(), "");
+                        coursesRS.moveToInsertRow();
+                        coursesRS.updateInt("PersonID", personIdMySql);
+                        coursesRS.updateInt("CourseDPID", personCourseIdold);
+                        coursesRS.updateInt("edboID", idPersonCourse);
+                        coursesRS.insertRow();
+                        coursesRS.moveToCurrentRow();
+                    }
+                    if (idPersonCourse == 0) {
+                        submitStatus.setError(true);
+                        submitStatus.setBackTransaction(false);
+                        System.out.println(coursesGuid);
+                        submitStatus.setMessage(submitStatus.getMessage() + "Неможливо додати курси  :  " + edbo.processErrors() + "<br />\n");
+                        System.out.println(edbo.getSeasonId() + " " + codeUPerson + " " + universitySpecialitiesCode + " " + idPersonEducationForm + " " + idPersonDocument);
+                        return json.toJson(submitStatus);
+                    }
+                }
+                
                 // если запись уже была добавлена, то обновляем ее поля в ЕДБО
                 if (edboId != 0) {
                     if (soap.personRequestEdit2(sessionGuid, // SessionGUID
-                            request.getInt("edboID"), // Id_PersonRequest
+                            edboId, // Id_PersonRequest
                             originalDocumentsAdd, // OriginalDocumentsAdd
                             isNeedHostel, // IsNeedHostel
                             codeOfBusiness, // CodeOfBusiness
@@ -175,6 +245,27 @@ public class EdboRequest {
                         submitStatus.setMessage(submitStatus.getMessage() + "Заявку успішно відредаговано.<br />\n");
 //                        return json.toJson(submitStatus);
                     } // if - else
+                    
+                    if (idPersonCourse != 0 && soap.personRequestCoursesAdd(sessionGuid, languageId, edboId, idPersonCourse, personRequestCourseBonus) == 0){
+                        submitStatus.setError(true);
+                        submitStatus.setBackTransaction(false);
+                        submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання курсів до заявки  :  " + edbo.processErrors() + "<br />\n");
+                    } else {
+                        submitStatus.setError(false);
+                        submitStatus.setBackTransaction(false);
+                        submitStatus.setMessage(submitStatus.getMessage() + "Курси додано до заявки<br />\n");
+                    }
+                    
+                    if (idOlympiadAward != 0 && soap.personRequestOlympiadsAwardsAdd(sessionGuid, languageId, edboId, idOlympiadAward, personRequestOlympiadAwardBonus) == 0)
+                    {
+                        submitStatus.setError(true);
+                        submitStatus.setBackTransaction(false);
+                        submitStatus.setMessage(submitStatus.getMessage() + "Помилка додавання олімпіади до заявки  :  " + edbo.processErrors() + "<br />\n");
+                    } else {
+                        submitStatus.setError(false);
+                        submitStatus.setBackTransaction(false);
+                        submitStatus.setMessage(submitStatus.getMessage() + "Олімпіаду додано до заявки<br />\n");
+                    }
                 } else {
                     // иначе добавляем заявку в ЕДБО
                     System.out.println("original  " + originalDocumentsAdd);
@@ -224,74 +315,7 @@ public class EdboRequest {
                     if (docCodeRs.next()) {
                         idPersonDocument = docCodeRs.getInt(1);
                     }
-                    // синхронизация подготовительных курсов
-                    if (idPersonCourse != 0) {
-                        int personCourseIdold = idPersonCourse;
-                        // 1 проверям наличие записий о курсах персоны в нашей базе
-                        ArrayOfDPersonCourses coursesArray = soap.personCoursesGet(sessionGuid, actualDate, languageId, edboIdPerson, edbo.getSeasonId(), edbo.getUniversityKey());
-                        List<DPersonCourses> coursesList = coursesArray.getDPersonCourses();
-                        for (DPersonCourses courses : coursesList) {
-                            ResultSet coursesIdRS = dbc.executeQuery("SELECT idCourseDP \n"
-                                    + "FROM coursedp\n"
-                                    + "WHERE guid LIKE \"" + courses.getUniversityCourseCode() + "\";");
-                            System.out.println(courses.getUniversityCourseCode());
-                            if (coursesIdRS.next()) {
-                                int coursesIdLocal = coursesIdRS.getInt(1);
-                                coursesIdRS.close();
-                                ResultSet coursesRS = dbc.executeQuery(""
-                                        + "SELECT * \n"
-                                        + "FROM personcoursesdp \n"
-                                        + "WHERE \n"
-                                        + "PersonID = " + personIdMySql + " \n"
-                                        + "AND\n"
-                                        + "guid LIKE \"" + courses.getUniversityCourseCode() + "\";");
-                                if (!coursesRS.next()) {
-                                    // если нет то заносим
-                                    coursesRS.moveToInsertRow();
-                                    coursesRS.updateInt("PersonID", personIdMySql);
-                                    coursesRS.updateInt("CourseDPID", coursesIdLocal);
-                                    coursesRS.updateInt("edboID", courses.getIdPersonCourse());
-                                    coursesRS.updateString("guid", courses.getUniversityCourseCode());
-                                    coursesRS.insertRow();
-                                    coursesRS.moveToCurrentRow();
-                                }
-                            }
-                        }
-                        // 2 проверяем наличие строки соответствующими курсами у персоны
-                        ResultSet coursesGuidRS = dbc.executeQuery("SELECT guid\n"
-                                + "FROM `coursedp` \n"
-                                + "WHERE \n"
-                                + "idCourseDP = " + personCourseIdold + ";");
-                        coursesGuidRS.next();
-                        String coursesGuid = coursesGuidRS.getString(1);
-                        ResultSet coursesRS = dbc.executeQuery(""
-                                + "SELECT * \n"
-                                + "FROM personcoursesdp \n"
-                                + "WHERE \n"
-                                + "PersonID = " + personIdMySql + " \n"
-                                + "AND\n"
-                                + "CourseDPID = " + personCourseIdold + ";");
-                        if (coursesRS.next() && coursesRS.getInt("edboID") != 0) {
-                            idPersonCourse = coursesRS.getInt("edboID");
-                        } else {
-                            // если не найдено, то нет и в едбо, значит обновляем
-                            idPersonCourse = soap.personCoursesAdd(sessionGuid, languageId, edboIdPerson, coursesGuid, 0, edbo.getSeasonId(), "");
-                            coursesRS.moveToInsertRow();
-                            coursesRS.updateInt("PersonID", personIdMySql);
-                            coursesRS.updateInt("CourseDPID", personCourseIdold);
-                            coursesRS.updateInt("edboID", idPersonCourse);
-                            coursesRS.insertRow();
-                            coursesRS.moveToCurrentRow();
-                        }
-                        if (idPersonCourse == 0) {
-                            submitStatus.setError(true);
-                            submitStatus.setBackTransaction(false);
-                            System.out.println(coursesGuid);
-                            submitStatus.setMessage(submitStatus.getMessage() + "Неможливо додати курси  :  " + edbo.processErrors() + "<br />\n");
-                            System.out.println(edbo.getSeasonId() + " " + codeUPerson + " " + universitySpecialitiesCode + " " + idPersonEducationForm + " " + idPersonDocument);
-                            return json.toJson(submitStatus);
-                        }
-                    }
+                    
                     System.out.println(idPersonDocument);
 //                    System.out.println(idPersonExamenationCause + "\t" + idPersonEntranceType+ "\tCause: " + ((idPersonExamenationCause != 0 && idPersonEntranceType != 1) ? idPersonExamenationCause : ((idPersonEntranceType == 1) ? 0 : 100)));
                     if (soap.personRequestCheckCanAdd(sessionGuid, edbo.getSeasonId(), codeUPerson, universitySpecialitiesCode, 0, idPersonEducationForm, idPersonDocument, 0, "") == 0) {
