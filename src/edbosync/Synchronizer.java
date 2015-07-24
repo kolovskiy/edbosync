@@ -2331,10 +2331,10 @@ public class Synchronizer {
      */
     public void getRequestExaminationsValueEdbo() {
         if (mySqlConnect()) {
-            int idQualification = 1;
+            int idQualification = 2; // 1 - бак, 3 - спец, 2 - магистр
             // Выбор из БД заявок с экзаменами
             String sql = "SELECT * \n"
-                    + "FROM abiturient.personspeciality \n"
+                    + "FROM personspeciality \n"
                     + "WHERE\n"
                     + "((`personspeciality`.`Exam1ID` is not null OR `personspeciality`.`Exam2ID` is not null OR `personspeciality`.`Exam3ID` is not null) and edboID is not null and QualificationID = " + idQualification + ");";
             try {
