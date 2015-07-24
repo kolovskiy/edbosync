@@ -13,12 +13,14 @@ import ua.edboservice.ArrayOfDPersonRequestStatusTypes;
 import ua.edboservice.ArrayOfDPersonRequests2;
 import ua.edboservice.ArrayOfDPersonRequestsAllPriority;
 import ua.edboservice.ArrayOfDPersonRequestsStatuses2;
+import ua.edboservice.ArrayOfDRequestExaminationCauses;
 import ua.edboservice.DPersonCourses;
 import ua.edboservice.DPersonRequestDocumentSubjects;
 import ua.edboservice.DPersonRequestStatusTypes;
 import ua.edboservice.DPersonRequests2;
 import ua.edboservice.DPersonRequestsAllPriority;
 import ua.edboservice.DPersonRequestsStatuses2;
+import ua.edboservice.DRequestExaminationCauses;
 import ua.edboservice.EDBOPersonSoap;
 
 /**
@@ -650,5 +652,13 @@ public class EdboRequest {
         Gson json = new Gson();
         int priority = soap.personRequestsNewPriorityGet(sessionGuid, personCodeU, edbo.getUniversityKey(), edbo.getSeasonId());
         return json.toJson(priority);
+    }
+    
+    public void examinationCausesGet() {
+        ArrayOfDRequestExaminationCauses arec = soap.personRequestExaminationCausesGet(sessionGuid, languageId);
+        List<DRequestExaminationCauses> lrec = arec.getDRequestExaminationCauses();
+        for (DRequestExaminationCauses couse : lrec) {
+            System.out.println(couse.getIdPersonRequestExaminationCause() + "  " + couse.getPersonRequestExaminationCauseName() + "  " + couse.getPersonRequestExaminationCauseDescription());
+        }
     }
 }
