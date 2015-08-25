@@ -695,11 +695,5 @@ public class EdboRequest {
             Logger.getLogger(EdboRequest.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0;
-    public void examinationCausesGet() {
-        ArrayOfDRequestExaminationCauses arec = soap.personRequestExaminationCausesGet(sessionGuid, languageId);
-        List<DRequestExaminationCauses> lrec = arec.getDRequestExaminationCauses();
-        for (DRequestExaminationCauses couse : lrec) {
-            System.out.println(couse.getIdPersonRequestExaminationCause() + "  " + couse.getPersonRequestExaminationCauseName() + "  " + couse.getPersonRequestExaminationCauseDescription());
-        }
     }
 }
