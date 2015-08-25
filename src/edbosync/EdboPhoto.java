@@ -29,4 +29,8 @@ public class EdboPhoto {
         }
         return base64;
     }
+    public int add(String personCodeU, String base64) {
+        EDBOPersonSoap soap = edbo.getSoap();
+        return soap.personSOAPPhotoAdd(edbo.getSessionGuid(), edbo.getUniversityKey(), personCodeU, base64);
+    }
 }

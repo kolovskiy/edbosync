@@ -301,10 +301,10 @@ public class EdboPerson {
                             entrantDocumentNumber, // EntrantDocumentNumber
                             entrantDocumentDate, // EntrantDocumentDate
                             entrantDocumentValue, // EntrantDocumentValue
-                            (documentTypeId == 3) ? documentSeries : "", // PasportSeries
-                            (documentTypeId == 3) ? documentNumber : "", // PasportNumber
-                            (documentTypeId == 3) ? documentIssued : "", // PasportIssued
-                            (documentTypeId == 3) ? documentDate : "", // PasportDate
+                            documentSeries, // PasportSeries
+                            documentNumber, // PasportNumber
+                            documentIssued, // PasportIssued
+                            documentDate, // PasportDate
                             "", // Kode_School
                             phone, // Phone
                             mobile, // Mobile

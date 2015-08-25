@@ -675,4 +675,23 @@ public class EdboRequest {
         int priority = soap.personRequestsNewPriorityGet(sessionGuid, personCodeU, edbo.getUniversityKey(), edbo.getSeasonId());
         return json.toJson(priority);
     }
+    
+    public int originalDocumentChange(int edboId) {
+        try {
+            String sql = "SELECT * \n"
+                    + "FROM personspeciality \n"
+                    + "WHERE\n"
+                    + "(edboID = " + edboId + ");";
+            ResultSet resultSet = dbc.executeQuery(sql);
+            if (resultSet.next()) {
+                int isOriginal = (resultSet.getInt("isCopyEntrantDoc") == 0) ? 1 : 0;
+                return soap.personRequestOriginalDocumentChange(sessionGuid, edboId, isOriginal);
+            }
+            else
+                return 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(EdboRequest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
 }

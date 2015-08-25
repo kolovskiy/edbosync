@@ -333,4 +333,53 @@ public class EdboDocuments {
         }
         return json.toJson(true);
     }
+    
+    public String edit(int idPerson) {
+        class DocEditResult{
+            public int idDocuments;
+            public int idType;
+            public int editStatus;
+            public String message;
+        }
+        DataBaseConnector dbc = new DataBaseConnector();
+        Gson json = new Gson();
+        ArrayList<DocEditResult> result = new ArrayList<DocEditResult>();
+        ResultSet personDocs = dbc.executeQuery("SELECT * FROM documents WHERE PersonID = " + idPerson + " and edboID is not null;");
+        try {
+            while (personDocs.next()) {
+                DocEditResult der = new DocEditResult();
+                der.idDocuments = personDocs.getInt("idDocuments");
+                der.idType = personDocs.getInt("TypeID");
+                int idPersondocument = personDocs.getInt("edboID");
+                String documentSeries = personDocs.getString("Series");
+                String documentNumbers = personDocs.getString("Numbers");
+                String documentDateGet = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(personDocs.getDate("DateGet"));
+                String documentIssued = personDocs.getString("Issued");
+                String description = "";
+                int isCheckForPaperCopy = 1;
+                int idPersonDocumentsAwardType = personDocs.getInt("PersonDocumentsAwardsTypesID");
+                der.editStatus = soap.personDocumentsEdit(sessionGuid, 
+                        languageId, 
+                        idPersondocument, 
+                        0, 
+                        documentSeries, 
+                        documentNumbers, 
+                        documentDateGet, 
+                        documentIssued, 
+                        description, 
+                        isCheckForPaperCopy, 
+                        idPersonDocumentsAwardType);
+                if (der.editStatus == 0) 
+                    der.message = edbo.processErrors();
+                else
+                    der.message = "";
+                result.add(der);
+            }
+            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(EdboDocuments.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return json.toJson(result);
+    }
 }
