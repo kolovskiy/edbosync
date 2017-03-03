@@ -8,18 +8,24 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ua.edboservice.ArrayOfDPersonCourses;
+import ua.edboservice.ArrayOfDPersonEnteranceTypes;
 import ua.edboservice.ArrayOfDPersonRequestDocumentSubjects;
 import ua.edboservice.ArrayOfDPersonRequestStatusTypes;
 import ua.edboservice.ArrayOfDPersonRequests2;
+import ua.edboservice.ArrayOfDPersonRequests4;
 import ua.edboservice.ArrayOfDPersonRequestsAllPriority;
 import ua.edboservice.ArrayOfDPersonRequestsStatuses2;
+import ua.edboservice.ArrayOfDRequestEnteranceCodes;
 import ua.edboservice.ArrayOfDRequestExaminationCauses;
 import ua.edboservice.DPersonCourses;
+import ua.edboservice.DPersonEnteranceTypes;
 import ua.edboservice.DPersonRequestDocumentSubjects;
 import ua.edboservice.DPersonRequestStatusTypes;
 import ua.edboservice.DPersonRequests2;
+import ua.edboservice.DPersonRequests4;
 import ua.edboservice.DPersonRequestsAllPriority;
 import ua.edboservice.DPersonRequestsStatuses2;
+import ua.edboservice.DRequestEnteranceCodes;
 import ua.edboservice.DRequestExaminationCauses;
 import ua.edboservice.EDBOPersonSoap;
 
@@ -245,6 +251,15 @@ public class EdboRequest {
                         submitStatus.setMessage(submitStatus.getMessage() + "Заявку успішно відредаговано.<br />\n");
 //                        return json.toJson(submitStatus);
                     } // if - else
+                    
+                    if (soap.personRequestsPriorityChange(sessionGuid, edboId, priority) == 0) {
+                        submitStatus.setError(true);
+                        submitStatus.setBackTransaction(false);
+                        submitStatus.setMessage(submitStatus.getMessage() + "Помилка редагування пріоритету заявки  :  " + edbo.processErrors() + "<br />\n");
+                    }
+                    else {
+                        submitStatus.setMessage(submitStatus.getMessage() + "Пріорітет заявки успішно відредаговано.<br />\n");
+                    }
                     
                     if (idPersonCourse != 0 && soap.personRequestCoursesAdd(sessionGuid, languageId, edboId, idPersonCourse, personRequestCourseBonus) == 0){
                         submitStatus.setError(true);
@@ -695,5 +710,102 @@ public class EdboRequest {
             Logger.getLogger(EdboRequest.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0;
+    }
+    
+    public void loadEnteranceCodes() {
+        System.out.println("Request Enterance Codes:");
+        ArrayOfDRequestEnteranceCodes arec = soap.requestEnteranceCodesGet(sessionGuid, actualDate, languageId);
+        List<DRequestEnteranceCodes> request_enrance_codes = arec.getDRequestEnteranceCodes();
+        for (DRequestEnteranceCodes request_enrance_code : request_enrance_codes) {
+            System.out.println(request_enrance_code.getIdRequestEnteranceCodes() + " " + request_enrance_code.getRequestEnteranceCodes() + " " + request_enrance_code.getRequestEnteranceCodesName());
+        }
+    }
+    
+    public void loadEnteranceTypes() {
+        System.out.println("Person Request Enterance Types:");
+        ArrayOfDPersonEnteranceTypes aodpet = soap.personEnteranceTypesGet(sessionGuid, languageId);
+        List<DPersonEnteranceTypes> dPersonEnteranceTypeses = aodpet.getDPersonEnteranceTypes();
+        for (DPersonEnteranceTypes dPersonEnteranceType : dPersonEnteranceTypeses) {
+            System.out.println(dPersonEnteranceType.getIdPersonEnteranceTypes() + " " + dPersonEnteranceType.getPersonEnteranceTypeName());
+        }
+    }
+    
+    public void loadExaminationCauses() {
+        System.out.println("Person Request Examination Causes:");
+        ArrayOfDRequestExaminationCauses aodrec = soap.personRequestExaminationCausesGet(sessionGuid, languageId);
+        List<DRequestExaminationCauses> causeses = aodrec.getDRequestExaminationCauses();
+        for (DRequestExaminationCauses c : causeses) {
+            System.out.println(c.getIdPersonRequestExaminationCause() + " " + c.getPersonRequestExaminationCauseName() + " " + c.getPersonRequestExaminationCauseDescription());
+        }
+    }
+    
+    public void loadRequestsBudjetContractData(int idQualification) {
+        String sql = "SELECT * \n"
+                        + "FROM personspeciality \n"
+                        + "WHERE\n"
+                        + "(edboID is not null and QualificationID = " + idQualification 
+                        + ");";
+        try {
+            ResultSet resultSet = dbc.executeQuery(sql);
+            while (resultSet.next()) {
+                EdboPersonConnector edbo = new EdboPersonConnector();
+                EDBOPersonSoap soap = edbo.getSoap();
+                int personRequestId = resultSet.getInt("edboID");
+                ArrayOfDPersonRequests4 aodpr = soap.personRequestsGet4(edbo.getSessionGuid(), edbo.getActualDate(), edbo.getLanguageId(), "", edbo.getSeasonId(), personRequestId, "", 0, idQualification, "");
+                if (aodpr == null) {
+                    edbo.login();
+                    soap = edbo.getSoap();
+                    aodpr = soap.personRequestsGet4(edbo.getSessionGuid(), edbo.getActualDate(), edbo.getLanguageId(), "", edbo.getSeasonId(), personRequestId, "", 0, idQualification, "");
+                    if (aodpr == null) {
+                        System.err.println("Person: id = " + resultSet.getInt("PersonID") + " request = " + resultSet.getInt("idPersonSpeciality"));
+                        System.err.println("Connection problem: " + edbo.processErrors());
+                        continue;
+                    }
+                }
+                List<DPersonRequests4> dPersonRequests4 = aodpr.getDPersonRequests4();
+                DPersonRequests4 dpr = dPersonRequests4.get(0);
+                resultSet.updateInt("isContract", dpr.getIsContract());
+                resultSet.updateInt("isBudget", dpr.getIsBudget());
+                resultSet.updateRow();
+                System.out.println("Request updated: id = " + resultSet.getInt("PersonID") + " request = " + resultSet.getInt("idPersonSpeciality"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EdboRequest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void loadRequestsKonkursValue(int idQualification)
+    {
+        String sql = "SELECT * \n"
+                        + "FROM personspeciality \n"
+                        + "WHERE\n"
+                        + "(edboID is not null and QualificationID = " + idQualification 
+                        + ");";
+        try {
+            ResultSet resultSet = dbc.executeQuery(sql);
+            while (resultSet.next()) {
+                EdboPersonConnector edbo = new EdboPersonConnector();
+                EDBOPersonSoap soap = edbo.getSoap();
+                int personRequestId = resultSet.getInt("edboID");
+                ArrayOfDPersonRequests4 aodpr = soap.personRequestsGet4(edbo.getSessionGuid(), edbo.getActualDate(), edbo.getLanguageId(), "", edbo.getSeasonId(), personRequestId, "", 0, idQualification, "");
+                if (aodpr == null) {
+                    edbo.login();
+                    soap = edbo.getSoap();
+                    aodpr = soap.personRequestsGet4(edbo.getSessionGuid(), edbo.getActualDate(), edbo.getLanguageId(), "", edbo.getSeasonId(), personRequestId, "", 0, idQualification, "");
+                    if (aodpr == null) {
+                        System.err.println("Person: id = " + resultSet.getInt("PersonID") + " request = " + resultSet.getInt("idPersonSpeciality"));
+                        System.err.println("Connection problem: " + edbo.processErrors());
+                        continue;
+                    }
+                }
+                List<DPersonRequests4> dPersonRequests4 = aodpr.getDPersonRequests4();
+                DPersonRequests4 dpr = dPersonRequests4.get(0);
+                resultSet.updateFloat("AdditionalBall", dpr.getKonkursValueCorrectValue().floatValue());
+                resultSet.updateRow();
+                System.out.println("Request updated: id = " + resultSet.getInt("PersonID") + " request = " + resultSet.getInt("idPersonSpeciality") + " konkurs value: " + dpr.getKonkursValue().floatValue() + " correction: " + dpr.getKonkursValueCorrectValue().floatValue());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EdboRequest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

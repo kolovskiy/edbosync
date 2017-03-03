@@ -20,7 +20,6 @@
         <mkdir dir="${build.generated.dir}/jax-wsCache/EDBOGuides"/>
         <property name="wsdl-EDBOGuides" location="xml-resources/web-service-references/EDBOGuides/wsdl/edbo.znu.edu.ua_8080/EDBOGuides/EDBOGuides.asmx.wsdl"/>
         <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/EDBOGuides" destdir="${build.generated.dir}/jax-wsCache/EDBOGuides" wsdl="${wsdl-EDBOGuides}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://edbo.znu.edu.ua:8080/EDBOGuides/EDBOGuides.asmx?WSDL" xnocompile="true" xendorsed="true">
-            <jvmarg value="-Xmx1024m"/>
             <depends file="${wsdl-EDBOGuides}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/EDBOGuides"/>
         </wsimport>

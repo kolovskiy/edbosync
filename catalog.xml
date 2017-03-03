@@ -11,6 +11,6 @@
     <system systemId="http://10.1.22.10:8080/EDBOGuides/EDBOGuides.asmx?WSDL" uri="xml-resources/web-service-references/EDBOGuides/wsdl/10.1.22.10_8080/EDBOGuides/EDBOGuides.asmx.wsdl"/>
     <system systemId="http://10.1.22.10:8080/EDBOPerson/EDBOPerson.asmx?WSDL" uri="xml-resources/web-service-references/EDBOPerson/wsdl/10.1.22.10_8080/EDBOPerson/EDBOPerson.asmx.wsdl"/>
     <system systemId="file:/home/matmod/NetBeansProjects/EDBOGuides.asmx" uri="xml-resources/web-service-references/EDBOGuides/wsdl/EDBOGuides.asmx.wsdl"/>
-    <system systemId="http://edbo.znu.edu.ua:8080/EDBOPerson/EDBOPerson.asmx?WSDL" uri="xml-resources/web-service-references/EDBOPerson/wsdl/edbo.znu.edu.ua_8080/EDBOPerson/EDBOPerson.asmx.wsdl"/>
     <system systemId="http://edbo.znu.edu.ua:8080/EDBOGuides/EDBOGuides.asmx?WSDL" uri="xml-resources/web-service-references/EDBOGuides/wsdl/edbo.znu.edu.ua_8080/EDBOGuides/EDBOGuides.asmx.wsdl"/>
+    <system systemId="http://edbo.znu.edu.ua:8080/EDBOPerson/EDBOPerson.asmx?WSDL" uri="xml-resources/web-service-references/EDBOPerson/wsdl/edbo.znu.edu.ua_8080/EDBOPerson/EDBOPerson.asmx.wsdl"/>
 </catalog>

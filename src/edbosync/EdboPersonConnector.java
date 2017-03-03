@@ -35,7 +35,7 @@ public class EdboPersonConnector {
     /**
      * Идентификатор вступительной компании (2 - 2012, 3 - 2013, ...)
      */
-    protected int seasonId = 5;
+    protected int seasonId = 6;
     /**
      * Ключ университета в ЕДБО
      */
@@ -72,7 +72,7 @@ public class EdboPersonConnector {
      */
     protected final boolean login() {
         // wsdl connection url:
-        // http://10.1.103.99:8080/EDBOPerson/EDBOPerson.asmx?WSDL
+        // http://edbo.znu.edu.ua:8080/EDBOPerson/EDBOPerson.asmx?WSDL
         // http://iskt-1.znu.edu.ua:9091/EDBOPerson/EDBOPerson.asmx?WSDL
         SoapConnectionData data = new SoapConnectionData();
         soap = edboPerson.getEDBOPersonSoap();
@@ -106,13 +106,72 @@ public class EdboPersonConnector {
      * @return Строка с сообщением об ошибках
      */
     public String processErrors() {
+        String[] smiles = {
+            ":-)", ":lol:", ":cheese:", ":)", ";-)", ";)", ":-S", ":wow:", ":bug:", ":-P", "%-P", ";-P", ":P", "8-/", ":-/", ">:(", ">:-(", ":-O"
+        };
+        String[] images = {
+            "_/﹋\\_\n" +
+"(҂`_´)\n" +
+"<,︻╦╤─ ҉ - - - - - - --\n" +
+"_/﹋\\_",
+            "░░░░██▄\n" +
+"░░░██▀░░░░▐\n" +
+"▌░███▄░░░░▐\n" +
+"▌▐███░▀▄███▄▄▄██▄▄\n" +
+"▌█████▌░░▌░░░░░░▌\n" +
+"▌▀▀▀▌▐█░░▌░░░░░░▌\n" +
+"▌▀▀▀▌▐█░░▌░░░░░░▌\n" +
+"▌░░░▌░█▄▌░░░░░░░▌",
+            "¦•¦♥¦╔═╦╦╦═╦═╦═╗ ¦•¦♥¦\n" +
+"¦•¦♥¦║═╣║║╬║═╣╬║ ¦•¦♥¦\n" +
+"¦•¦♥¦╠═║║║╔╣═╣╔╣ ¦•¦♥¦\n" +
+"¦•¦♥¦╚═╩═╩╝╚═╩╩╝ ¦•¦♥¦",
+            "╔┓┏╦━━╦┓╔┓╔━━╗\n" +
+"║┗┛║┗━╣┃║┃║╯╰║\n" +
+"║┏┓║┏━╣┗╣┗╣╰╯║\n" +
+"╚┛┗╩━━╩━╩━╩━━╝",
+            "██████　██████\n" +
+"███▄▄█　█▀▀███\n" +
+"█████▄　▀█████\n" +
+"████▀▀　██████\n" +
+"██████　▄▄████\n" +
+"██████　██████",
+            "████▐▐▐██████████\n" +
+"███▐▐▐▐███▌▌▌████\n" +
+"███───▐▌██▌▌▌▌███\n" +
+"███▄──▄▄█▐▌───███\n" +
+"█████████▄▄──▄███",
+            ". . . . /\\„.„/\\\n" +
+". . . .(=’♥’=). . . . . . ./\\„„/\\\n" +
+". . ../ ‾`•´‾ \\. . . . . .(=’•’=)\n" +
+". . . \\ .\\ …/. /. . . . . ./ . . . \\\n" +
+". . ..(,,)⌣ (,,)__)……...\\„/⌣\\„/__)\n" +
+" ”´”`´”\"`”`´”´”`´”\"”´”`´”\"´”´ МЯУ!!!",
+            "▄██▄██▄\n" +
+"▀██♥██▀\n" +
+"░░▀█▀\n" +
+"░░░❤▄██▄██▄\n" +
+"░░░ ♥▀██♥██▀\n" +
+"░░░░░ ♥▀█▀\n" +
+"▄██▄██▄\n" +
+"▀██♥██▀\n" +
+"░░▀█▀\n" +
+"░░░❤\n" +
+"░░░♥\n" +
+"░░♥"
+        };
         ArrayOfDLastError errorArray;
         errorArray = soap.getLastError(sessionGuid);
         String finalMessage = "";
         List<DLastError> errorList = errorArray.getDLastError();
         for (DLastError dError : errorList) {
+            int iSmile = (int)(Math.random() * smiles.length);
+            int iImage = (int)(Math.random() * images.length);
             System.err.println(dError.getLastErrorDescription());
-            finalMessage = finalMessage + dError.getLastErrorDescription() + " ";
+            if (dError.getLastErrorDescription() == null || dError.getLastErrorDescription().isEmpty())
+                finalMessage = finalMessage + "Ooops.<br />" + smiles[iSmile] + "<br />" + "Network Error!<br />" + images[iImage] + "<br />";
+            else
+                finalMessage = finalMessage + dError.getLastErrorDescription() + " ";
         }
         return finalMessage;
     }

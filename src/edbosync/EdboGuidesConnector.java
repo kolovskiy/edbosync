@@ -35,7 +35,7 @@ public class EdboGuidesConnector {
     /**
      * Идентификатор вступительной компании (2 - 2012, 3 - 2013, ...)
      */
-    protected int seasonId = 5;
+    protected int seasonId = 6;
     /**
      * Ключ университета в ЕДБО
      */
@@ -72,7 +72,7 @@ public class EdboGuidesConnector {
      */
     protected final boolean login() {
         // wsdl connection url:
-        // http://10.1.103.99:8080/EDBOGuides/EDBOGuides.asmx?WSDL
+        // http://edbo.znu.edu.ua:8080/EDBOGuides/EDBOGuides.asmx?WSDL
         // http://iskt-1.znu.edu.ua:9091/EDBOGuides/EDBOGuides.asmx?WSDL
         SoapConnectionData data = new SoapConnectionData();
         soap = edboGuides.getEDBOGuidesSoap();

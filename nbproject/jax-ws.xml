@@ -33,7 +33,6 @@
           <wsimport-option-value>true</wsimport-option-value>
         </wsimport-option>
       </wsimport-options>
-      <jvmarg>-Xmx1024m</jvmarg>
     </client>
     <client name="EDBOPerson">
       <wsdl-url>http://edbo.znu.edu.ua:8080/EDBOPerson/EDBOPerson.asmx?WSDL</wsdl-url>

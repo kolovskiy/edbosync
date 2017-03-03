@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ua.edboservice.ArrayOfDPersonDocumentTypes2;
 import ua.edboservice.ArrayOfDPersonDocuments;
 import ua.edboservice.ArrayOfDPersonDocumentsSubjects;
+import ua.edboservice.DPersonDocumentTypes2;
 import ua.edboservice.DPersonDocuments;
 import ua.edboservice.DPersonDocumentsSubjects;
 import ua.edboservice.EDBOPersonSoap;
@@ -131,10 +133,10 @@ public class EdboDocuments {
         submitStatus.setId(edboIdPerson);
         // ЕДБО ----> БД
         // очистим идентифкаторы документов оо образовании для ресинхронизации
-        dbc.executeUpdate("UPDATE `documents`\n"
-                + "SET\n"
-                + "`documents`.`edboID` = null\n"
-                + "WHERE `documents`.`TypeID` in (2, 7,8,9,10,11,12,13,14,15) AND `documents`.`PersonID` = " + personIdMysql + ";");
+//        dbc.executeUpdate("UPDATE `documents`\n"
+//                + "SET\n"
+//                + "`documents`.`edboID` = null\n"
+//                + "WHERE `documents`.`TypeID` in (2, 7,8,9,10,11,12,13,14,15) AND `documents`.`PersonID` = " + personIdMysql + ";");
         ArrayOfDPersonDocuments documentsArray = soap.personDocumentsGet(sessionGuid, actualDate, languageId, codeUPerson, 0, 0, "", -1);
         if (documentsArray == null) {
             // возникла ошибка при получении данных из ЕДБО
@@ -148,7 +150,7 @@ public class EdboDocuments {
             try {
                 if (documentMySql.next()) {
                     int docId = documentMySql.getInt("idDocuments");
-                    documentMySql.updateInt("edboID", dDocument.getIdPersonDocument());
+                    if (dDocument.getIdPersonDocument() != 0) documentMySql.updateInt("edboID", dDocument.getIdPersonDocument());
                     documentMySql.updateRow();
                     System.out.println("updated");
                     if (dDocument.getIdPersonDocumentType() == 4) {
@@ -247,7 +249,9 @@ public class EdboDocuments {
                         submitStatus.setMessage(submitStatus.getMessage() + number + "  :  " + edbo.processErrors() + "<br />");
 //                            System.out.println(number + personSoap.getLastError(sessionGuid).getDLastError().get(0).getLastErrorDescription());
                     }
-                    document.updateInt("edboID", edboId);
+                    else {
+                        document.updateInt("edboID", edboId);
+                    }
                     document.updateRow();
                     // если работаем с сертификатом, то добавляем перметы в список
                     if (typeId == 4) {
@@ -285,7 +289,7 @@ public class EdboDocuments {
                     // найдена подходящая запись
                     // запись о предмете не была синхронизирована
                     docsubRs.updateDouble("SubjectValue", subject.getSubjectValue());
-                    docsubRs.updateInt("edboID", subject.getId_DocumentSubject());
+                    if (subject.getId_DocumentSubject() != 0) docsubRs.updateInt("edboID", subject.getId_DocumentSubject());
                     docsubRs.updateRow();
                     submitStatus.setError(true);
                     submitStatus.setBackTransaction(false);
@@ -381,5 +385,35 @@ public class EdboDocuments {
             Logger.getLogger(EdboDocuments.class.getName()).log(Level.SEVERE, null, ex);
         }
         return json.toJson(result);
+    }
+    
+    /**
+     * Метод загружает типы документов из ЕДБО
+     */
+    public void loadDocumentsTypes(){
+        DataBaseConnector dbc = new DataBaseConnector();
+        ArrayOfDPersonDocumentTypes2 adpdt = soap.personDocumentTypesGet2(sessionGuid, actualDate, languageId);
+        if (adpdt == null) {
+            // возникла ошибка при получении данных из ЕДБО
+            System.err.println(edbo.processErrors());
+        }
+        List<DPersonDocumentTypes2> documentsTypes = adpdt.getDPersonDocumentTypes2();
+        for (DPersonDocumentTypes2 documentsType : documentsTypes) {
+            System.out.println(documentsType.getIdPersonDocumentType() + "\t" + documentsType.getPersonDocumentTypeName() + "\t" + documentsType.getIsEntrantDocument());
+            String sql = ""
+                    + "INSERT INTO `abiturient_2016`.`persondocumenttypes`\n"
+                    + "(`idPersonDocumentTypes`,\n"
+                    + "`PersonDocumentTypesName`,\n"
+                    + "`IsEntrantDocument`)\n"
+                    + "VALUES(\n"
+                    + documentsType.getIdPersonDocumentType() + ",\n"
+                    + "'" + documentsType.getPersonDocumentTypeName() + "',\n"
+                    + documentsType.getIsEntrantDocument() + ")"
+                    + "on duplicate key update "
+                    + "`PersonDocumentTypesName` = " + "'" + documentsType.getPersonDocumentTypeName() + "',\n"
+                    + "`IsEntrantDocument` = " + documentsType.getIsEntrantDocument()
+                    + ";";
+            dbc.executeUpdate(sql);
+        }
     }
 }
